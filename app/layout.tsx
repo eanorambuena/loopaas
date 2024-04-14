@@ -7,8 +7,11 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: {
+    template: '%s | IDS App',
+    default: 'IDS App'
+  },
+  description: "IDS App es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable"
 };
 
 export default function RootLayout({
