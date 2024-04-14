@@ -1,31 +1,11 @@
-import DeployButton from "../components/DeployButton";
-import AuthButton from "../components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
+import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 export default async function Index() {
-  const canInitSupabaseClient = () => {
-    // This function is just for the interactive tutorial.
-    // Feel free to remove it once you have Supabase connected.
-    try {
-      createClient();
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  const isSupabaseConnected = canInitSupabaseClient();
-
   return (
     <div className="flex-1 w-full flex flex-col items-center">
-      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-        <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-          <DeployButton />
-          {isSupabaseConnected && <AuthButton />}
-        </div>
-      </nav>
+      <Header />
 
       <div className='bg-center min-h-screen max-w-screen bg-cover bg-[url(background-color.webp)] bg-gray-800 bg-blend-multiply flex items-center justify-center'>
         <main className='px-14 mx-auto text-center py-24 lg:py-56'>

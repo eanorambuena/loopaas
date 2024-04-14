@@ -1,9 +1,8 @@
-import DeployButton from "@/components/DeployButton";
-import AuthButton from "@/components/AuthButton";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import CourseCard from "@/components/CourseCard";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 
 export default async function CursosPage() {
   const supabase = createClient();
@@ -28,12 +27,7 @@ export default async function CursosPage() {
           This is a protected page that you can only see as an authenticated
           user
         </div>
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-            <DeployButton />
-            <AuthButton />
-          </div>
-        </nav>
+        <Header />
       </div>
 
       <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3">
