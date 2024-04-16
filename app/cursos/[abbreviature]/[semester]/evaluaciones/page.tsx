@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import EvaluationCard from "../../../../components/EvaluationCard";
+import EvaluationCard from "@/components/EvaluationCard";
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
   const supabase = createClient();
