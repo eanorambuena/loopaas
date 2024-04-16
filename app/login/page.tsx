@@ -58,7 +58,6 @@ export default function Login({
         className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
           viewBox="0 0 24 24"
@@ -97,14 +96,14 @@ export default function Login({
         <SubmitButton
           formAction={signIn}
           className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing In..."
+          pendingText="Iniciando Sesión..."
         >
           Iniciar Sesión
         </SubmitButton>
         <SubmitButton
           formAction={signUp}
           className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
-          pendingText="Signing Up..."
+          pendingText="Creando cuenta..."
         >
           Registrarse
         </SubmitButton>
