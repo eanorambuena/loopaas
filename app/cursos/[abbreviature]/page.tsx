@@ -1,28 +1,26 @@
-import Header from "@/components/Header";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import CourseCard from "@/components/CourseCard";
-import Footer from "@/components/Footer";
+import Header from "@/components/Header"
+import { createClient } from "@/utils/supabase/server"
+import { redirect } from "next/navigation"
+import CourseCard from "@/components/CourseCard"
+import Footer from "@/components/Footer"
 
 export default async function Page({ params }: { params: { abbreviature: string } }) {
-  const supabase = createClient();
+  const supabase = createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
-  if (!user) {
-    return redirect("/login");
-  }
+  if (!user) return redirect("/login")
 
   const { data: courses } = await supabase
     .from("courses")
     .select("*")
     .eq("abbreviature", params.abbreviature)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
 
   if (courses?.length === 0) {
-    return <div>Course not found</div>;
+    return <div>Course not found</div>
   }
 
   return (
@@ -46,5 +44,5 @@ export default async function Page({ params }: { params: { abbreviature: string 
 
       <Footer />
     </div>
-  );
+  )
 }

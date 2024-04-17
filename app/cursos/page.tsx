@@ -1,24 +1,22 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import CourseCard from "@/components/CourseCard";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
+import { createClient } from "@/utils/supabase/server"
+import { redirect } from "next/navigation"
+import CourseCard from "@/components/CourseCard"
+import Footer from "@/components/Footer"
+import Header from "@/components/Header"
 
 export default async function CursosPage() {
-  const supabase = createClient();
+  const supabase = createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
-  if (!user) {
-    return redirect("/login");
-  }
+  if (!user) return redirect("/login")
 
   const { data: courses } = await supabase
     .from("courses")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
 
   return (
     <div className="flex-1 w-full flex flex-col gap-5 items-center">
@@ -41,5 +39,5 @@ export default async function CursosPage() {
 
       <Footer />
     </div>
-  );
+  )
 }

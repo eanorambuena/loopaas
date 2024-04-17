@@ -31,7 +31,7 @@ export default function Form({ evaluation }: { evaluation: Evaluation }) {
       { Object.entries(evaluation.sections).map(([sectionKey, sectionValue]) => (
         <fieldset key={ sectionKey } className='w-full'>
           <legend className='text-lg font-bold dark:text-gray-100'>{ sectionValue as any }</legend>
-          { Object.entries(evaluation.questions ?? {}).map(([questionKey, question]) => (
+          { Object.entries(evaluation.questions).map(([questionKey, question]) => (
             <Question
               id={`${sectionKey}-${questionKey}`}
               key={`${sectionKey}-${questionKey}`}
@@ -41,7 +41,7 @@ export default function Form({ evaluation }: { evaluation: Evaluation }) {
           ))}
         </fieldset>
       ))}
-      <button type='submit' className='w-full bg-purple-950 text-white font-bold py-2 rounded-md'>Enviar</button>
+      <button type='submit' className='w-full bg-emerald-950 text-white font-bold py-2 rounded-md'>Enviar</button>
     </form>
   )
 }

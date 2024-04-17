@@ -1,6 +1,5 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
-//import { useState } from "react"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Form, { Evaluation } from "@/components/Form"
@@ -65,7 +64,6 @@ export default async function Page({ params }: { params: { abbreviature: string,
     sections,
   }
 
-
   return (
     <div className="flex-1 w-full flex flex-col gap-5 items-center">
       <div className="w-full">
@@ -80,6 +78,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
         <h1 className='text-3xl font-bold'>{evaluation.title}</h1>
         <Form evaluation={evaluation as Evaluation} />
       </div>
+
       <Footer />
     </div>
   )

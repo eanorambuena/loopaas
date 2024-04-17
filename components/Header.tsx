@@ -1,19 +1,19 @@
-import AuthButton from "../components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
+import AuthButton from "../components/AuthButton"
+import { createClient } from "@/utils/supabase/server"
 
 export default function Header() {
   const canInitSupabaseClient = () => {
     // This function is just for the interactive tutorial.
     // Feel free to remove it once you have Supabase connected.
     try {
-      createClient();
-      return true;
+      createClient()
+      return true
     } catch (e) {
-      return false;
+      return false
     }
-  };
+  }
 
-  const isSupabaseConnected = canInitSupabaseClient();
+  const isSupabaseConnected = canInitSupabaseClient()
 
   return (
     <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
@@ -21,5 +21,5 @@ export default function Header() {
         {isSupabaseConnected && <AuthButton />}
       </div>
     </nav>
-  );
+  )
 }

@@ -1,20 +1,18 @@
-import { createClient } from "@/utils/supabase/server";
-import { evaluationPath } from "@/utils/paths";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import Image from "next/image";
-import Badge from "@/components/Badge";
+import { createClient } from "@/utils/supabase/server"
+import { evaluationPath } from "@/utils/paths"
+import Link from "next/link"
+import { redirect } from "next/navigation"
+import Image from "next/image"
+import Badge from "@/components/Badge"
 
 export default async function EvaluationCard({ evaluation, params }: { evaluation: any, params: any }) {
-  const supabase = createClient();
+  const supabase = createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
-  if (!user) {
-    return redirect("/login");
-  }
+  if (!user) return redirect("/login")
 
   return (
     <Link className="w-full max-w-4xl rounded-md bg-foreground/5 hover:bg-foreground/10" href={evaluationPath({ ...params, ...evaluation })}>
@@ -27,5 +25,5 @@ export default async function EvaluationCard({ evaluation, params }: { evaluatio
         <h3 className="text-xl font-bold">{evaluation.title}</h3>
       </div>
     </Link>
-  );
+  )
 }

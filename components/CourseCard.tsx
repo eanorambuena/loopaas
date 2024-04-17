@@ -1,20 +1,18 @@
-import { createClient } from "@/utils/supabase/server";
-import Link from "next/link";
-import Badge from "@/components/Badge";
+import { createClient } from "@/utils/supabase/server"
+import Link from "next/link"
+import Badge from "@/components/Badge"
 
 export default async function CourseCard({ course }: { course: any }) {
-  const supabase = createClient();
+  const supabase = createClient()
 
   const { data: teacher } = await supabase
     .from("userInfo")
     .select("*")
-    .eq("id", course.teacherInfoId);
+    .eq("id", course.teacherInfoId)
 
-  if (!teacher) {
-    return null;
-  }
+  if (!teacher) return null
 
-  const teacherName = `${teacher[0].firstName} ${teacher[0].lastName}`;
+  const teacherName = `${teacher[0].firstName} ${teacher[0].lastName}`
 
   return (
     <Link className="w-full max-w-4xl rounded-md bg-foreground/5 hover:bg-foreground/10" href={`/cursos/${course.abbreviature}/${course.semester}`}>
@@ -28,5 +26,5 @@ export default async function CourseCard({ course }: { course: any }) {
         <p className="text-sm font-normal">{teacherName}</p>
       </div>
     </Link>
-  );
+  )
 }
