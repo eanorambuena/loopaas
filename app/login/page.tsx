@@ -91,7 +91,7 @@ export default function Login({ searchParams }: { searchParams: { message: strin
         />
         <SubmitButton
           formAction={signIn}
-          className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
+          className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 text-white dark:text-black"
           pendingText="Iniciando Sesión..."
         >
           Iniciar Sesión
