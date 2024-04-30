@@ -21,8 +21,6 @@ export default async function Page({ params }: { params: { abbreviature: string,
     .select("*")
     .eq("id", params.id)
     .single()
-
-  console.log("evaluation", _evaluation)
   if (!_evaluation) return redirect(REDIRECT_PATH)
 
   const { data: userInfo } = await supabase
@@ -30,8 +28,6 @@ export default async function Page({ params }: { params: { abbreviature: string,
     .select("*")
     .eq("userId", user.id)
     .single()
-
-  console.log("userInfo", userInfo)
   if (!userInfo) return redirect(REDIRECT_PATH)
 
   const { data: student } = await supabase
@@ -40,8 +36,6 @@ export default async function Page({ params }: { params: { abbreviature: string,
     .eq("courseId", _evaluation.courseId)
     .eq("userInfoId", userInfo.id)
     .single()
-
-  console.log("student", student)
   if (!student) return redirect(REDIRECT_PATH)
 
   const { data: groupStudents } = await supabase
@@ -50,14 +44,17 @@ export default async function Page({ params }: { params: { abbreviature: string,
     .eq("courseId", _evaluation.courseId)
     .neq("userInfoId", userInfo.id)
     .eq("group", student.group)
-
-  console.log("groupStudents", groupStudents)
   if (!groupStudents) return redirect(REDIRECT_PATH)
 
-  const sections = groupStudents.reduce((acc, user) => {
-    if (!groupStudents.includes(user.id)) return acc
-    return { ...acc, [user.id]: `Por favor, califica a ${user.firstName} ${user.lastName}` }
-  }, {})
+  const sections: any = []
+  for (const mate of groupStudents) {
+    const { data: mateInfo } = await supabase
+      .from("userInfo")
+      .select("*")
+      .eq("id", mate.userInfoId)
+      .single()
+    sections.push(`Por favor, califica a ${mateInfo.firstName} ${mateInfo.lastName}`)
+  }
 
   const evaluation: any = {
     ..._evaluation,
