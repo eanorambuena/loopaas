@@ -1,5 +1,5 @@
 import FormGroup from '@/components/FormGroup'
-import Linear from '@/components/Linear'
+import Likert from '@/components/Likert'
 
 export default function Question({ id, question, sectionKey } : { id: string, question: { label: string, type: string, required: boolean, criteria?: { label: string }[] }, sectionKey: string }) {
 	if (question.type === 'checkbox') {
@@ -16,7 +16,7 @@ export default function Question({ id, question, sectionKey } : { id: string, qu
 		return (
 			<div key={id}>
 				<label htmlFor={id} className='block mb-2 text-sm font-medium text-gray-100'>{question.label}</label>
-				<Linear
+				<Likert
 					id={id}
 					criteria={question.criteria as { label: string }[]}
 					sectionKey={sectionKey}

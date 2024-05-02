@@ -2,7 +2,7 @@ import Link from "next/link"
 import { headers } from "next/headers"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
-import { SubmitButton } from "./submit-button"
+import { SubmitButton } from "../../components/SubmitButton"
 
 export default function Login({ searchParams }: { searchParams: { message: string } }) {
   const signIn = async (formData: FormData) => {
@@ -91,7 +91,7 @@ export default function Login({ searchParams }: { searchParams: { message: strin
         />
         <SubmitButton
           formAction={signIn}
-          className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 text-white dark:text-black"
+          className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 font-bold"
           pendingText="Iniciando Sesión..."
         >
           Iniciar Sesión

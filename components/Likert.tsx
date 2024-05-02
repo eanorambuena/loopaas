@@ -1,4 +1,11 @@
-export default function Linear({ id, criteria, sectionKey, required } : { id?: string, criteria: { label: string }[], sectionKey: string, required?: boolean }) {
+interface LikertProps {
+  id?: string
+  criteria: { label: string }[]
+  sectionKey: string
+  required?: boolean
+}
+
+export default function Likert({ id, criteria, sectionKey, required } : LikertProps) {
   return (
     <div className='flex flex-col text-center h-fit text-gray-800 gap-4 overflow-x-auto mt-4 max-w-[75vw] sm:max-w-[85vw] md:max-w-[90vw]'>
       <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
@@ -25,7 +32,7 @@ export default function Linear({ id, criteria, sectionKey, required } : { id?: s
         </thead>
         <tbody>
           { criteria.map((criterion) => {
-            const name = `${sectionKey}-${criterion.label.toLowerCase().replace(' ', '-')}`
+            const name = `${sectionKey}-${criterion.label.toLowerCase().replace(/\s/g, '-')}`
             return (
               <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700' key={name}> 
                 <th scope='row' className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
@@ -38,6 +45,7 @@ export default function Linear({ id, criteria, sectionKey, required } : { id?: s
                       <input
                         type='radio'
                         id={ id }
+                        name={ name }
                        />
                     </td>
                   )
