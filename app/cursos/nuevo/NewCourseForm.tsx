@@ -25,13 +25,6 @@ export default function NewCourseForm() {
         variant: 'destructive'
       })
     }
-    if (response.code == "23505") {
-      return toast({
-        title: 'Error',
-        description: 'El curso ya existe',
-        variant: 'destructive'
-      })
-    }
     const year = response.start_at?.split('-')[0] ?? new Date().getFullYear()
     const month = parseInt(response.start_at?.split('-')[1]) ?? new Date().getMonth()
     const semester = month < 7 ? 1 : 2 
@@ -47,6 +40,7 @@ export default function NewCourseForm() {
         }
       ])
       if (error) {
+        console.error(error)
         return toast({
           title: 'Error',
           description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros.`,
@@ -54,9 +48,9 @@ export default function NewCourseForm() {
         })
       }
     return toast({
-        title: 'Éxito',
-        description: 'Curso creado correctamente',
-        variant: 'success'
+      title: 'Éxito',
+      description: 'Curso creado correctamente',
+      variant: 'success'
     })
   }
 

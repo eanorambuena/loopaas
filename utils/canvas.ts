@@ -36,16 +36,10 @@ export async function fetchGroups(course: any) {
 export async function fetchCourse(canvasId: string) {
   try {
     const response = await fetch(`${CANVAS_URL}/api/v1/courses/${canvasId}`, await getAuthorizationHeader())
-    const result = await response.json()
-    if (result.code) {
-      console.log(result)
-    }
-    return result
+    return await response.json()
   }
   catch (error) {
     console.log(error)
     return null
   }
-
-  
 }
