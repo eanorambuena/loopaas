@@ -69,7 +69,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
   }
 
   return (
-    <form className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center gap-2 text-foreground" onSubmit={handleSubmit}>
+    <form className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
       <label htmlFor="canvasId" className="text-md">ID Canvas</label>
       <input type="text" id="canvasId" name="canvasId" className="rounded-md px-4 py-2 bg-inherit border mb-6" />
       <label htmlFor="color" className="text-md">Color</label>
