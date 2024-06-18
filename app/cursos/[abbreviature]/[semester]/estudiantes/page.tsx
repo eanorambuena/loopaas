@@ -44,30 +44,26 @@ export default async function Page({ params }: { params: { abbreviature: string,
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-5 items-center">
-      <Header />
-      <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3">
-        <h1 className='text-3xl font-bold'>Estudiantes {course.title ?? params.abbreviature} {params.semester}</h1>
-        <table className="table-auto">
-          <thead>
-            <tr className="text-left *:px-6 *:py-3">
-              <th>Nombre</th>
-              <th>Correo</th>
-              <th>Grupo</th>
+    <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3">
+      <h1 className='text-3xl font-bold'>Estudiantes {course.title ?? params.abbreviature} {params.semester}</h1>
+      <table className="table-auto">
+        <thead>
+          <tr className="text-left *:px-6 *:py-3">
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Grupo</th>
+          </tr>
+        </thead>
+        <tbody className="text-left">
+          {students.map((student) => (
+            <tr key={student.id} className="*:px-6 *:py-3">
+              <td>{student.userInfo?.firstName} {student.userInfo?.lastName}</td>
+              <td>{student.userInfo?.email}</td>
+              <td>{student.group}</td>
             </tr>
-          </thead>
-          <tbody className="text-left">
-            {students.map((student) => (
-              <tr key={student.id} className="*:px-6 *:py-3">
-                <td>{student.userInfo?.firstName} {student.userInfo?.lastName}</td>
-                <td>{student.userInfo?.email}</td>
-                <td>{student.group}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <Footer />
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
