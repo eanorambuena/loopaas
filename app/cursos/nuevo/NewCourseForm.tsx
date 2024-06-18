@@ -1,7 +1,10 @@
 "use client"
 
 import { SubmitButton } from "@/components/SubmitButton"
+import { fetchCourse } from "@/utils/canvas"
 import { createClient } from "@/utils/supabase/client"
+
+const DEFAULT_COLOR = '#9AE6B4'
 
 export default function NewCourseForm() {
   const supabase = createClient()
@@ -9,15 +12,27 @@ export default function NewCourseForm() {
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     const formData = new FormData(e.target)
-    const title = formData.get('title')
-    const abbreviature = formData.get('abbreviature')
-    const semester = formData.get('semester')
-    const color = formData.get('color')
-    const canvasId = formData.get('canvasId')
+    const color = formData.get('color') as string
+    const canvasId = formData.get('canvasId') as string
+    const response = await fetchCourse(canvasId)
+    if (!response) {
+      console.error('No se encontró el curso')
+      return
+    }
+    console.log(response)
+    const year = response.start_at?.split('-')[0] ?? new Date().getFullYear()
+    const month = parseInt(response.start_at?.split('-')[1]) ?? new Date().getMonth()
+    const semester = month < 7 ? 1 : 2 
     const { data, error } = await supabase
       .from('courses')
       .insert([
-        { title, abbreviature, semester, color: `bg-[${color}]`, canvasId }
+        {
+          title: response.name,
+          abbreviature: response.course_code,
+          semester: `${year}-${semester}`,
+          color: `bg-[${color}]`,
+          canvasId
+        }
       ])
     if (error) {
       console.error(error)
@@ -29,17 +44,11 @@ export default function NewCourseForm() {
 
   return (
     <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground" onSubmit={handleSubmit}>
-      <label htmlFor="title" className="text-md">Título</label>
-      <input type="text" id="title" name="title" className="rounded-md px-4 py-2 bg-inherit border mb-6" />
-      <label htmlFor="abbreviature" className="text-md">Abreviatura</label>
-      <input type="text" id="abbreviature" name="abbreviature" className="rounded-md px-4 py-2 bg-inherit border mb-6" />
-      <label htmlFor="semester" className="text-md">Semestre</label>
-      <input type="text" id="semester" name="semester" className="rounded-md px-4 py-2 bg-inherit border mb-6" />
-      <label htmlFor="color" className="text-md">Color</label>
-      <input type="color" id="color" name="color" defaultValue={'#000000'} className="rounded-md bg-inherit border mb-6" />
       <label htmlFor="canvasId" className="text-md">ID Canvas</label>
       <input type="text" id="canvasId" name="canvasId" className="rounded-md px-4 py-2 bg-inherit border mb-6" />
-      <SubmitButton pendingText="Creando curso...">
+      <label htmlFor="color" className="text-md">Color</label>
+      <input type="color" id="color" name="color" defaultValue={DEFAULT_COLOR} className="rounded-md bg-inherit border mb-6" />
+      <SubmitButton pendingText="Creando curso..." className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 font-bold">
         Crear Curso
       </SubmitButton>
     </form>

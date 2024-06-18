@@ -1,17 +1,18 @@
-import { getCourseStudents } from "./queries"
+"use server"
 
 const CANVAS_URL = 'https://cursos.canvas.uc.cl'
 
-export function getAuthorizationHeader() {
+export async function getAuthorizationHeader() {
   return {
     headers: {
       Authorization: `Bearer ${process.env.NEXT_CANVAS_API_TOKEN}`,
+      mode: 'no-cors'
     }
   }
 }
 
 export async function fetchGroups(course: any) {
-  let response = await fetch(`${CANVAS_URL}/api/v1/courses/${course.canvasId}/groups`, getAuthorizationHeader())
+  let response = await fetch(`${CANVAS_URL}/api/v1/courses/${course.canvasId}/groups`, await getAuthorizationHeader())
   let groups = (await response.json())
     .map((group: any) => ({
       id: group.id,
@@ -20,7 +21,7 @@ export async function fetchGroups(course: any) {
     }))
 
   for (const group of groups) {
-    let response = await fetch(`${CANVAS_URL}/api/v1/groups/${group.id}/users`, getAuthorizationHeader())
+    let response = await fetch(`${CANVAS_URL}/api/v1/groups/${group.id}/users`, await getAuthorizationHeader())
     let students = (await response.json())
       .map((student: any) => ({
         id: student.id,
@@ -28,8 +29,11 @@ export async function fetchGroups(course: any) {
       }))
     group.students = students
   }
-
-  const students = await getCourseStudents(course)
   
   return groups
+}
+
+export async function fetchCourse(canvasId: string) {
+  let response = await fetch(`${CANVAS_URL}/api/v1/courses/${canvasId}`, await getAuthorizationHeader())
+  return await response.json()
 }
