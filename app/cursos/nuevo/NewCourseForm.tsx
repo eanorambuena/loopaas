@@ -39,7 +39,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
         {
           title: response.name,
           abbreviature: response.course_code,
-          img: response.course_image,
+          img: response.image_download_url,
           semester: `${year}-${semester}`,
           color: `bg-[${color}]`,
           canvasId,
