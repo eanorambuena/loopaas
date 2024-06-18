@@ -34,3 +34,43 @@ export async function getCourseStudents(course: any) {
 
   return students
 }
+
+export async function createCourseStudents(course: any, groups: any) {
+  const supabase = createClient()
+
+  console.log(groups.students)
+  return
+  for (const user in groups.students)
+  {
+    const student = user as any
+    const { email } = student
+    const password = "a"
+    await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
+      },
+    })
+    const { data } = await supabase
+      .from("userInfo")
+      .insert([
+        {
+          email,
+          firstName: "a",
+          lastName: "b",
+          img: "c"
+        }
+      ])
+    if (!data) continue
+    supabase
+      .from("students")
+      .insert([
+        {
+          courseId: course.id,
+          userInfoId: (data[0] as any).id,
+          group: student.group
+        }
+      ])
+  }
+}
