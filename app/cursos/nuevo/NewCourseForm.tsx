@@ -32,13 +32,14 @@ export default function NewCourseForm({ userInfoId }: Props) {
     }
     const year = response.start_at?.split('-')[0] ?? new Date().getFullYear()
     const month = parseInt(response.start_at?.split('-')[1]) ?? new Date().getMonth()
-    const semester = month < 7 ? 1 : 2 
+    const semester = month < 7 ? 1 : 2
+    const abbreviature = response.course_code.split('-')[0]
     const { data, error } = await supabase
       .from('courses')
       .insert([
         {
           title: response.name,
-          abbreviature: response.course_code.split('-')[0],
+          abbreviature,
           img: response.image_download_url ?? 'https://bit.ly/2k1H1t6',
           semester: `${year}-${semester}`,
           color: `bg-[${color}]`,
