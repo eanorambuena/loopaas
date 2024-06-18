@@ -1,7 +1,18 @@
 import FormGroup from '@/components/FormGroup'
 import Likert from '@/components/Likert'
 
-export default function Question({ id, question, sectionKey } : { id: string, question: { label: string, type: string, required: boolean, criteria?: { label: string }[] }, sectionKey: string }) {
+interface Props {
+	id: string
+	question: {
+		label: string
+		type: string
+		required: boolean
+		criteria?: { label: string }[]
+	}
+	sectionKey: string
+}
+
+export default function Question({ id, question, sectionKey } : Props) {
 	if (question.type === 'checkbox') {
 		return (
 			<div className='flex items-start' key={id}>
