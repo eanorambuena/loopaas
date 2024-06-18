@@ -22,7 +22,6 @@ export default function NewCourseForm({ userInfoId }: Props) {
     const color = formData.get('color') as string
     const canvasId = formData.get('canvasId') as string
     const response = await fetchCourse(canvasId)
-    console.log(response)
     if (!response) {
       return toast({
         title: 'Error',
@@ -34,7 +33,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
     const month = parseInt(response.start_at?.split('-')[1]) ?? new Date().getMonth()
     const semester = month < 7 ? 1 : 2
     const abbreviature = response.course_code.split('-')[0]
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('courses')
       .insert([
         {

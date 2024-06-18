@@ -68,7 +68,7 @@ export async function createCourseStudents(course: any, groups: any) {
       .insert([
         {
           courseId: course.id,
-          userInfoId: (data[0] as any).id,
+          userInfoId: (data as any)[0].id,
           group: student.group
         }
       ])
