@@ -44,6 +44,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
 
   async function saveStudents() {
     "use server"
+    console.log({ groups })
     await createCourseStudents(course, groups)
   }
 

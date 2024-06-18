@@ -40,7 +40,6 @@ export default async function CursosPage() {
         {isProfessor && (
           <Card icon={PlusIcon} title="Nuevo Curso" path="/cursos/nuevo" />
         )}
-        {JSON.stringify(professor)}
         {courses?.map((course) => (
           <CourseCard key={course.id} course={course} />
         ))}

@@ -38,7 +38,7 @@ export async function getCourseStudents(course: any) {
 export async function createCourseStudents(course: any, groups: any) {
   const supabase = createClient()
 
-  console.log(groups.students)
+  console.log({s: groups.students})
   return
   for (const user in groups.students)
   {
