@@ -23,11 +23,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-background text-foreground">
         <main className="min-h-screen flex flex-col items-center">
           <Header />
-          <div className="flex-1 w-full flex flex-col gap-5 items-center">
+          <section className="h-full felx flex-col justify-left">
             <GoBackLink />
+          </section>
+          <section className="flex-1 w-full flex flex-col gap-5 items-center">
             {children}
             <Footer />
-          </div>
+          </section>
         </main>
       </body>
     </html>
