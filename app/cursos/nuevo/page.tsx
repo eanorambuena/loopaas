@@ -19,6 +19,14 @@ export default async function Page() {
 
   if (!userInfo) return redirect("/login")
 
+  const { data: professor } = await supabase
+    .from("professors")
+    .select("*")
+    .eq("teacherInfoId", userInfo.id)
+    .single()
+
+  if (!professor) return redirect("/cursos")
+
   return (
     <div className="animate-in flex-1 flex flex-col justify-center items-center gap-6 p-6 opacity-0 px-3 w-full md:max-w-md">
       <h1 className='text-3xl font-bold'>Nuevo Curso</h1>
