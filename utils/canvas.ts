@@ -46,4 +46,6 @@ export async function fetchCourse(canvasId: string) {
     console.log(error)
     return null
   }
+
+  
 }

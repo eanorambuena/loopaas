@@ -46,13 +46,13 @@ export default function NewCourseForm() {
           canvasId
         }
       ])
-    if (error) {
-      return toast({
-        title: 'Error',
-        description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros. CÓDIGO DE ERROR ${response.error.message}`,
-        variant: 'destructive'
-      })
-    }
+      if (error) {
+        return toast({
+          title: 'Error',
+          description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros.`,
+          variant: 'destructive'
+        })
+      }
     return toast({
         title: 'Éxito',
         description: 'Curso creado correctamente',
