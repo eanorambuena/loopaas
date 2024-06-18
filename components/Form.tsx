@@ -32,7 +32,7 @@ export default function Form({ evaluation }: { evaluation: Evaluation }) {
       })
     }
 
-    let formData = []
+    let formData: Record<any, any>[] = []
     entries.forEach(([key, value]) => {
       formData.push({ [key]: value })
     })
