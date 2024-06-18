@@ -35,7 +35,7 @@ export async function fetchGroups(course: any) {
 
 export async function fetchCourse(canvasId: string) {
   try {
-    const response = await fetch(`${CANVAS_URL}/api/v1/courses/${canvasId}`, await getAuthorizationHeader())
+    const response = await fetch(`${CANVAS_URL}/api/v1/courses/${canvasId}?include[]=course_image`, await getAuthorizationHeader())
     return await response.json()
   }
   catch (error) {
