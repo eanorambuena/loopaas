@@ -1,8 +1,6 @@
-import Header from "@/components/Header"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import CourseCard from "@/components/CourseCard"
-import Footer from "@/components/Footer"
 
 export default async function Page({ params }: { params: { abbreviature: string } }) {
   const supabase = createClient()

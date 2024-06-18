@@ -1,7 +1,5 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
 import EvaluationCard from "@/components/EvaluationCard"
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
@@ -31,16 +29,13 @@ export default async function Page({ params }: { params: { abbreviature: string,
     .order("created_at", { ascending: false })
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-5 items-center">
-      <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3">
-        <h1 className='text-3xl font-bold'>Evaluaciones {courses?.[0].title ?? params.abbreviature} {params.semester}</h1>
-        <main className="grid gap-20 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {courseEvaluations?.map((courseEvaluation) => (
-            <EvaluationCard key={courseEvaluation.id} evaluation={courseEvaluation} params={params} />
-          ))}
-        </main>
-      </div>
-      
+    <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3">
+      <h1 className='text-3xl font-bold'>Evaluaciones {courses?.[0].title ?? params.abbreviature} {params.semester}</h1>
+      <main className="grid gap-20 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        {courseEvaluations?.map((courseEvaluation) => (
+          <EvaluationCard key={courseEvaluation.id} evaluation={courseEvaluation} params={params} />
+        ))}
+      </main>
     </div>
   )
 }

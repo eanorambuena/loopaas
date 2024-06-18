@@ -1,8 +1,6 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import CourseCard from "@/components/CourseCard"
-import Footer from "@/components/Footer"
-import Header from "@/components/Header"
 import Card from "@/components/Card"
 import PlusIcon from "@/components/icons/PlusIcon"
 

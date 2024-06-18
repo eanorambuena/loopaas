@@ -1,6 +1,3 @@
-import Footer from "@/components/Footer"
-import GoBackLink from "@/components/GoBackLink"
-import Header from "@/components/Header"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import NewCourseForm from "./NewCourseForm"

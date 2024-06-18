@@ -1,9 +1,7 @@
-import Footer from "@/components/Footer"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { fetchGroups } from "@/utils/canvas"
 import { getCourse, getCourseStudents } from "@/utils/queries"
-import Header from "@/components/Header"
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
   const supabase = createClient()
@@ -46,6 +44,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
   return (
     <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3">
       <h1 className='text-3xl font-bold'>Estudiantes {course.title ?? params.abbreviature} {params.semester}</h1>
+      
       <table className="table-auto">
         <thead>
           <tr className="text-left *:px-6 *:py-3">
