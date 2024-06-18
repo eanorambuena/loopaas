@@ -3,11 +3,14 @@
 import { SubmitButton } from "@/components/SubmitButton"
 import { fetchCourse } from "@/utils/canvas"
 import { createClient } from "@/utils/supabase/client"
+import { Toaster } from '@/components/ui/toaster'
+import { useToast } from '@/components/ui/use-toast'
 
 const DEFAULT_COLOR = '#9AE6B4'
 
 export default function NewCourseForm() {
   const supabase = createClient()
+  const { toast } = useToast()
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
@@ -16,10 +19,26 @@ export default function NewCourseForm() {
     const canvasId = formData.get('canvasId') as string
     const response = await fetchCourse(canvasId)
     if (!response) {
-      console.error('No se encontró el curso')
-      return
+      return toast({
+        title: 'Error',
+        description: 'No se encontró el curso en Canvas',
+        variant: 'destructive'
+      })
     }
-    console.log(response)
+    if (response.error) {
+      if (response.error.code == "23505") {
+        return toast({
+          title: 'Error',
+          description: 'El curso ya existe',
+          variant: 'destructive'
+        })
+      }
+      return toast({
+        title: 'Error',
+        description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros. CÓDIGO DE ERROR ${response.error.message}`,
+        variant: 'destructive'
+      })
+    }
     const year = response.start_at?.split('-')[0] ?? new Date().getFullYear()
     const month = parseInt(response.start_at?.split('-')[1]) ?? new Date().getMonth()
     const semester = month < 7 ? 1 : 2 
@@ -35,11 +54,17 @@ export default function NewCourseForm() {
         }
       ])
     if (error) {
-      console.error(error)
+      return toast({
+        title: 'Error',
+        description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros. CÓDIGO DE ERROR ${response.error.message}`,
+        variant: 'destructive'
+      })
     }
-    else {
-      console.log('Curso creado:', data)
-    }
+    return toast({
+        title: 'Éxito',
+        description: 'Curso creado correctamente',
+        variant: 'success'
+    })
   }
 
   return (
@@ -51,6 +76,7 @@ export default function NewCourseForm() {
       <SubmitButton pendingText="Creando curso..." className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 font-bold">
         Crear Curso
       </SubmitButton>
+      <Toaster />
     </form>
   )
 }
