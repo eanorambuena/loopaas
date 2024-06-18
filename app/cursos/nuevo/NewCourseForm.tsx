@@ -18,6 +18,7 @@ export default function NewCourseForm() {
     const color = formData.get('color') as string
     const canvasId = formData.get('canvasId') as string
     const response = await fetchCourse(canvasId)
+    console.log(response)
     if (!response) {
       return toast({
         title: 'Error',
