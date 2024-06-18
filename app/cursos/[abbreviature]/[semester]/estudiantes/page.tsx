@@ -16,12 +16,20 @@ export default async function Page({ params }: { params: { abbreviature: string,
 
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) {
-    return <div>Course not found</div>
+    return (
+      <h1 className='text-3xl font-bold'>
+        No se encontró el curso
+      </h1>
+    )
   }
 
   const students = await getCourseStudents(course)
   if (students?.length === 0 || !students) {
-    return <div>No students found</div>
+    return (
+      <h1 className='text-3xl font-bold'>
+        No hay estudiantes inscritos en el curso
+      </h1>
+    )
   }
 
   const groups = await fetchGroups(course)
@@ -39,7 +47,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
     <div className="flex-1 w-full flex flex-col gap-5 items-center">
       <Header />
       <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3">
-        <h1 className='text-3xl font-bold'>{course.title ?? params.abbreviature} {params.semester}</h1>
+        <h1 className='text-3xl font-bold'>Estudiantes {course.title ?? params.abbreviature} {params.semester}</h1>
         <table className="table-auto">
           <thead>
             <tr className="text-left *:px-6 *:py-3">
