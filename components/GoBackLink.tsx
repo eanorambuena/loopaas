@@ -1,9 +1,10 @@
 "use client"
 
+import { usePathname } from 'next/navigation'
 import GoBackArrowIcon from './icons/GoBackArrowIcon'
 
 export default function GoBackLink() {
-  if (window.location.pathname === '/') return null
+  if (usePathname() === '/') return null
 
   const goBack = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
