@@ -1,5 +1,4 @@
 "use server"
-import { createClient } from "@utils/supabase/server"
 
 const CANVAS_URL = 'https://cursos.canvas.uc.cl'
 

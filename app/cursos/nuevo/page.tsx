@@ -20,7 +20,7 @@ export default async function Page() {
   if (!userInfo) return redirect("/login")
 
   return (
-    <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3 w-full max-w-4xl">
+    <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3 w-full md:max-w-md">
       <h1 className='text-3xl font-bold'>Nuevo Curso</h1>
       <NewCourseForm userInfoId={userInfo.id} />
     </div>
