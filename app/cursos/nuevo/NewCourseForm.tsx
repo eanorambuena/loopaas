@@ -69,14 +69,16 @@ export default function NewCourseForm({ userInfoId }: Props) {
   }
 
   return (
-    <form className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
-      <label htmlFor="canvasId" className="text-md">ID Canvas</label>
-      <input type="text" id="canvasId" name="canvasId" className="rounded-md px-4 py-2 bg-inherit border mb-6" />
-      <label htmlFor="color" className="text-md">Color</label>
-      <input type="color" id="color" name="color" defaultValue={DEFAULT_COLOR} className="rounded-md bg-inherit border mb-6" />
-      <SubmitButton pendingText="Creando curso..." className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 font-bold">
-        Crear Curso
-      </SubmitButton>
+    <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
+      <fieldset className="flex flex-col gap-2 sm:max-w-md">
+        <label htmlFor="canvasId" className="text-md">ID Canvas</label>
+        <input type="text" id="canvasId" name="canvasId" className="rounded-md px-4 py-2 bg-inherit border mb-6" />
+        <label htmlFor="color" className="text-md">Color</label>
+        <input type="color" id="color" name="color" defaultValue={DEFAULT_COLOR} className="rounded-md bg-inherit border mb-6" />
+        <SubmitButton pendingText="Creando curso..." className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 font-bold">
+          Crear Curso
+        </SubmitButton>
+      </fieldset>
       <Toaster />
     </form>
   )
