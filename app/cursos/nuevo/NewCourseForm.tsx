@@ -8,7 +8,11 @@ import { useToast } from '@/components/ui/use-toast'
 
 const DEFAULT_COLOR = '#9AE6B4'
 
-export default function NewCourseForm() {
+interface Props {
+  userInfoId: string
+}
+
+export default function NewCourseForm({ userInfoId }: Props) {
   const supabase = createClient()
   const { toast } = useToast()
 
@@ -37,7 +41,8 @@ export default function NewCourseForm() {
           abbreviature: response.course_code,
           semester: `${year}-${semester}`,
           color: `bg-[${color}]`,
-          canvasId
+          canvasId,
+          teacherInfoId: userInfoId
         }
       ])
       if (error) {
