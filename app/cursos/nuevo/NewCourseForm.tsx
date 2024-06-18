@@ -41,7 +41,7 @@ export default function NewCourseForm() {
       ])
       if (error) {
         if (error.code = "23505") {
-          toast({
+          return toast({
             title: 'Error',
             description: 'El curso ya existe',
             variant: 'destructive'
