@@ -41,7 +41,7 @@ export default function NewCourseForm() {
       ])
       if (error) {
         if (error.code = "23505") {
-          return toast({
+          toast({
             title: 'Error',
             description: 'El curso ya existe',
             variant: 'destructive'
@@ -49,7 +49,7 @@ export default function NewCourseForm() {
         }
         return toast({
           title: 'Error',
-          description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros.`,
+          description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros. Código de error: ${error.code}`,
           variant: 'destructive'
         })
       }
