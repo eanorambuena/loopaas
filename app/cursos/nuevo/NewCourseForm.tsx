@@ -38,7 +38,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
       .insert([
         {
           title: response.name,
-          abbreviature: response.course_code,
+          abbreviature: response.course_code.split('-')[0],
           img: response.image_download_url ?? 'https://bit.ly/2k1H1t6',
           semester: `${year}-${semester}`,
           color: `bg-[${color}]`,
