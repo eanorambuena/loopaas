@@ -11,7 +11,7 @@ type Email = {
   html: string
 }
 
-export function sendEmail(email: Email) {
+export async function sendEmail(email: Email) {
   const resend = new Resend(RESEND_API_TOKEN)
-  return resend.emails.send(email)
+  return await resend.emails.send(email)
 }
