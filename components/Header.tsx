@@ -50,7 +50,7 @@ export default async function Header() {
       <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
         <Link
           href="/perfil"
-          className="py-2 px-3 flex rounded-md no-underline hover:bg-foreground/10"
+          className="py-2 px-3 flex rounded-md no-underline hover:opacity-95 transition-opacity duration-300"
         >
           Perfil
         </Link>
