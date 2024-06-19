@@ -1,11 +1,32 @@
 "use server"
 
+import { redirect } from "next/navigation"
+import { createClient } from "./supabase/server"
+
 const CANVAS_URL = 'https://cursos.canvas.uc.cl'
 
 export async function getAuthorizationHeader() {
+  const supabase = createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) return redirect("/login")
+
+  const { data: userInfo } = await supabase
+    .from("userInfo")
+    .select("*")
+    .eq("userId", user.id)
+    .single()
+
+  if (!userInfo) return redirect("/login")
+
+  const canvasToken = userInfo.canvasToken ?? process.env.NEXT_CANVAS_API_TOKEN
+
   return {
     headers: {
-      Authorization: `Bearer ${process.env.NEXT_CANVAS_API_TOKEN}`,
+      Authorization: `Bearer ${canvasToken}`,
       mode: 'no-cors'
     }
   }
