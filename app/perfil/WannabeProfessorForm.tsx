@@ -1,7 +1,7 @@
 "use client"
 
 import { SubmitButton } from "@/components/SubmitButton"
-import { resend } from "@/utils/resend"
+import { send } from "@/utils/resend"
 
 export default function WannabeProfessorForm() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -10,7 +10,7 @@ export default function WannabeProfessorForm() {
     const token = formData.get("token")
     console.log("Solicitar Cuenta de Profesor", token)
     // enviar correo
-    resend.emails.send({
+    send({
       from: 'onboarding@resend.dev',
       to: 'eanorambuena@uc.cl',
       subject: 'Hello World',
