@@ -1,3 +1,5 @@
+"use server"
+
 import { Resend } from "resend"
 
 const RESEND_API_TOKEN = process.env.NEXT_RESEND_API_TOKEN
