@@ -15,7 +15,11 @@ export default async function CourseCard({ course }: { course: any }) {
   const teacherName = `${teacher[0].firstName} ${teacher[0].lastName}`
 
   return (
-    <Link className="w-full max-w-4xl rounded-md bg-foreground/5 hover:bg-foreground/10" href={`/cursos/${course.abbreviature}/${course.semester}`}>
+    <Link
+      className="w-full max-w-4xl rounded-md bg-foreground/5 hover:bg-foreground/10"
+      href={`/cursos/${course.abbreviature}/${course.semester}`}
+      style={{ backgroundColor: course.color }}
+    >
       <img src={course.img} alt={course.title} className="w-full rounded-t-md" />
       <div className="flex gap-2 p-4 flex-col">
         <div className="flex gap-2 justify-between">
