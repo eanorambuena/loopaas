@@ -16,7 +16,7 @@ export default async function CourseCard({ course }: { course: any }) {
 
   return (
     <Link
-      className="w-full max-w-4xl rounded-md bg-foreground/5 hover:bg-foreground/10"
+      className="w-full max-w-4xl rounded-md bg-[#eeeeee] hover:opacity-95 hover:scale-105 transition-transform duration-300"
       href={`/cursos/${course.abbreviature}/${course.semester}`}
       style={{ backgroundColor: course.color }}
     >

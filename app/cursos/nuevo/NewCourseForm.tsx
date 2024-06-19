@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/client"
 import { Toaster } from '@/components/ui/toaster'
 import { useToast } from '@/components/ui/use-toast'
 
-const DEFAULT_COLOR = '#9AE6B4'
+const DEFAULT_COLOR = '#eeeeee'
 
 interface Props {
   userInfoId: string
