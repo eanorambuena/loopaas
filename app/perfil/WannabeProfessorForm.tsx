@@ -1,9 +1,13 @@
 "use client"
 
 import { SubmitButton } from "@/components/SubmitButton"
+import { Toaster } from "@/components/ui/toaster"
+import { useToast } from "@/components/ui/use-toast"
 import { sendEmail } from "@/utils/resend"
 
 export default function WannabeProfessorForm({ userEmail }: { userEmail: string }) {
+  const { toast } = useToast()
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
@@ -12,9 +16,15 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
       from: 'onboarding@resend.dev',
       to: 'eanorambuena@uc.cl',
       subject: 'IDSApp | Cuenta de Profesor Solicitada',
-      html: `<p>El usuario con token <em>${token}</em> ha solicitado una cuenta de profesor</p>
-      <p>Correo: ${userEmail}</p>
+      html: `<p>Un usuario ha solicitado una cuenta de profesor</p>
+      <p>Token de Canvas: <strong>${token}</strong></p>
+      <p>Correo: <strong>${userEmail}</strong></p>
       <p>Por favor, revisa la solicitud en el panel de administración</p>`
+    })
+    toast({
+      title: 'Solicitud Enviada',
+      description: 'Tu solicitud ha sido enviada. Nos pondremos en contacto contigo pronto.',
+      variant: 'success'
     })
   }
 
@@ -42,6 +52,7 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
           Solicitar Cuenta de Profesor
         </SubmitButton>
       </form>
+      <Toaster />
     </section>
   )
 }
