@@ -31,6 +31,11 @@ export default function Login({ searchParams }: { searchParams: { message: strin
     const password = formData.get("password") as string
     const supabase = createClient()
 
+    const isUC = email.endsWith("uc.cl")
+    if (!isUC) {
+      return redirect("/login?message=El correo debe ser de la UC")
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -40,9 +45,9 @@ export default function Login({ searchParams }: { searchParams: { message: strin
     })
 
     if (error) {
-      return redirect("/login?message=Could not authenticate user")
+      return redirect("/login?message=No se pudo autenticar al usuario")
     }
-    return redirect("/login?message=Check email to continue sign in process")
+    return redirect("/login?message=Revisa tu correo para continuar con el proceso de inicio de sesión")
   }
 
   return (
@@ -54,7 +59,7 @@ export default function Login({ searchParams }: { searchParams: { message: strin
         <input
           className="rounded-md px-4 py-2 bg-inherit border mb-6"
           name="email"
-          placeholder="you@example.com"
+          placeholder="correo@estudiante.uc.cl"
           required
         />
         <label className="text-md" htmlFor="password">
@@ -69,7 +74,7 @@ export default function Login({ searchParams }: { searchParams: { message: strin
         />
         <SubmitButton
           formAction={signIn}
-          className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 font-bold"
+          className="bg-green-700 rounded-md px-4 py-2 text-green-50 mb-2 font-bold"
           pendingText="Iniciando Sesión..."
         >
           Iniciar Sesión
