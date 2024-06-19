@@ -1,5 +1,3 @@
-"use client"
-
 import { headers } from "next/headers"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"

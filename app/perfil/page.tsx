@@ -1,6 +1,6 @@
 import { SubmitButton } from "@/components/SubmitButton"
 
-export default function Login({ searchParams }: { searchParams: { message: string } }) {
+export default function Page({ searchParams }: { searchParams: { message: string } }) {
   const handleSubmit = async (formData: FormData) => {
     "use server"
 
@@ -9,6 +9,11 @@ export default function Login({ searchParams }: { searchParams: { message: strin
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+      <h1 className="text-3xl font-bold">Perfil</h1>
+      <h2 className="text-xl font-bold">Solicitar Cuenta de Profesor</h2>
+      <p className="text-foreground">
+        Para solicitar una cuenta de profesor, ingresa tu token de Canvas
+      </p>
       <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
         <label className="text-md" htmlFor="email">
           Token de Canvas
