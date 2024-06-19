@@ -48,7 +48,7 @@ export default async function Header() {
   return (
     <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
       <div className="w-full max-w-4xl flex justify-end items-center p-3 text-sm">
-        <Link size="24" href="/perfil">
+        <Link href="/perfil" className="inline-flex items-center gap-2 text-sm text-foreground">
           Perfil
         </Link>
         <AuthButton />

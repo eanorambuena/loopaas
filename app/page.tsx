@@ -8,7 +8,7 @@ export default async function Index() {
         <h2 className='mb-4 text-4xl !leading-tight text-white md:text-5xl lg:text-6xl'>Convocando saberes para el<br className="hidden lg:inline" /> cuidado de la Tierra</h2>
         <p className='mb-8 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 lg:px-48'>En esta plataforma del Instituto para el Desarrollo Sustentable podrás encontrar las coevaluaciones de todos los cursos.</p>
         <div className='flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0'>
-          <Link href='/cursos' className='inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-900'>
+          <Link href='/cursos'className='inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-900'>
             Ir a los Cursos
             <svg className='w-3.5 h-3.5 ms-2 rtl:rotate-180' aria-hidden='true'  fill='none' viewBox='0 0 14 10'>
               <path stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M1 5h12m0 0L9 1m4 4L9 9'/>
