@@ -8,7 +8,6 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const token = formData.get("token")
-    console.log("Solicitar Cuenta de Profesor", token)
     sendEmail({
       from: 'onboarding@resend.dev',
       to: 'eanorambuena@uc.cl',
