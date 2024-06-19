@@ -3,7 +3,7 @@
 import { SubmitButton } from "@/components/SubmitButton"
 import { sendEmail } from "@/utils/resend"
 
-export default function WannabeProfessorForm() {
+export default function WannabeProfessorForm({ userEmail }: { userEmail: string }) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
@@ -12,8 +12,10 @@ export default function WannabeProfessorForm() {
     sendEmail({
       from: 'onboarding@resend.dev',
       to: 'eanorambuena@uc.cl',
-      subject: 'Hello World',
-      html: `<p>Congrats on sending your <strong>first email ${token}</strong>!</p>`
+      subject: 'IDSApp | Cuenta de Profesor Solicitada',
+      html: `<p>El usuario con token <em>${token}</em> ha solicitado una cuenta de profesor</p>
+      <p>Correo: ${userEmail}</p>
+      <p>Por favor, revisa la solicitud en el panel de administración</p>`
     })
   }
 
