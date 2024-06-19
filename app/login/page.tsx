@@ -4,12 +4,8 @@ import { headers } from "next/headers"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { SubmitButton } from "@/components/SubmitButton"
-import { useToast } from "@/components/ui/use-toast"
-import { Toaster } from "@/components/ui/toaster"
 
 export default function Login({ searchParams }: { searchParams: { message: string } }) {
-  const { toast } = useToast()
-
   const signIn = async (formData: FormData) => {
     "use server"
 
@@ -19,15 +15,11 @@ export default function Login({ searchParams }: { searchParams: { message: strin
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password
     })
 
     if (error) {
-      return toast({
-        title: "Error",
-        description: "No se pudo autenticar al usuario",
-        variant: "destructive"
-      })
+      return redirect("/login?message=No se pudo autenticar al usuario")
     }
 
     return redirect("/cursos")
@@ -43,11 +35,7 @@ export default function Login({ searchParams }: { searchParams: { message: strin
 
     const isUC = email.endsWith("uc.cl")
     if (!isUC) {
-      return toast({
-        title: "Error",
-        description: "Debes usar un correo UC",
-        variant: "destructive"
-      })
+      return redirect("/login?message=Debes usar un correo UC")
     }
 
     const { error } = await supabase.auth.signUp({
@@ -101,11 +89,10 @@ export default function Login({ searchParams }: { searchParams: { message: strin
           Registrarse
         </SubmitButton>
         {searchParams?.message && (
-          <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
+          <p className="mt-4 bg-foreground/10 text-foreground text-center group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full destructive group border-red-300 bg-red-500 text-slate-50 dark:border-red-500 dark:bg-red-700 dark:text-slate-50">
             {searchParams.message}
           </p>
         )}
-        <Toaster />
       </form>
     </div>
   )
