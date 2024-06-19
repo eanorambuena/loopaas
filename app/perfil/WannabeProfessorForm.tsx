@@ -11,7 +11,7 @@ export default function WannabeProfessorForm() {
   }
 
   return (
-    <section className="flex flex-col gap-2">
+    <section className="flex flex-col gap-4">
       <h2 className="text-xl font-bold">Solicitar Cuenta de Profesor</h2>
       <p className="text-foreground">
         Para solicitar una cuenta de profesor, ingresa tu token de Canvas
