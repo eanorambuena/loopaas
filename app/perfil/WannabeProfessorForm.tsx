@@ -46,7 +46,7 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
           required
         />
         <SubmitButton
-          className="bg-green-700 rounded-md px-4 py-2 text-green-50 mb-2 font-bold"
+          className="bg-emerald-700 rounded-md px-4 py-2 text-emerald-50 mb-2 font-bold"
           pendingText="Iniciando Sesión..."
         >
           Solicitar Cuenta de Profesor

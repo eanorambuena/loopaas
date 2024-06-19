@@ -74,7 +74,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
         <input type="text" id="canvasId" name="canvasId" className="rounded-md px-4 py-2 bg-inherit border mb-6" />
         <label htmlFor="color" className="text-md">Color</label>
         <input type="color" id="color" name="color" defaultValue={DEFAULT_COLOR} className="rounded-md bg-inherit border mb-6" />
-        <SubmitButton pendingText="Creando curso..." className="bg-green-700 text-green-50 rounded-md px-4 py-2 mb-2 font-bold">
+        <SubmitButton pendingText="Creando curso..." className="bg-emerald-700 text-emerald-50 rounded-md px-4 py-2 mb-2 font-bold">
           Crear Curso
         </SubmitButton>
       </fieldset>

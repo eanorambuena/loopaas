@@ -69,7 +69,7 @@ export default function Form({ evaluation }: { evaluation: Evaluation }) {
           </fieldset>
         ))}
         <SubmitButton
-          className="w-full bg-green-700 rounded-md px-4 py-2 text-foreground mb-2 font-bold"
+          className="w-full bg-emerald-700 rounded-md px-4 py-2 text-foreground mb-2 font-bold"
           pendingText="Enviando formulario..."
         >
           Enviar
