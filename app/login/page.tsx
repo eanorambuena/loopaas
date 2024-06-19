@@ -1,9 +1,15 @@
+"use client"
+
 import { headers } from "next/headers"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { SubmitButton } from "@/components/SubmitButton"
+import { useToast } from "@/components/ui/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 
 export default function Login({ searchParams }: { searchParams: { message: string } }) {
+  const { toast } = useToast()
+
   const signIn = async (formData: FormData) => {
     "use server"
 
@@ -17,7 +23,11 @@ export default function Login({ searchParams }: { searchParams: { message: strin
     })
 
     if (error) {
-      return redirect("/login?message=Could not authenticate user")
+      return toast({
+        title: "Error",
+        description: "No se pudo autenticar al usuario",
+        variant: "destructive"
+      })
     }
 
     return redirect("/cursos")
@@ -33,7 +43,11 @@ export default function Login({ searchParams }: { searchParams: { message: strin
 
     const isUC = email.endsWith("uc.cl")
     if (!isUC) {
-      return redirect("/login?message=El correo debe ser de la UC")
+      return toast({
+        title: "Error",
+        description: "Debes usar un correo UC",
+        variant: "destructive"
+      })
     }
 
     const { error } = await supabase.auth.signUp({
@@ -91,6 +105,7 @@ export default function Login({ searchParams }: { searchParams: { message: strin
             {searchParams.message}
           </p>
         )}
+        <Toaster />
       </form>
     </div>
   )
