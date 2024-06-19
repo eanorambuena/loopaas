@@ -4,7 +4,7 @@ import { Resend } from "resend"
 
 const RESEND_API_TOKEN = process.env.NEXT_RESEND_API_TOKEN
 
-type Email {
+type Email = {
   from: string
   to: string
   subject: string
