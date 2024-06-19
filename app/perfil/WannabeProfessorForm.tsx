@@ -16,7 +16,7 @@ export default function WannabeProfessorForm() {
       <p className="text-foreground">
         Para solicitar una cuenta de profesor, ingresa tu token de Canvas
       </p>
-      <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground" onSubmit={handleSubmit}>
+      <form className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center gap-2 text-foreground" onSubmit={handleSubmit}>
         <label className="text-md" htmlFor="email">
           Token de Canvas
         </label>
