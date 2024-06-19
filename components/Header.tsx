@@ -47,10 +47,10 @@ export default async function Header() {
 
   return (
     <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-      <div className="w-full max-w-4xl flex justify-end items-center p-3 text-sm">
+      <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
         <Link
           href="/perfil"
-          className="py-2 px-3 flex rounded-md no-underline"
+          className="py-2 px-3 flex rounded-md no-underline hover:bg-foreground/10"
         >
           Perfil
         </Link>
