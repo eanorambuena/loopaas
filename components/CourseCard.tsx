@@ -16,14 +16,14 @@ export default async function CourseCard({ course }: { course: any }) {
 
   return (
     <Link
-      className="w-full max-w-4xl rounded-md bg-[#eeeeee] hover:opacity-95 hover:scale-105 transition-transform duration-300"
+      className="w-full max-w-4xl rounded-md bg-[#eeeeee] text-gray-50 dark:text-gray-900 hover:scale-105 transition-transform duration-300 hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)]"
       href={`/cursos/${course.abbreviature}/${course.semester}`}
       style={{ backgroundColor: course.color }}
     >
       <img src={course.img} alt={course.title} className="w-full rounded-t-md" />
       <div className="flex gap-2 p-4 flex-col">
         <div className="flex gap-2 justify-between">
-          <p className="text-sm font-normal text-gray-400">{course.abbreviature}</p>
+          <p className="text-sm font-normal text-gray-400 dark:text-gray-600">{course.abbreviature}</p>
           <Badge>{course.semester}</Badge>
         </div>
         <h3 className="text-xl font-bold">{course.title}</h3>

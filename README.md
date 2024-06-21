@@ -1,6 +1,33 @@
+# Documentación IDS App
+
+## Introducción
+
+IDS App es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable, principalmente sus coevaluaciones y autoevaluaciones.
+
+## Tecnologías (Stack)
+- Next.js
+- Supabase
+- Resend
+- Tailwind CSS
+
+### APIs externas
+- Canvas LMS
+
+### Librerías de componentes
+- shadcn/ui
+- lucide-react
+
+## Variables de entorno
+Crear un archivo `.env.local` y rellenar las variables de entorno que se encuentran en el archivo `.env.local.example`.
+
+<br />
+<hr />
+
+> A continuación está la documentación entregada por la plantilla de Next.js y Supabase.
+
 <a href="https://demo-nextjs-with-supabase.vercel.app/">
   <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
+  <h2 align="center">Next.js and Supabase Starter Kit</h2>
 </a>
 
 <p align="center">
