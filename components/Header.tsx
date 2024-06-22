@@ -1,6 +1,6 @@
-import Link from "next/link"
 import AuthButton from "@/components/AuthButton"
 import { createClient } from "@/utils/supabase/server"
+import HoverableLink from "./HoverableLink"
 
 export default async function Header() {
   const canInitSupabaseClient = () => {
@@ -49,18 +49,8 @@ export default async function Header() {
     <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
       <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
         <div className="flex gap-4">
-          <Link
-            href="/cursos"
-            className="py-2 px-3 flex rounded-md no-underline hover:bg-foreground/5 dark:hover:bg-foreground/10 transition-colors duration-300 dark:text-gray-50"
-          >
-            Cursos
-          </Link>
-          <Link
-            href="/perfil"
-            className="py-2 px-3 flex rounded-md no-underline hover:bg-foreground/5 dark:hover:bg-foreground/10 transition-colors duration-300 dark:text-gray-50"
-          >
-            Perfil
-          </Link>
+          <HoverableLink href="/cursos">Cursos</HoverableLink>
+          <HoverableLink href="/perfil">Perfil</HoverableLink>
         </div>
         <AuthButton />
       </div>
