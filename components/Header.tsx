@@ -48,7 +48,7 @@ export default async function Header() {
   return (
     <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
       <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-        <div>
+        <div className="flex gap-4">
           <Link
             href="/cursos"
             className="py-2 px-3 flex rounded-md no-underline hover:bg-foreground/5 dark:hover:bg-foreground/10 transition-colors duration-300 dark:text-gray-50"

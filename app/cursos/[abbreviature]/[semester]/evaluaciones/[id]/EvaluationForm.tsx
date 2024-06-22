@@ -55,6 +55,7 @@ export default function EvaluationForm({ evaluation }: Props) {
         names.push(radios[i].name)
       }
     }
+    // Adapted from https://stackoverflow.com/a/1423868
     names.forEach((name) => {
       for (var i = 0; i < radios.length; i++) {
         if (radios[i].type === 'radio' && radios[i].checked && radios[i].name === name) {

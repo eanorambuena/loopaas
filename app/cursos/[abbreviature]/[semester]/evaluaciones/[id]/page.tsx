@@ -77,7 +77,10 @@ export default async function Page({ params }: { params: { abbreviature: string,
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3'>
       <h1 className='text-3xl font-bold'>{evaluation.title}</h1>
       {isCourseProfessor && (
-        <Link href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`}>
+        <Link
+          className="py-2 px-3 w-fit flex rounded-md no-underline hover:bg-foreground/5 dark:hover:bg-foreground/10 transition-colors duration-300 dark:text-gray-50"
+          href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`} 
+        >
           Configurar Evaluación
         </Link>
       )}
