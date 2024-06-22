@@ -1,6 +1,8 @@
+import { getCourse } from '@/utils/queries'
 import { createClient } from '@/utils/supabase/server'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import Form, { Evaluation } from '@/components/Form'
+import EvaluationForm, { Evaluation } from './EvaluationForm'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string, id: string } }) {
   const supabase = createClient()
@@ -54,15 +56,32 @@ export default async function Page({ params }: { params: { abbreviature: string,
     sections.push(`Por favor, califica a ${mateInfo.firstName} ${mateInfo.lastName}`)
   }
 
-  const evaluation: any = {
+  const evaluation: Evaluation = {
     ..._evaluation,
     sections,
   }
 
+  const course = await getCourse(params.abbreviature, params.semester)
+
+  if (!course) {
+    return (
+      <h1 className='text-3xl font-bold'>
+        No se encontró el curso
+      </h1>
+    )
+  }
+
+  const isCourseProfessor = userInfo?.id === course.teacherInfoId
+
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3'>
       <h1 className='text-3xl font-bold'>{evaluation.title}</h1>
-      <Form evaluation={evaluation as Evaluation} />
+      {isCourseProfessor && (
+        <Link href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`}>
+          Configurar Evaluación
+        </Link>
+      )}
+      <EvaluationForm evaluation={evaluation} />
     </div>
   )
 }

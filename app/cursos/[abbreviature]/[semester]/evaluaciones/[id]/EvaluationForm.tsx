@@ -2,8 +2,7 @@
 
 import Question from '@/components/Question'
 import { useToast } from '@/components/ui/use-toast'
-import { useState } from 'react'
-import { SubmitButton } from './SubmitButton'
+import { SubmitButton } from '../../../../../../components/SubmitButton'
 
 export type Evaluation = {
   title: string
@@ -31,7 +30,7 @@ interface Props {
   evaluation: Evaluation
 }
 
-export default function Form({ evaluation }: Props) {
+export default function EvaluationForm({ evaluation }: Props) {
   const { toast } = useToast()
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -99,7 +98,7 @@ export default function Form({ evaluation }: Props) {
       ))}
       <SubmitButton
         className="w-full bg-emerald-700 rounded-md px-4 py-2 text-white mb-2 font-bold"
-        pendingText="Enviando formulario..."
+        pendingText="Enviando evaluación..."
       >
         Enviar
       </SubmitButton>
