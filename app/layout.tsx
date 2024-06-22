@@ -3,6 +3,7 @@ import "./globals.css"
 import Header from "@/components/Header"
 import GoBackLink from "@/components/GoBackLink"
 import Footer from "@/components/Footer"
+import { Toaster } from '@/components/ui/toaster'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
           </section>
         </main>
+        <Toaster />
       </body>
     </html>
   )

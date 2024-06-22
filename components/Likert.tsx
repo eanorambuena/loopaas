@@ -7,9 +7,9 @@ interface LikertProps {
 
 export default function Likert({ id, criteria, sectionKey, required } : LikertProps) {
   return (
-    <div className='flex flex-col text-center h-fit text-gray-800 gap-4 overflow-x-auto mt-4 max-w-[75vw] sm:max-w-[85vw] md:max-w-[90vw]'>
-      <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
-        <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:opacity-90 dark:text-gray-400'>
+    <div className='flex flex-col text-center h-fit gap-4 overflow-x-auto mt-4 rounded-md max-w-[80vw] sm:max-w-[85vw] md:max-w-[90vw]'>
+      <table className='w-full text-sm text-left rtl:text-right'>
+        <thead className='text-xs bg-gray-50 dark:bg-gray-700 dark:opacity-90 text-gray-700 dark:text-gray-100'>
           <tr>
             <th scope='col' className='px-6 py-3'>
             </th>
@@ -35,13 +35,13 @@ export default function Likert({ id, criteria, sectionKey, required } : LikertPr
             const name = `${sectionKey}-${criterion.label.toLowerCase().replace(/\s/g, '-')}`
             return (
               <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700' key={name}> 
-                <th scope='row' className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
+                <th scope='row' className='p-4 font-medium text-gray-900 whitespace-nowrap dark:text-gray-50'>
                   {criterion.label}
                 </th>
                 {[1, 2, 3, 4, 5].map((i) => {
                   const id = `${name}-${i}`
                   return (
-                    <td className='px-6 py-4' key={ id }>
+                    <td className='p-4' key={ id }>
                       <input
                         type='radio'
                         id={ id }
