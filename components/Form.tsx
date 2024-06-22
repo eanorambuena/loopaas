@@ -51,7 +51,7 @@ export default function Form({ evaluation }: { evaluation: Evaluation }) {
   
   return (
     <>
-      <form onSubmit={ handleSubmit } className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-slate-100 dark:bg-slate-800 p-6'>
+      <form onSubmit={ handleSubmit } className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'>
         <h1 className='text-2xl font-bold dark:text-gray-100'>{ evaluation.title }</h1>
         <p className='dark:text-gray-100'>{ evaluation.instructions }</p>
         <p className='dark:text-gray-100'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
@@ -69,7 +69,7 @@ export default function Form({ evaluation }: { evaluation: Evaluation }) {
           </fieldset>
         ))}
         <SubmitButton
-          className="w-full bg-emerald-700 rounded-md px-4 py-2 text-foreground mb-2 font-bold"
+          className="w-full bg-emerald-700 rounded-md px-4 py-2 text-white mb-2 font-bold"
           pendingText="Enviando formulario..."
         >
           Enviar

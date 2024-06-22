@@ -50,7 +50,7 @@ export default async function Header() {
       <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
         <Link
           href="/perfil"
-          className="py-2 px-3 flex rounded-md no-underline hover:shadow-[0_20px_30px_rgba(_8,_184,_112,_0.7)]"
+          className="py-2 px-3 flex rounded-md no-underline hover:bg-foreground/5 dark:hover:bg-foreground/10 transition-colors duration-300 dark:text-gray-50"
         >
           Perfil
         </Link>
