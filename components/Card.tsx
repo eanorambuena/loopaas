@@ -20,7 +20,7 @@ export default function Card({ icon, path, title } : Props) {
   }
 
   return (
-    <Link className="w-full max-w-4xl rounded-md flex justify-center items-center bg-[#eeeeee] text-gray-50 dark:text-gray-900 hover:scale-105 transition-transform duration-300 hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)]" href={path}>
+    <Link className="w-full max-w-4xl rounded-md flex justify-center items-center bg-[#eeeeee] dark:text-gray-900 hover:scale-105 transition-transform duration-300 hover:shadow-[0_20px_30px_rgba(_8,_184,_112,_0.7)]" href={path}>
       <div className="flex gap-2 p-10 flex-col items-center justify-center">
         {icon({ size: 48 })}
         <h3 className="text-xl font-bold">{title}</h3>
