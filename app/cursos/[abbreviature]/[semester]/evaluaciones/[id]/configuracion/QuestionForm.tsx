@@ -15,6 +15,10 @@ export default function QuestionForm({ id, question }: Props) {
     </>
   )
 
+  const handleClick = () => {
+    question.criteria.push({ label: '', weight: 0 })
+  }
+
   return (
     <fieldset className="flex flex-col gap-4">
       <legend className="text-xl font-bold">Pregunta {id}</legend>
@@ -22,9 +26,10 @@ export default function QuestionForm({ id, question }: Props) {
         <div key={i} className="flex gap-4">
           <Input label="Criterio" name={`${id}-${i}-criterion`} required defaultValue={criterion.label} />
           <Input label="Peso" name={`${id}-${i}-weight`} type="number" required defaultValue={criterion.weight.toString()} />
+          <SecondarySubmitButton onClick={() => question.criteria.splice(i, 1)}>Eliminar criterio</SecondarySubmitButton>
         </div>
       ))}
-      <SecondarySubmitButton key={id} pendingText="Añadiendo criterio...">
+      <SecondarySubmitButton key={id} pendingText="Añadiendo criterio..." onClick={handleClick}>
         Añadir criterio
       </SecondarySubmitButton>
     </fieldset>
