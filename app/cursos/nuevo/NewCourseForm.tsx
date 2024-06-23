@@ -1,7 +1,7 @@
 "use client"
 
 import Input from "@/components/Input"
-import MainSubmitButton from "@/components/MainSubmitButton"
+import MainButton from "@/components/MainSubmitButton"
 import { useToast } from '@/components/ui/use-toast'
 import { fetchCourse } from "@/utils/canvas"
 import { createClient } from "@/utils/supabase/client"
@@ -73,9 +73,9 @@ export default function NewCourseForm({ userInfoId }: Props) {
         <Input label="ID Canvas" name="canvasId" required />
         <label htmlFor="color" className="text-md">Color</label>
         <input type="color" id="color" name="color" defaultValue={DEFAULT_COLOR} className="rounded-md bg-inherit border mb-6" />
-        <MainSubmitButton pendingText="Creando curso...">
+        <MainButton pendingText="Creando curso...">
           Crear Curso
-        </MainSubmitButton>
+        </MainButton>
       </fieldset>
     </form>
   )

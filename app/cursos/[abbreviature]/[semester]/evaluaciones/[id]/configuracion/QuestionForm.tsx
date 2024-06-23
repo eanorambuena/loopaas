@@ -1,5 +1,5 @@
 import Input from "@/components/Input"
-import SecondarySubmitButton from "@/components/SecondarySubmitButton"
+import SecondaryButton from "@/components/SecondaryButton"
 import { Question } from "@/utils/schema"
 
 interface Props {
@@ -11,10 +11,10 @@ interface Props {
 export default function QuestionForm({ id, question, deleteQuestion }: Props) {
   if (question.type !== 'linear') return (
     <fieldset className="flex flex-col gap-4 border-t border-b border-foreground/20 p-4">
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-between items-center">
         <legend className="text-xl font-bold">Pregunta {id}</legend>
-        <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className="flex-row" />
-        <SecondarySubmitButton onClick={() => deleteQuestion(id)}>Eliminar pregunta</SecondarySubmitButton>
+        <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className="!flex-row justify-center items-center" />
+        <SecondaryButton onClick={() => deleteQuestion(id)}>Eliminar pregunta</SecondaryButton>
       </div>
       <Input type={question.type} label={`Pregunta ${id}`} name={id} required defaultValue={JSON.stringify(question)} />
     </fieldset>
@@ -26,21 +26,21 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
 
   return (
     <fieldset className="flex flex-col gap-4 border-t border-b border-foreground/20 p-4">
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-between items-center">
         <legend className="text-xl font-bold">Pregunta {id}</legend>
-        <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className="flex-row" />
-        <SecondarySubmitButton onClick={() => deleteQuestion(id)}>Eliminar pregunta</SecondarySubmitButton>
+        <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className="!flex-row justify-center items-center" />
+        <SecondaryButton onClick={() => deleteQuestion(id)}>Eliminar pregunta</SecondaryButton>
       </div>
       {question.criteria.map((criterion, i) => (
         <div key={i} className="flex gap-4">
           <Input label="Criterio" name={`${id}-${i}-criterion`} required defaultValue={criterion.label} />
           <Input label="Peso" name={`${id}-${i}-weight`} type="number" required defaultValue={criterion.weight.toString()} />
-          <SecondarySubmitButton onClick={() => question.criteria.splice(i, 1)}>Eliminar criterio</SecondarySubmitButton>
+          <SecondaryButton onClick={() => question.criteria.splice(i, 1)}>Eliminar criterio</SecondaryButton>
         </div>
       ))}
-      <SecondarySubmitButton key={id} pendingText="Añadiendo criterio..." onClick={handleClick}>
+      <SecondaryButton key={id} pendingText="Añadiendo criterio..." onClick={handleClick}>
         Agregar criterio
-      </SecondarySubmitButton>
+      </SecondaryButton>
     </fieldset>
   )
 }

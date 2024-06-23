@@ -1,12 +1,12 @@
 "use client"
 
 import Input from "@/components/Input"
-import MainSubmitButton from "@/components/MainSubmitButton"
+import MainButton from "@/components/MainButton"
 import { useToast } from '@/components/ui/use-toast'
 import { Evaluation, LinearQuestion } from "@/utils/schema"
 import { createClient } from "@/utils/supabase/client"
 import QuestionForm from "./QuestionForm"
-import SecondarySubmitButton from "@/components/SecondarySubmitButton"
+import SecondaryButton from "@/components/SecondaryButton"
 
 interface Props {
   evaluation: Evaluation
@@ -78,14 +78,14 @@ export default function ConfigForm({ evaluation }: Props) {
   
   return (
     <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
-      <fieldset className="flex flex-col gap-6 !max-w-md">
+      <fieldset className="flex flex-col gap-6">
         <Input label="Título" name="title" required defaultValue={evaluation.title} />
         <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} />
         <Input type="date" label="Fecha de entrega" name="deadLine"required defaultValue={evaluation.deadLine} />
         { Object.entries(evaluation.questions).map(([id, question]) => (
           <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
         )) }
-        <SecondarySubmitButton onClick={() => {
+        <SecondaryButton onClick={() => {
           const id = Object.keys(evaluation.questions).length
           evaluation.questions[id] = {
             type: 'linear',
@@ -94,10 +94,10 @@ export default function ConfigForm({ evaluation }: Props) {
           }
         }}>
           Agregar pregunta
-        </SecondarySubmitButton>
-        <MainSubmitButton pendingText="Guardando evaluación...">
+        </SecondaryButton>
+        <MainButton pendingText="Guardando evaluación...">
           Guardar evaluación
-        </MainSubmitButton>
+        </MainButton>
       </fieldset>
     </form>
   )
