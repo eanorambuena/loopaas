@@ -19,7 +19,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
   const evaluation = await getEvaluation(params, user)
   const debug = true
   return (
-    <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 w-full max-w-xl sm:max-w-4xl px-3'>
+    <div className='animate-in flex-1 flex flex-col gap-6 p-8 opacity-0 w-full max-w-xl sm:max-w-4xl px-3'>
       <h1 className='text-3xl font-bold'>Configuración de {evaluation.title}</h1>
       { new Date(evaluation.deadLine) < new Date() || debug && (
         <HoverableLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/resultados`}>

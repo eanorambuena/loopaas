@@ -99,9 +99,9 @@ export default function ConfigForm({ evaluation }: Props) {
   
   return (
     <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-6 text-foreground" onSubmit={handleSubmit}>
-      <Input label="Título" name="title" required defaultValue={evaluation.title} />
-      <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} />
-      <Input type="date" label="Fecha de entrega" name="deadLine"required defaultValue={evaluation.deadLine} />
+      <Input label="Título" name="title" required defaultValue={evaluation.title} className="w-full" />
+      <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} className="w-full" />
+      <Input type="date" label="Fecha de entrega" name="deadLine"required defaultValue={evaluation.deadLine} className="w-full" />
       { Object.entries(questions).map(([id, question]) => (
         <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
       )) }

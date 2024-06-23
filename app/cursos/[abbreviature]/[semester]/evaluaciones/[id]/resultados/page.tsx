@@ -59,26 +59,28 @@ export default async function Page({ params }: Props) {
   }
 
   return (
-    <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3">
+    <div className="animate-in flex-1 flex flex-col gap-6 p-8 opacity-0">
       <h1 className='text-3xl font-bold'>Resultados {evaluation.title}</h1>
-      <table className="table-auto">
-        <thead>
-          <tr className="text-left *:px-6 *:py-3">
-            <th>Nombre</th>
+      <table className="table-auto text-sm sm:text-inherit max-w-[95%]">
+        <thead className="h-fit">
+          <tr className="sm:text-left sm:*:px-6 *:py-3">
+            <th className="hidden sm:table-cell">Nombre</th>
             <th>Correo</th>
-            <th>Grupo</th>
-            <th>Nota Grupal</th>
-            <th>Coevaluación</th>
-            <th>Nota Individual</th>
+            <th className="hidden sm:table-cell">Grupo</th>
+            <th className="hidden sm:table-cell">Nota Grupal</th>
+            <th className="hidden sm:table-cell">Coevaluación</th>
+            <th className="table-cell sm:hidden">Coev.</th>
+            <th className="hidden sm:table-cell">Nota Final</th>
+            <th className="table-cell sm:hidden">Nota</th>
           </tr>
         </thead>
         <tbody className="text-left">
           {students.map((student) => (
-            <tr key={student.id} className="*:px-6 *:py-3">
-              <td>{student.userInfo?.firstName} {student.userInfo?.lastName}</td>
+            <tr key={student.id} className="sm:*:px-6 *:py-3">
+              <td className="hidden sm:table-cell">{student.userInfo?.firstName} {student.userInfo?.lastName}</td>
               <td>{student.userInfo?.email}</td>
-              <td>{student.group}</td>
-              <td>{student.groupGrade}</td>
+              <td className="hidden sm:table-cell">{student.group}</td>
+              <td className="hidden sm:table-cell">{student.groupGrade}</td>
               <td>{student.coGrade}</td>
               <td>{student.finalGrade}</td>
             </tr>

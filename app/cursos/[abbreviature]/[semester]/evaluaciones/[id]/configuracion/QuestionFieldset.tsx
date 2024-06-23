@@ -11,7 +11,7 @@ interface Props {
 
 export default function QuestionFieldset({ deleteQuestion, id, question, children } : Props) {
   return (
-    <fieldset className='flex flex-col gap-4 w-full max-w-md border border-foreground/20 rounded-md p-4'>
+    <fieldset className='flex flex-col gap-4 !max-w-sm border border-foreground/20 rounded-md p-4'>
       <div className='flex gap-4 justify-between items-center w-full'>
         <legend className='text-xl font-bold'>Pregunta {id}</legend>
         <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className='!flex-row justify-center items-center' />

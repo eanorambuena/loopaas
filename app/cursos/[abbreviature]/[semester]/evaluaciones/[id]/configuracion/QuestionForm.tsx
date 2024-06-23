@@ -35,13 +35,20 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
       {(questionState as LinearQuestion).criteria.map((criterion, i) => (
         <div key={i} className='flex gap-4'>
           <Input label='Criterio' name={`${id}-${i}-criterion`} required defaultValue={criterion.label} />
-          <Input label='Peso' name={`${id}-${i}-weight`} type='number' required defaultValue={criterion.weight.toString()} />
+          <Input
+            label='Peso'
+            name={`${id}-${i}-weight`}
+            type='number'
+            className='max-w-fit sm:max-w-none'
+            required
+            defaultValue={criterion.weight.toString()}
+          />
           <SecondaryButton
             aria-label='Eliminar pregunta'
             className='border-red-300 text-red-500'
             onClick={() => deleteCriterion(i)}
           >
-            <DeleteIcon size={48} />
+            <DeleteIcon size={40} />
           </SecondaryButton>
         </div>
       ))}
