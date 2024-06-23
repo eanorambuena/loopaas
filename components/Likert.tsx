@@ -32,20 +32,20 @@ export default function Likert({ id, criteria, sectionKey, required } : LikertPr
         </thead>
         <tbody>
           { criteria.map((criterion) => {
-            const name = `${sectionKey}-${criterion.label.toLowerCase().replace(/\s/g, '-')}`
+            const name = `${sectionKey}--${criterion.label.toLowerCase().replace(/\s/g, '-')}`
             return (
               <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700' key={name}> 
                 <th scope='row' className='p-4 font-medium text-gray-900 whitespace-nowrap dark:text-gray-50'>
                   {criterion.label}
                 </th>
                 {[1, 2, 3, 4, 5].map((i) => {
-                  const id = `${name}-${i}`
+                  const id = `${name}--${i}`
                   return (
-                    <td className='p-4' key={ id }>
+                    <td className='p-4' key={id}>
                       <input
                         type='radio'
-                        id={ id }
-                        name={ name }
+                        id={id}
+                        name={name}
                        />
                     </td>
                   )

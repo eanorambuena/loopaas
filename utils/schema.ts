@@ -1,10 +1,15 @@
-export type Evaluation = {
+export interface Section {
+  title: string
+  mateId: string
+}
+
+export interface Evaluation {
   id: string
   title: string
   courseId: string
   instructions: string
   deadLine: string
-  sections: Array<string>
+  sections: Array<Section>
   questions: Record<string, any>
 }
 

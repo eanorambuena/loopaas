@@ -1,7 +1,6 @@
-import HoverableLink from '@/components/HoverableLink'
-import { getCourse, getCurrentUser, getEvaluation, getIsCourseProfessor, getUserInfo } from '@/utils/queries'
+import SecondaryLink from '@/components/SecondaryLink'
+import { getCourse, getCurrentUser, getEvaluationWithSections, getIsCourseProfessor, getUserInfo } from '@/utils/queries'
 import EvaluationForm from './EvaluationForm'
-import SecondaryButton from '@/components/SecondaryButton'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string, id: string } }) {
   const user = await getCurrentUser()
@@ -22,19 +21,19 @@ export default async function Page({ params }: { params: { abbreviature: string,
     )
   }
   const isCourseProfessor = await getIsCourseProfessor(course, user)
-  const evaluation = await getEvaluation(params, user)
+  const evaluation = await getEvaluationWithSections(params, user)
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3'>
       <h1 className='text-3xl font-bold'>{evaluation.title}</h1>
       {isCourseProfessor && (
         <div className='flex gap-4'>
-          <HoverableLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`}>
+          <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`}>
             Configurar Evaluación
-          </HoverableLink>
-          <HoverableLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/resultados`}>
+          </SecondaryLink>
+          <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/resultados`}>
             Resultados
-          </HoverableLink>
+          </SecondaryLink>
         </div>
       )}
       <EvaluationForm evaluation={evaluation} userInfoId={userInfo.id} />

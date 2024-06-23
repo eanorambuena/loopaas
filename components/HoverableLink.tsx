@@ -6,10 +6,10 @@ interface Props {
   className?: string
 }
 
-export default function HoverableLink({ href, children, className }: Props) {
+export default function HoverableLink({ href, children, className = '' }: Props) {
   return (
     <Link
-      className={`py-2 px-3 w-fit flex rounded-md no-underline hover:bg-foreground/5 dark:hover:bg-foreground/10 transition-colors duration-300 dark:text-gray-50 ${className || ''}`}
+      className={`py-2 px-3 w-fit flex rounded-md no-underline hover:bg-foreground/5 dark:hover:bg-foreground/10 transition-colors duration-300 dark:text-gray-50 ${className}`}
       href={href}
     >
       {children}

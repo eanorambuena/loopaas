@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { fetchGroups } from "@/utils/canvas"
-import { getCourse, getCourseStudents, getEvaluation, getGrades, saveGrades } from "@/utils/queries"
+import { getCourse, getCourseStudents, getEvaluationWithSections, getGrades, saveGrades } from "@/utils/queries"
 
 interface Props {
   params: {
@@ -49,7 +49,7 @@ export default async function Page({ params }: Props) {
     }
   }
 
-  const evaluation = await getEvaluation(params, user)
+  const evaluation = await getEvaluationWithSections(params, user)
   await saveGrades(evaluation, students)
   
   for (const student of students) {

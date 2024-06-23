@@ -77,7 +77,6 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
         description: 'Hubo un error al enviar la evaluación',
         variant: 'destructive'
       })
-      console.log({values})
       toast({
         title: 'Éxito',
         description: 'Evaluación enviada correctamente',
@@ -98,15 +97,15 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
       <h1 className='text-2xl font-bold dark:text-gray-100'>{ evaluation.title }</h1>
       <p className='dark:text-gray-100'>{ evaluation.instructions }</p>
       <p className='dark:text-gray-100'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
-      { [ ...evaluation.sections].map((title, index) => (
-        <fieldset key={ index } className='w-full flex flex-col justify-center items-center'>
-          <legend className='text-lg font-bold dark:text-gray-100'>{ title }</legend>
+      { [ ...evaluation.sections].map((section, index) => (
+        <fieldset key={ section.mateId } className='w-full flex flex-col justify-center items-center'>
+          <legend className='text-lg font-bold dark:text-gray-100'>{ section.title }</legend>
           { Object.entries(evaluation.questions).map(([questionKey, question]) => (
             <Question
-              id={`${index}-${questionKey}`}
-              key={`${index}-${questionKey}`}
+              id={`${section.mateId}-${questionKey}`}
+              key={`${section.mateId}-${questionKey}`}
               question={ question as any }
-              sectionKey={ `${index}` }
+              sectionKey={ `${section.mateId}` }
             />
           ))}
         </fieldset>

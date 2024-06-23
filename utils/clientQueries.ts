@@ -1,7 +1,7 @@
 import { Evaluation } from "./schema"
 import { createClient } from "./supabase/client"
 
-export async function createResponse(evaluation: Evaluation, userInfoId: string, data: any) {
+export async function createResponse(evaluation: Evaluation, userInfoId: string, data: string[]) {
   const supabase = createClient()
   const { data: error } = await supabase
     .from('responses')
@@ -9,7 +9,7 @@ export async function createResponse(evaluation: Evaluation, userInfoId: string,
       {
         evaluationId: evaluation.id,
         userInfoId: userInfoId,
-        data,
+        data: JSON.stringify(data)
       }
     ])
   return error

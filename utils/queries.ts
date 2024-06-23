@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation"
 import { createClient } from "./supabase/server"
-import { Course, Evaluation, LinearQuestion, Question, QuestionCriterion, Response } from "./schema"
+import { Course, Evaluation, LinearQuestion, QuestionCriterion, Response, Section } from "./schema"
 import { User } from "@supabase/supabase-js"
 import { sendEmail } from "./resend"
+import { evaluationPath } from "./paths"
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
@@ -85,47 +86,62 @@ interface PathParams {
   id: string
 }
 
-export async function getEvaluation(params: PathParams, user: any) {
-  const REDIRECT_PATH = `/cursos/${params.abbreviature}/${params.semester}/evaluaciones`
-  const supabase = createClient()
 
-  const { data: _evaluation } = await supabase
+export async function getEvaluationByParams(params: PathParams) {
+  const supabase = createClient()
+  const { data: evaluation } = await supabase
     .from('evaluations')
     .select('*')
     .eq('id', params.id)
     .single()
-  if (!_evaluation) return redirect(REDIRECT_PATH)
+  if (!evaluation) return redirect(evaluationPath(params))
+  return evaluation as Evaluation
+}
 
-  const userInfo = await getUserInfo(user.id)
-  if (!userInfo) return redirect(REDIRECT_PATH)
+export async function getGroupMates(params: PathParams, userInfoId: string, evaluation: Evaluation) {
+  const REDIRECT_PATH = evaluationPath(params)
+  const supabase = createClient()
 
   const { data: student } = await supabase
     .from('students')
     .select('*')
-    .eq('courseId', _evaluation.courseId)
-    .eq('userInfoId', userInfo.id)
+    .eq('courseId', evaluation.courseId)
+    .eq('userInfoId', userInfoId)
     .single()
   if (!student) return redirect(REDIRECT_PATH)
 
   const { data: groupStudents } = await supabase
     .from('students')
     .select('*')
-    .eq('courseId', _evaluation.courseId)
-    .neq('userInfoId', userInfo.id)
+    .eq('courseId', evaluation.courseId)
+    .neq('userInfoId', userInfoId)
     .eq('group', student.group)
   if (!groupStudents) return redirect(REDIRECT_PATH)
 
-  const sections: any = []
+  return groupStudents
+}
+
+export async function getEvaluationWithSections(params: PathParams, user: User) {
+  const supabase = createClient()
+  const evaluation = await getEvaluationByParams(params)
+  const userInfo = await getUserInfo(user.id)
+  if (!userInfo) return redirect(evaluationPath(params))
+  const groupStudents = await getGroupMates(params, userInfo.id, evaluation)
+
+  const sections: Section[] = []
   for (const mate of groupStudents) {
     const { data: mateInfo } = await supabase
       .from('userInfo')
       .select('*')
       .eq('id', mate.userInfoId)
       .single()
-    sections.push(`Por favor, califica a ${mateInfo.firstName} ${mateInfo.lastName}`)
+    sections.push({
+      title: `Por favor, califica a ${mateInfo.firstName} ${mateInfo.lastName}`,
+      mateId: mate.userInfoId,
+    })
   }
   return {
-    ..._evaluation,
+    ...evaluation,
     sections,
   } as Evaluation
 }
@@ -169,14 +185,13 @@ interface ResponsesByUserInfoId {
   [userInfoId: string]: Response[]
 }
 
-export async function getResponses(evaluation: Evaluation) {
+export async function getResponsesByUserInfoId(evaluation: Evaluation) {
   const supabase = createClient()
   const { data: responses } = await supabase
     .from('responses')
     .select('*')
     .eq('evaluationId', evaluation.id)
     .order('created_at', { ascending: false })
-  console.log({ responses })
   if (!responses) return
   const grouped: ResponsesByUserInfoId = {}
   for (const response of responses) {
@@ -184,23 +199,6 @@ export async function getResponses(evaluation: Evaluation) {
     else grouped[response.userInfoId].push(response)
   }
   return grouped
-}
-
-interface QuestionCriterionWithValue extends QuestionCriterion {
-  value: number
-}
-
-interface LinearQuestionWithValues extends LinearQuestion {
-  criteria: QuestionCriterionWithValue[]
-}
-
-interface ResponseWithWeights {
-  id: string
-  evaluationId: string
-  userInfoId: string
-  data: {
-    [key: string]: LinearQuestionWithValues
-  }
 }
 
 export async function getCourseById(courseId: string) {
@@ -223,42 +221,48 @@ export async function getUserInfoById(userInfoId: string) {
   return data
 }
 
-export async function saveGrades(evaluation: Evaluation, grades: any) {
+export async function saveGrades(evaluation: Evaluation, students: any) {
   const supabase = createClient()
-  const responses = await getResponses(evaluation)
-  if (!responses) return
-  Object.entries(responses).forEach(async ([userInfoId, responses]) => {
-    const grades = await getGrades(evaluation, userInfoId)
-    const groupGrade = grades?.groupGrade ?? 1
-    const coGrade = grades?.evaluationGrade ?? 0
-    const finalGrade = grades?.finalGrade ?? 1
+  const responsesByUserInfoId = await getResponsesByUserInfoId(evaluation)
+  if (!responsesByUserInfoId) return
+
+  const lastResponseByUserInfoId: Record<string, Response> = {}
+  Object.entries(responsesByUserInfoId).forEach(async ([userInfoId, responses]) => {
     const response = responses[0] // consider only the last response
-    const responseData = JSON.parse(response.data) as string[]
-    const firstLinearQuestion = evaluation.questions[Object.keys(evaluation.questions)[0]] as LinearQuestion
-    const responseDataWithWeights = responseData.map((data, i) => {
-      const [mateId, criterionLabel, value] = data.split('-')
-      const criterion = firstLinearQuestion.criteria.find(({ label }) => label === criterionLabel)
-      return {
-        mateId,
-        value: parseInt(value),
-        weight: criterion?.weight ?? 1
-      }
-    })
-    const totalWeight = responseDataWithWeights.reduce((acc, { weight }) => acc + weight, 0)
-    const maxValue = 10
-    const mapValue = (value: number) => (value - 3) * maxValue / 2
-    const newCoGrade = responseDataWithWeights.reduce((acc, { value, weight }) => acc + mapValue(value) * weight / totalWeight, 0)
-    console.log({ userInfoId, newCoGrade })
+    lastResponseByUserInfoId[userInfoId] = response
   })
-  console.log({ grades })
+
   const course = await getCourseById(evaluation.courseId)
   if (!course) return
+
+  const newGradesByUserInfoId: Record<string, number> = {}
+  // for each student, calculate the grade
+  const pathParams = { abbreviature: course.abbreviature, semester: course.semester, id: evaluation.id }
+  students.forEach(async (student: any) => {
+    const groupMates = await getGroupMates(pathParams, student.userInfoId, evaluation)
+    const studentCriteriaScores: Record<string, []> = {}
+    groupMates.forEach((mate: any) => {
+      const mateResponse = lastResponseByUserInfoId[mate.userInfoId]
+      if (!mateResponse) return
+      const mateData = JSON.parse(mateResponse.data) as string[]
+      const parsedMateData = mateData.map((value) => value.split('--'))
+      const studentScores = parsedMateData.filter(value => value[0] === student.userInfoId)
+    })
+  })
+
+  const newGrades: any[] = []
+  console.log({newGrades})
+  const { data: error } = await supabase
+    .from('grades')
+    .insert(newGrades)
+  console.log({error})  
+  
   const professorUserInfo = await getUserInfoById(course.teacherInfoId)
   sendEmail({
     from: 'onboarding@resend.dev',
     to: professorUserInfo.email,
     subject: 'IDSApp | Envío de Notas',
     html: `<h1>Notas</h1>
-    <p>${JSON.stringify(grades)}</p>`
+    <p>${JSON.stringify(newGrades)}</p>`
   })
 }

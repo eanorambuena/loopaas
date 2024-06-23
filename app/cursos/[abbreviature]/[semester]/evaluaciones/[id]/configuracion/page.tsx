@@ -1,5 +1,5 @@
 import HoverableLink from '@/components/HoverableLink'
-import { getCourse, getCurrentUser, getEvaluation, getIsCourseProfessor } from '@/utils/queries'
+import { getCourse, getCurrentUser, getEvaluationWithSections, getIsCourseProfessor } from '@/utils/queries'
 import { redirect } from 'next/navigation'
 import ConfigForm from './ConfigForm'
 
@@ -16,7 +16,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
   const isCourseProfessor = await getIsCourseProfessor(course, user)
   if (!isCourseProfessor) redirect(`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}`)
 
-  const evaluation = await getEvaluation(params, user)
+  const evaluation = await getEvaluationWithSections(params, user)
   
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-8 opacity-0 w-full max-w-xl sm:max-w-4xl px-3'>
