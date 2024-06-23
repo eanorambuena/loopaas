@@ -3,11 +3,11 @@
 import { useFormStatus } from "react-dom"
 import { type ComponentProps } from "react"
 
-type Props = ComponentProps<"button"> & {
+export type SubmitButtonProps = ComponentProps<"button"> & {
   pendingText?: string
 }
 
-export function SubmitButton({ children, pendingText, ...props }: Props) {
+export function SubmitButton({ children, pendingText, ...props }: SubmitButtonProps) {
   const { pending, action } = useFormStatus()
 
   const isPending = pending && action === props.formAction

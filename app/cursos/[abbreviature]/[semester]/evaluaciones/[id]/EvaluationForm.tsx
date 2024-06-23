@@ -1,16 +1,9 @@
 'use client'
 
 import Question from '@/components/Question'
+import { SubmitButton } from '@/components/SubmitButton'
 import { useToast } from '@/components/ui/use-toast'
-import { SubmitButton } from '../../../../../../components/SubmitButton'
-
-export type Evaluation = {
-  title: string
-  instructions: string
-  deadLine: string
-  sections: Array<string>
-  questions: Record<string, any>
-}
+import { Evaluation } from '@/utils/schema'
 
 function getNumberOfQuestions(evaluation: Evaluation) {
   let numberOfQuestions = 0;
