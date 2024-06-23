@@ -1,3 +1,5 @@
+import { QuestionType } from "@/utils/schema"
+
 interface OptionalInputProps {
   autocomplete?: string
   required?: boolean
@@ -8,7 +10,7 @@ interface Props extends OptionalInputProps {
   className?: string
   label: string
   name: string
-  type?: 'text' | 'email' | 'password' | 'number' | 'textarea' | 'datetime-local' | 'date' | 'time' | 'file'
+  type?: 'text' | 'email' | 'password' | 'number' | 'textarea' | 'datetime-local' | 'date' | 'time' | 'file' | QuestionType
 }
 
 export default function Input({ className = '', label, name, type = 'text', ...props }: Props) {

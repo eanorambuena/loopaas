@@ -1,7 +1,6 @@
 "use client"
 
 import { SubmitButton } from "@/components/SubmitButton"
-import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/components/ui/use-toast"
 import { sendEmail } from "@/utils/resend"
 
@@ -52,7 +51,6 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
           Solicitar Cuenta de Profesor
         </SubmitButton>
       </form>
-      <Toaster />
     </section>
   )
 }

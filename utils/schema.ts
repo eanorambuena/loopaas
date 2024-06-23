@@ -1,4 +1,5 @@
 export type Evaluation = {
+  id: string
   title: string
   instructions: string
   deadLine: string
@@ -7,10 +8,12 @@ export type Evaluation = {
 }
 
 export type Course = {
-  name: string
+  id: string
+  title: string
   abbreviature: string
   semester: string
   teacherInfoId: string
+  img: string
 }
 
 type QuestionCriterion = {
@@ -20,13 +23,17 @@ type QuestionCriterion = {
 
 type QuestionCriteria = Array<QuestionCriterion>
 
-type LinearQuestion = {
+export type LinearQuestion = {
   type: 'linear'
   required: boolean
   criteria: QuestionCriteria
 }
 
+export type QuestionType = 'text' | 'radio' | 'checkbox' | 'select' | 'file'
+
 export type Question = LinearQuestion | {
-  type: 'text' | 'radio' | 'checkbox' | 'select' | 'file'
+  type: QuestionType
   required: boolean
 }
+
+export type Questions = Record<string, Question>

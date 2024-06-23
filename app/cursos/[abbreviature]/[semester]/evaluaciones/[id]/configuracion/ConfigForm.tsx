@@ -1,12 +1,10 @@
 "use client"
 
-import { fetchCourse } from "@/utils/canvas"
-import { createClient } from "@/utils/supabase/client"
-import { Toaster } from '@/components/ui/toaster'
-import { useToast } from '@/components/ui/use-toast'
 import Input from "@/components/Input"
 import MainSubmitButton from "@/components/MainSubmitButton"
-import { Evaluation } from "@/utils/schema"
+import { useToast } from '@/components/ui/use-toast'
+import { Evaluation, LinearQuestion } from "@/utils/schema"
+import { createClient } from "@/utils/supabase/client"
 import QuestionForm from "./QuestionForm"
 
 interface Props {
@@ -21,23 +19,70 @@ export default function ConfigForm({ evaluation }: Props) {
     e.preventDefault()
     const formData = new FormData(e.target)
     const entries = Object.fromEntries(formData.entries())
-    console.log(entries)
+    const questionData = Object.entries(entries).filter(([key, value]) => key.includes('-'))
+    /* parse questions in format:
+        {id: {type: 'linear', required: true, criteria: [{label: 'criterion', weight: 1}, {label: 'criterion1', weight: 2}]}
+      for example, from format:
+        [['id-0-criterion, 'criterion'], ['id-0-weight', '1'], ['id-1-criterion', 'criterion1'], ['id-1-weight', '2']]
+    */
+   // TODO: add support for non-linear questions
+    const questions: Record<string, LinearQuestion> = {}
+    questionData.forEach(([key, value]) => {
+      const [id, index, type] = key.split('-')
+      if (!questions[id]) {
+        questions[id] = {
+          type: 'linear',
+          required: true,
+          criteria: []
+        } as LinearQuestion
+      }
+      if (type === 'criterion') {
+        questions[id].criteria.push({
+          label: value as string,
+          weight: parseInt(entries[`${id}-${index}-weight`] as string)
+        })
+      }
+    })
+
+    const newEvaluation = {
+      title: entries.title,
+      instructions: entries.instructions,
+      deadLine: entries.deadLine,
+      questions
+    }
+
+    const { error } = await supabase
+      .from('evaluations')
+      .update(newEvaluation)
+      .eq('id', evaluation.id)
+
+    console.log({ error })
+    if (error) return toast({
+      title: 'Error',
+      description: 'Ocurrió un error al guardar la evaluación',
+      variant: 'destructive'
+    })
+    
+    toast({
+      title: 'Éxito',
+      description: 'Evaluación guardada correctamente',
+      variant: 'success'
+    })
   }
-  console.log({deadLine: evaluation.deadLine})
+  
   return (
     <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
-      <fieldset className="flex flex-col gap-6 max-w-[90vw]">
+      <fieldset className="flex flex-col gap-6 !max-w-md">
         <Input label="Título" name="title" required defaultValue={evaluation.title} />
         <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} />
         <Input type="date" label="Fecha de entrega" name="deadLine"required defaultValue={evaluation.deadLine} />
         { Object.entries(evaluation.questions).map(([id, question]) => (
-          <QuestionForm id={id} question={question} />
+          <QuestionForm id={id} question={question} key={id} />
         )) }
-        <MainSubmitButton pendingText="Creando curso...">
-          Crear Curso
+        <MainSubmitButton pendingText="Guardando evaluación...">
+          Guardar evaluación
         </MainSubmitButton>
       </fieldset>
-      <Toaster />
     </form>
   )
 }

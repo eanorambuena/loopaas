@@ -1,10 +1,10 @@
 "use client"
 
-import { SubmitButton } from "@/components/SubmitButton"
+import Input from "@/components/Input"
+import MainSubmitButton from "@/components/MainSubmitButton"
+import { useToast } from '@/components/ui/use-toast'
 import { fetchCourse } from "@/utils/canvas"
 import { createClient } from "@/utils/supabase/client"
-import { Toaster } from '@/components/ui/toaster'
-import { useToast } from '@/components/ui/use-toast'
 
 const DEFAULT_COLOR = '#eeeeee'
 
@@ -69,16 +69,14 @@ export default function NewCourseForm({ userInfoId }: Props) {
 
   return (
     <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
-      <fieldset className="flex flex-col gap-2 sm:max-w-md">
-        <label htmlFor="canvasId" className="text-md">ID Canvas</label>
-        <input type="text" id="canvasId" name="canvasId" className="rounded-md px-4 py-2 bg-inherit border mb-6" />
+      <fieldset className="flex flex-col gap-6 max-w-md">
+        <Input label="ID Canvas" name="canvasId" required />
         <label htmlFor="color" className="text-md">Color</label>
         <input type="color" id="color" name="color" defaultValue={DEFAULT_COLOR} className="rounded-md bg-inherit border mb-6" />
-        <SubmitButton pendingText="Creando curso..." className="bg-emerald-700 text-emerald-50 rounded-md px-4 py-2 mb-2 font-bold">
+        <MainSubmitButton pendingText="Creando curso...">
           Crear Curso
-        </SubmitButton>
+        </MainSubmitButton>
       </fieldset>
-      <Toaster />
     </form>
   )
 }
