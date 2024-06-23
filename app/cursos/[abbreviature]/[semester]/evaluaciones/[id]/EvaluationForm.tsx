@@ -79,6 +79,13 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
   const deadLineDay = evaluation.deadLine?.split('-')[2]
   const deadLineMonth = evaluation.deadLine?.split('-')[1]
   const deadLineYear = evaluation.deadLine?.split('-')[0]
+
+  if (new Date(evaluation.deadLine) < new Date()) return (
+    <section className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'>
+      Esta evaluación ya no está disponible
+      <p className='dark:text-gray-100'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
+    </section>
+  )
   
   return (
     <form onSubmit={ handleSubmit } className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'>

@@ -77,6 +77,9 @@ export default function ConfigForm({ evaluation }: Props) {
   
   return (
     <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
+      <SecondaryButton onClick={() => {}} className="mb-6">
+        Calcular resultados
+      </SecondaryButton>
       <fieldset className="flex flex-col gap-6">
         <Input label="Título" name="title" required defaultValue={evaluation.title} />
         <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} />

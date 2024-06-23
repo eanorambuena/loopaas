@@ -1,6 +1,7 @@
 import HoverableLink from '@/components/HoverableLink'
 import { getCourse, getCurrentUser, getEvaluation, getIsCourseProfessor, getUserInfo } from '@/utils/queries'
 import EvaluationForm from './EvaluationForm'
+import SecondaryButton from '@/components/SecondaryButton'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string, id: string } }) {
   const user = await getCurrentUser()
