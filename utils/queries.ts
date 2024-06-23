@@ -292,20 +292,22 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
   }
 
   const supabase = createClient()
-  console.log({newGrades})
   for (const grade of newGrades) {
     const { data: error } = await supabase
       .from('grades')
       .upsert(grade)
-    console.log({error})
+    if (error) redirect(`${evaluationPath(pathParams)}/${evaluation.id}/resultados?message=No se pudieron guardar las notas`)
   }
-  
+
   const professorUserInfo = await getUserInfoById(course.teacherInfoId)
-  sendEmail({
-    from: 'onboarding@resend.dev',
-    to: professorUserInfo.email,
-    subject: 'IDSApp | Envío de Notas',
-    html: `<h1>Notas</h1>
-    <p>${JSON.stringify(newGrades)}</p>`
-  })
+  const sendReport = async (html: any) => {
+    await sendEmail({
+      from: 'onboarding@resend.dev',
+      to: professorUserInfo.email,
+      subject: `IDSApp | Notas de Evaluación ${evaluation.title}`,
+      html
+    })
+    redirect(`${evaluationPath(pathParams)}/${evaluation.id}/resultados?message=Reporte enviado con éxito`)
+  }
+  return sendReport
 }
