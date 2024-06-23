@@ -1,7 +1,9 @@
-import Input from "@/components/Input"
-import SecondaryButton from "@/components/SecondaryButton"
-import { LinearQuestion, Question } from "@/utils/schema"
-import { useState } from "react"
+import DeleteIcon from '@/components/icons/DeleteIcon'
+import Input from '@/components/Input'
+import SecondaryButton from '@/components/SecondaryButton'
+import { LinearQuestion, Question } from '@/utils/schema'
+import { useState } from 'react'
+import QuestionFieldset from './QuestionFieldset'
 
 interface Props {
   id: string
@@ -13,14 +15,9 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
   const [questionState, setQuestion] = useState<Question>(question)
 
   if (question.type !== 'linear') return (
-    <fieldset className="flex flex-col gap-4 w-full border-t border-b border-foreground/20 p-4">
-      <div className="flex gap-4 justify-between items-center w-full">
-        <legend className="text-xl font-bold">Pregunta {id}</legend>
-        <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className="!flex-row justify-center items-center" />
-        <SecondaryButton onClick={() => deleteQuestion(id)}>Eliminar pregunta</SecondaryButton>
-      </div>
+    <QuestionFieldset deleteQuestion={deleteQuestion} id={id} question={question}>
       <Input type={question.type} label={`Pregunta ${id}`} name={id} required defaultValue={JSON.stringify(question)} />
-    </fieldset>
+    </QuestionFieldset>
   )
 
   const addCriterion = () => {
@@ -34,24 +31,23 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
   }
 
   return (
-    <fieldset className="flex flex-col gap-4 w-full border-t border-b border-foreground/20 p-4">
-      <div className="flex gap-4 justify-between items-center w-full">
-        <legend className="text-xl font-bold">Pregunta {id}</legend>
-        <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className="!flex-row justify-center items-center" />
-        <SecondaryButton onClick={() => deleteQuestion(id)}>Eliminar pregunta</SecondaryButton>
-      </div>
+    <QuestionFieldset deleteQuestion={deleteQuestion} id={id} question={question}>
       {(questionState as LinearQuestion).criteria.map((criterion, i) => (
-        <div key={i} className="flex gap-4">
-          <Input label="Criterio" name={`${id}-${i}-criterion`} required defaultValue={criterion.label} />
-          <Input label="Peso" name={`${id}-${i}-weight`} type="number" required defaultValue={criterion.weight.toString()} />
-          <SecondaryButton onClick={() => deleteCriterion(i)}>
-            Eliminar criterio
+        <div key={i} className='flex gap-4'>
+          <Input label='Criterio' name={`${id}-${i}-criterion`} required defaultValue={criterion.label} />
+          <Input label='Peso' name={`${id}-${i}-weight`} type='number' required defaultValue={criterion.weight.toString()} />
+          <SecondaryButton
+            aria-label='Eliminar pregunta'
+            className='border-red-300 text-red-500'
+            onClick={() => deleteCriterion(i)}
+          >
+            <DeleteIcon size={48} />
           </SecondaryButton>
         </div>
       ))}
-      <SecondaryButton key={id} pendingText="Añadiendo criterio..." onClick={addCriterion}>
+      <SecondaryButton key={id} pendingText='Añadiendo criterio...' onClick={addCriterion}>
         Agregar criterio
       </SecondaryButton>
-    </fieldset>
+    </QuestionFieldset>
   )
 }

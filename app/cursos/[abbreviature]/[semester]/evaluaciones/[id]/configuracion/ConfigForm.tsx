@@ -76,7 +76,7 @@ export default function ConfigForm({ evaluation }: Props) {
 
   const deleteQuestion = (id: string) => {
     delete evaluation.questions[id]
-    setQuestions(evaluation.questions)
+    setQuestions({ ...questions })
   }
 
   const calculateResults = () => {
@@ -85,6 +85,16 @@ export default function ConfigForm({ evaluation }: Props) {
     // save the results in the database
 
 
+  }
+
+  const addQuestion = () => {
+    const id = Object.keys(questions).length
+    evaluation.questions[id] = {
+      type: 'linear',
+      required: false,
+      criteria: []
+    }
+    setQuestions({ ...questions })
   }
   
   return (
@@ -95,16 +105,7 @@ export default function ConfigForm({ evaluation }: Props) {
       { Object.entries(questions).map(([id, question]) => (
         <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
       )) }
-      <SecondaryButton onClick={() => {
-          const id = Object.keys(evaluation.questions).length
-          evaluation.questions[id] = {
-            type: 'linear',
-            required: false,
-            criteria: []
-          }
-          setQuestions(evaluation.questions)
-        }}
-      >
+      <SecondaryButton onClick={addQuestion}>
         Agregar pregunta
       </SecondaryButton>
       <MainButton pendingText="Guardando evaluación...">

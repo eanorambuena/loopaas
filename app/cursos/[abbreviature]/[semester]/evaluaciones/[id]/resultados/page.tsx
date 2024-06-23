@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { fetchGroups } from "@/utils/canvas"
-import { getCourse, getCourseStudents, getEvaluation } from "@/utils/queries"
+import { getCourse, getCourseStudents, getEvaluation, getGrades } from "@/utils/queries"
 
 interface Props {
   params: {
@@ -51,6 +51,13 @@ export default async function Page({ params }: Props) {
 
   const evaluation = await getEvaluation(params, user)
 
+  for (const student of students) {
+    const grades = await getGrades(evaluation, student.userInfoId)
+    student.groupGrade = grades?.groupGrade ?? 'N/A'
+    student.coGrade = grades?.evaluationGrade ?? 'N/A'
+    student.finalGrade = grades?.finalGrade ?? 'N/A'
+  }
+
   return (
     <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3">
       <h1 className='text-3xl font-bold'>Resultados {evaluation.title}</h1>
@@ -60,6 +67,9 @@ export default async function Page({ params }: Props) {
             <th>Nombre</th>
             <th>Correo</th>
             <th>Grupo</th>
+            <th>Nota Grupal</th>
+            <th>Coevaluación</th>
+            <th>Nota Individual</th>
           </tr>
         </thead>
         <tbody className="text-left">
@@ -68,6 +78,9 @@ export default async function Page({ params }: Props) {
               <td>{student.userInfo?.firstName} {student.userInfo?.lastName}</td>
               <td>{student.userInfo?.email}</td>
               <td>{student.group}</td>
+              <td>{student.groupGrade}</td>
+              <td>{student.coGrade}</td>
+              <td>{student.finalGrade}</td>
             </tr>
           ))}
         </tbody>

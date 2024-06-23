@@ -152,3 +152,14 @@ export async function getIsCourseProfessor(course: Course, user: User) {
   const userInfo = await getUserInfo(user.id)
   return course.teacherInfoId === userInfo.id
 }
+
+export async function getGrades(evaluation: Evaluation, userInfoId: string) {
+  const supabase = createClient()
+  const { data: grades } = await supabase
+    .from('grades')
+    .select('*')
+    .eq('evaluationId', evaluation.id)
+    .eq('userInfoId', userInfoId)
+    .single()
+  return grades
+}
