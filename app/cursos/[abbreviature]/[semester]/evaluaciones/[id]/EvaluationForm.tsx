@@ -28,6 +28,10 @@ interface Props {
 export default function EvaluationForm({ evaluation, userInfoId }: Props) {
   const { toast } = useToast()
 
+  const deadLineDay = evaluation.deadLine?.split('-')[2]
+  const deadLineMonth = evaluation.deadLine?.split('-')[1]
+  const deadLineYear = evaluation.deadLine?.split('-')[0]
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const data = new FormData(e.currentTarget)
@@ -59,7 +63,12 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
       }
     })
 
-    const responses = Object.groupBy(entries, ([key]) => key.split('-')[0])
+    if (new Date(evaluation.deadLine) < new Date()) return toast({
+      title: 'Error',
+      description: `Esta evaluación ya no está disponible. Fecha límite: ${deadLineDay} / ${deadLineMonth} / ${deadLineYear}`,
+      variant: 'destructive'
+    })
+
     ;(async () => {
       const error = await createResponse(evaluation, userInfoId, values)
       if (error) return toast({
@@ -75,10 +84,6 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
       })
     })()
   }
-
-  const deadLineDay = evaluation.deadLine?.split('-')[2]
-  const deadLineMonth = evaluation.deadLine?.split('-')[1]
-  const deadLineYear = evaluation.deadLine?.split('-')[0]
 
   if (new Date(evaluation.deadLine) < new Date()) return (
     <section className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'>
