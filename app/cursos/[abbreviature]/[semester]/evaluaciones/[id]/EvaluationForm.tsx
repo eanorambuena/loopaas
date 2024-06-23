@@ -62,6 +62,7 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
         }
       }
     })
+    const valuesList = Object.values(values)
 
     if (new Date(evaluation.deadLine) < new Date()) return toast({
       title: 'Error',
@@ -70,7 +71,7 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
     })
 
     ;(async () => {
-      const error = await createResponse(evaluation, userInfoId, values)
+      const error = await createResponse(evaluation, userInfoId, valuesList)
       if (error) return toast({
         title: 'Error',
         description: 'Hubo un error al enviar la evaluación',

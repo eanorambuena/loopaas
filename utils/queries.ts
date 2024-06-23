@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import { createClient } from "./supabase/server"
-import { Course, Evaluation } from "./schema"
+import { Course, Evaluation, LinearQuestion, Question, QuestionCriterion, Response } from "./schema"
 import { User } from "@supabase/supabase-js"
 
 export async function getCourse(abbreviature: string, semester: string) {
@@ -162,4 +162,70 @@ export async function getGrades(evaluation: Evaluation, userInfoId: string) {
     .eq('userInfoId', userInfoId)
     .single()
   return grades
+}
+
+interface ResponsesByUserInfoId {
+  [userInfoId: string]: Response[]
+}
+
+export async function getResponses(evaluation: Evaluation) {
+  const supabase = createClient()
+  const { data: responses } = await supabase
+    .from('responses')
+    .select('*')
+    .eq('evaluationId', evaluation.id)
+    .order('created_at', { ascending: false })
+  if (!responses) return
+  const grouped: ResponsesByUserInfoId = {}
+  for (const response of responses) {
+    if (!grouped[response.userInfoId]) grouped[response.userInfoId] = [response]
+    else grouped[response.userInfoId].push(response)
+  }
+  return grouped
+}
+
+interface QuestionCriterionWithValue extends QuestionCriterion {
+  value: number
+}
+
+interface LinearQuestionWithValues extends LinearQuestion {
+  criteria: QuestionCriterionWithValue[]
+}
+
+interface ResponseWithWeights {
+  id: string
+  evaluationId: string
+  userInfoId: string
+  data: {
+    [key: string]: LinearQuestionWithValues
+  }
+}
+
+export async function saveGrades(evaluation: Evaluation, grades: any) {
+  const supabase = createClient()
+  const responses = await getResponses(evaluation)
+  if (!responses) return
+  Object.entries(responses).forEach(async ([userInfoId, responses]) => {
+    const grades = await getGrades(evaluation, userInfoId)
+    const groupGrade = grades?.groupGrade ?? 1
+    const coGrade = grades?.evaluationGrade ?? 0
+    const finalGrade = grades?.finalGrade ?? 1
+    const response = responses[0] // consider only the last response
+    const responseData = JSON.parse(response.data) as string[]
+    const firstLinearQuestion = evaluation.questions[Object.keys(evaluation.questions)[0]] as LinearQuestion
+    const responseDataWithWeights = responseData.map((data, i) => {
+      const [mateId, criterionLabel, value] = data.split('-')
+      const criterion = firstLinearQuestion.criteria.find(({ label }) => label === criterionLabel)
+      return {
+        mateId,
+        value: parseInt(value),
+        weight: criterion?.weight ?? 1
+      }
+    })
+    const totalWeight = responseDataWithWeights.reduce((acc, { weight }) => acc + weight, 0)
+    const maxValue = 10
+    const mapValue = (value: number) => (value - 3) * maxValue / 2
+    const newCoGrade = responseDataWithWeights.reduce((acc, { value, weight }) => acc + mapValue(value) * weight / totalWeight, 0)
+    console.log({ userInfoId, newCoGrade })
+  })
 }

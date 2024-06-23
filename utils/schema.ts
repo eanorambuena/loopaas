@@ -16,17 +16,15 @@ export type Course = {
   img: string
 }
 
-type QuestionCriterion = {
+export type QuestionCriterion = {
   label: string
   weight: number
 }
 
-type QuestionCriteria = Array<QuestionCriterion>
-
 export type LinearQuestion = {
   type: 'linear'
   required: boolean
-  criteria: QuestionCriteria
+  criteria: QuestionCriterion[]
 }
 
 export type QuestionType = 'text' | 'radio' | 'checkbox' | 'select' | 'file'
@@ -37,3 +35,11 @@ export type Question = LinearQuestion | {
 }
 
 export type Questions = Record<string, Question>
+
+export interface Response {
+  id: string
+  evaluationId: string
+  userInfoId: string
+  data: string
+  created_at: string
+}
