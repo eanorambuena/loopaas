@@ -1,9 +1,17 @@
 import HoverableLink from '@/components/HoverableLink'
-import { getCourse, getCurrentUser, getEvaluation, getIsCourseProfessor } from '@/utils/queries'
+import { getCourse, getCurrentUser, getEvaluation, getIsCourseProfessor, getUserInfo } from '@/utils/queries'
 import EvaluationForm from './EvaluationForm'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string, id: string } }) {
   const user = await getCurrentUser()
+  const userInfo = await getUserInfo(user.id)
+  if (!userInfo) {
+    return (
+      <h1 className='text-3xl font-bold'>
+        No se encontró el usuario
+      </h1>
+    )
+  }
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) {
     return (
@@ -23,7 +31,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
           Configurar Evaluación
         </HoverableLink>
       )}
-      <EvaluationForm evaluation={evaluation} />
+      <EvaluationForm evaluation={evaluation} userInfoId={userInfo.id} />
     </div>
   )
 }

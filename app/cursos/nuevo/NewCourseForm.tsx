@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import Input from "@/components/Input"
-import MainButton from "@/components/MainSubmitButton"
+import Input from '@/components/Input'
+import MainButton from '@/components/MainButton'
 import { useToast } from '@/components/ui/use-toast'
-import { fetchCourse } from "@/utils/canvas"
-import { createClient } from "@/utils/supabase/client"
+import { fetchCourse } from '@/utils/canvas'
+import { createClient } from '@/utils/supabase/client'
 
 const DEFAULT_COLOR = '#eeeeee'
 
@@ -47,7 +47,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
         }
       ])
       if (error) {
-        if (error.code = "23505") {
+        if (error.code = '23505') {
           return toast({
             title: 'Error',
             description: 'El curso ya existe',
@@ -68,12 +68,12 @@ export default function NewCourseForm({ userInfoId }: Props) {
   }
 
   return (
-    <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
-      <fieldset className="flex flex-col gap-6 max-w-md">
-        <Input label="ID Canvas" name="canvasId" required />
-        <label htmlFor="color" className="text-md">Color</label>
-        <input type="color" id="color" name="color" defaultValue={DEFAULT_COLOR} className="rounded-md bg-inherit border mb-6" />
-        <MainButton pendingText="Creando curso...">
+    <form className='animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground' onSubmit={handleSubmit}>
+      <fieldset className='flex flex-col gap-6 max-w-md'>
+        <Input label='ID Canvas' name='canvasId' required />
+        <label htmlFor='color' className='text-md'>Color</label>
+        <input type='color' id='color' name='color' defaultValue={DEFAULT_COLOR} className='rounded-md bg-inherit border mb-6' />
+        <MainButton pendingText='Creando curso...'>
           Crear Curso
         </MainButton>
       </fieldset>

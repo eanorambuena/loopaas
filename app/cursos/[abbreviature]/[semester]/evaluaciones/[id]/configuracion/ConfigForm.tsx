@@ -58,7 +58,6 @@ export default function ConfigForm({ evaluation }: Props) {
       .update(newEvaluation)
       .eq('id', evaluation.id)
 
-    console.log({ error })
     if (error) return toast({
       title: 'Error',
       description: 'Ocurrió un error al guardar la evaluación',
@@ -89,10 +88,10 @@ export default function ConfigForm({ evaluation }: Props) {
           const id = Object.keys(evaluation.questions).length
           evaluation.questions[id] = {
             type: 'linear',
-            required: true,
+            required: false,
             criteria: []
-          }
-        }}>
+          }}}
+        >
           Agregar pregunta
         </SecondaryButton>
         <MainButton pendingText="Guardando evaluación...">

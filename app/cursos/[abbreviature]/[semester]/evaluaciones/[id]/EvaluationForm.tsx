@@ -3,6 +3,7 @@
 import Question from '@/components/Question'
 import { SubmitButton } from '@/components/SubmitButton'
 import { useToast } from '@/components/ui/use-toast'
+import { createResponse } from '@/utils/clientQueries'
 import { Evaluation } from '@/utils/schema'
 
 function getNumberOfQuestions(evaluation: Evaluation) {
@@ -21,9 +22,10 @@ function getNumberOfQuestions(evaluation: Evaluation) {
 
 interface Props {
   evaluation: Evaluation
+  userInfoId: string
 }
 
-export default function EvaluationForm({ evaluation }: Props) {
+export default function EvaluationForm({ evaluation, userInfoId }: Props) {
   const { toast } = useToast()
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -41,7 +43,7 @@ export default function EvaluationForm({ evaluation }: Props) {
     }
 
     const radios = document.getElementsByTagName('input')
-    const value: Record<string, any> = {}
+    const values: Record<string, any> = {}
     const names = []
     for (var i = 0; i < radios.length; i++) {
       if (radios[i].type === 'radio') {
@@ -52,20 +54,26 @@ export default function EvaluationForm({ evaluation }: Props) {
     names.forEach((name) => {
       for (var i = 0; i < radios.length; i++) {
         if (radios[i].type === 'radio' && radios[i].checked && radios[i].name === name) {
-          value[name] = radios[i].id;      
+          values[name] = radios[i].id;      
         }
       }
     })
-    console.log(value)
-
-    toast({
-      title: 'Éxito',
-      description: 'Formulario enviado correctamente',
-      variant: 'success'
-    })
 
     const responses = Object.groupBy(entries, ([key]) => key.split('-')[0])
-    console.log({responses})
+    ;(async () => {
+      const error = await createResponse(evaluation, userInfoId, values)
+      if (error) return toast({
+        title: 'Error',
+        description: 'Hubo un error al enviar la evaluación',
+        variant: 'destructive'
+      })
+      console.log({values})
+      toast({
+        title: 'Éxito',
+        description: 'Evaluación enviada correctamente',
+        variant: 'success'
+      })
+    })()
   }
 
   const deadLineDay = evaluation.deadLine?.split('-')[2]
