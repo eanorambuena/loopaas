@@ -4,6 +4,8 @@ interface OptionalInputProps {
   autocomplete?: string
   required?: boolean
   defaultValue?: string
+  defaultChecked?: boolean
+  placeholder?: string
 }
 
 interface Props extends OptionalInputProps {

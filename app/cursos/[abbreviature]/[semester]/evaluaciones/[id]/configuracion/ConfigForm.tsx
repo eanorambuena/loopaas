@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { Evaluation, LinearQuestion } from "@/utils/schema"
 import { createClient } from "@/utils/supabase/client"
 import QuestionForm from "./QuestionForm"
+import SecondarySubmitButton from "@/components/SecondarySubmitButton"
 
 interface Props {
   evaluation: Evaluation
@@ -30,9 +31,10 @@ export default function ConfigForm({ evaluation }: Props) {
     questionData.forEach(([key, value]) => {
       const [id, index, type] = key.split('-')
       if (!questions[id]) {
+        const required = entries[`${id}-required`] === 'on'
         questions[id] = {
           type: 'linear',
-          required: true,
+          required: required,
           criteria: []
         } as LinearQuestion
       }
@@ -69,6 +71,10 @@ export default function ConfigForm({ evaluation }: Props) {
       variant: 'success'
     })
   }
+
+  const deleteQuestion = (id: string) => {
+    delete evaluation.questions[id]
+  }
   
   return (
     <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
@@ -77,8 +83,18 @@ export default function ConfigForm({ evaluation }: Props) {
         <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} />
         <Input type="date" label="Fecha de entrega" name="deadLine"required defaultValue={evaluation.deadLine} />
         { Object.entries(evaluation.questions).map(([id, question]) => (
-          <QuestionForm id={id} question={question} key={id} />
+          <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
         )) }
+        <SecondarySubmitButton onClick={() => {
+          const id = Object.keys(evaluation.questions).length
+          evaluation.questions[id] = {
+            type: 'linear',
+            required: true,
+            criteria: []
+          }
+        }}>
+          Agregar pregunta
+        </SecondarySubmitButton>
         <MainSubmitButton pendingText="Guardando evaluación...">
           Guardar evaluación
         </MainSubmitButton>
