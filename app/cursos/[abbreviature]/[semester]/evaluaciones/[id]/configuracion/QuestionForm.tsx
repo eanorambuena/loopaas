@@ -34,13 +34,19 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
     <QuestionFieldset deleteQuestion={deleteQuestion} id={id} question={question}>
       {(questionState as LinearQuestion).criteria.map((criterion, i) => (
         <div key={i} className='flex gap-4 flex-col sm:flex-row'>
-          <Input label='Criterio' name={`${id}-${i}-criterion`} required defaultValue={criterion.label} />
+          <Input
+            className='flex-grow'
+            label='Criterio'
+            name={`${id}-${i}-criterion`}
+            required
+            defaultValue={criterion.label}
+          />
           <div className='flex gap-4'>
             <Input
+              className='flex-grow'
               label='Peso'
               name={`${id}-${i}-weight`}
               type='number'
-              className='flex-grow'
               required
               defaultValue={criterion.weight.toString()}
             />

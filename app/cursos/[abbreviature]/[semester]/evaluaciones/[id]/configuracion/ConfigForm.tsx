@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
-import Input from "@/components/Input"
-import MainButton from "@/components/MainButton"
+import Input from '@/components/Input'
+import MainButton from '@/components/MainButton'
 import { useToast } from '@/components/ui/use-toast'
-import { Evaluation, LinearQuestion } from "@/utils/schema"
-import { createClient } from "@/utils/supabase/client"
-import QuestionForm from "./QuestionForm"
-import SecondaryButton from "@/components/SecondaryButton"
-import { useState } from "react"
+import { Evaluation, LinearQuestion } from '@/utils/schema'
+import { createClient } from '@/utils/supabase/client'
+import QuestionForm from './QuestionForm'
+import SecondaryButton from '@/components/SecondaryButton'
+import { useState } from 'react'
 
 interface Props {
   evaluation: Evaluation
@@ -79,14 +79,6 @@ export default function ConfigForm({ evaluation }: Props) {
     setQuestions({ ...questions })
   }
 
-  const calculateResults = () => {
-    // get all the responses for this evaluation
-    // calculate the results for each student
-    // save the results in the database
-
-
-  }
-
   const addQuestion = () => {
     const id = Object.keys(questions).length
     evaluation.questions[id] = {
@@ -98,17 +90,17 @@ export default function ConfigForm({ evaluation }: Props) {
   }
   
   return (
-    <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-6 text-foreground" onSubmit={handleSubmit}>
-      <Input label="Título" name="title" required defaultValue={evaluation.title} className="w-full" />
-      <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} className="w-full" />
-      <Input type="date" label="Fecha de entrega" name="deadLine"required defaultValue={evaluation.deadLine} className="w-full" />
+    <form className='animate-in flex-1 flex flex-col w-full justify-center items-center gap-6 text-foreground' onSubmit={handleSubmit}>
+      <Input label='Título' name='title' required defaultValue={evaluation.title} className='w-full' />
+      <Input type='textarea' label='Instrucciones' name='instructions' required defaultValue={evaluation.instructions} className='w-full' />
+      <Input type='date' label='Fecha de entrega' name='deadLine'required defaultValue={evaluation.deadLine} className='w-full' />
       { Object.entries(questions).map(([id, question]) => (
         <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
       )) }
-      <SecondaryButton onClick={addQuestion}>
+      <SecondaryButton onClick={addQuestion} className='w-full'>
         Agregar pregunta
       </SecondaryButton>
-      <MainButton pendingText="Guardando evaluación...">
+      <MainButton pendingText='Guardando evaluación...' className='w-full'>
         Guardar evaluación
       </MainButton>
     </form>
