@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import { createClient } from "./supabase/server"
-import { Course, Evaluation, LinearQuestion, QuestionCriterion, Response, Section } from "./schema"
+import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section } from "./schema"
 import { User } from "@supabase/supabase-js"
 import { sendEmail } from "./resend"
 import { evaluationPath } from "./paths"
@@ -235,22 +235,57 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
   const course = await getCourseById(evaluation.courseId)
   if (!course) return
 
+  const firstQuestion = evaluation.questions[0] as LinearQuestion
+  
   const newGradesByUserInfoId: Record<string, number> = {}
-  // for each student, calculate the grade
   const pathParams = { abbreviature: course.abbreviature, semester: course.semester, id: evaluation.id }
   students.forEach(async (student: any) => {
     const groupMates = await getGroupMates(pathParams, student.userInfoId, evaluation)
-    const studentCriteriaScores: Record<string, []> = {}
+    const studentCriteriaScores: Record<string, number[]> = {}
     groupMates.forEach((mate: any) => {
       const mateResponse = lastResponseByUserInfoId[mate.userInfoId]
       if (!mateResponse) return
       const mateData = JSON.parse(mateResponse.data) as string[]
       const parsedMateData = mateData.map((value) => value.split('--'))
       const studentScores = parsedMateData.filter(value => value[0] === student.userInfoId)
+      studentScores.forEach(([_, criterionLabel, score]) => {
+        if (!studentCriteriaScores[criterionLabel]) studentCriteriaScores[criterionLabel] = []
+        studentCriteriaScores[criterionLabel].push(parseInt(score))
+      })
+    })
+
+    const weightsSum = firstQuestion.criteria.reduce((acc, criterion) => acc + criterion.weight, 0)
+    const numberOfGroupMates = groupMates.length
+    const evaluationScore = Object.entries(studentCriteriaScores).reduce((acc, [criterionLabel, scores]) => {
+      const criterion = firstQuestion.criteria.find((criterion: QuestionCriterion) => criterion.label === criterionLabel)
+      const weight = criterion?.weight ?? 0
+      if (scores.length < numberOfGroupMates) {
+        const missingScores = Array(numberOfGroupMates - scores.length).fill(3)
+        scores.push(...missingScores)
+      }
+      const averageScore = scores.reduce((acc, score) => acc + score, 0) / numberOfGroupMates
+      return acc + (averageScore * weight) / weightsSum
+    }, 0)
+    const maxGrade = 1
+    const nullScore = 3
+    const minScore = 1
+    const evaluationGrade = (evaluationScore - nullScore) * (maxGrade / (nullScore - minScore))
+    newGradesByUserInfoId[student.userInfoId] = evaluationGrade
+  })
+
+  const newGrades: Grade[] = []
+  Object.entries(newGradesByUserInfoId).forEach(async ([userInfoId, grade]) => {
+    const grades = await getGrades(evaluation, userInfoId)
+    const groupGrade = parseFloat(grades?.groupGrade || '0.0') ?? 4.0
+    newGrades.push({
+      evaluationId: evaluation.id,
+      userInfoId,
+      groupGrade: groupGrade.toFixed(2),
+      evaluationGrade: grade.toFixed(2),
+      finalGrade: (groupGrade + grade).toFixed(2),
     })
   })
 
-  const newGrades: any[] = []
   console.log({newGrades})
   const { data: error } = await supabase
     .from('grades')

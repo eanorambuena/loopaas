@@ -49,3 +49,11 @@ export interface Response {
   data: string
   created_at: string
 }
+
+export interface Grade {
+  userInfoId: string
+  evaluationId: string
+  groupGrade: string
+  evaluationGrade: string
+  finalGrade: string
+}
