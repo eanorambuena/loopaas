@@ -28,7 +28,7 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
   }
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-4 border border-foreground/20 rounded-md p-4">
       <h2 className="text-xl font-bold">Solicitar Cuenta de Profesor</h2>
       <p className="text-foreground">
         Para solicitar una cuenta de profesor, ingresa tu token de Canvas

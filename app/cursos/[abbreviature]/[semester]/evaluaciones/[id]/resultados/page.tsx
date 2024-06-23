@@ -63,11 +63,12 @@ export default async function Page({ params }: Props) {
       <h1 className='text-3xl font-bold'>Resultados {evaluation.title}</h1>
       <table className="table-auto text-sm sm:text-inherit max-w-[95%]">
         <thead className="h-fit">
-          <tr className="sm:text-left sm:*:px-6 *:py-3">
+          <tr className="text-left sm:*:px-6 *:py-3">
             <th className="hidden sm:table-cell">Nombre</th>
             <th>Correo</th>
             <th className="hidden sm:table-cell">Grupo</th>
             <th className="hidden sm:table-cell">Nota Grupal</th>
+            <th className="table-cell sm:hidden">Grupal</th>
             <th className="hidden sm:table-cell">Coevaluación</th>
             <th className="table-cell sm:hidden">Coev.</th>
             <th className="hidden sm:table-cell">Nota Final</th>
@@ -80,7 +81,7 @@ export default async function Page({ params }: Props) {
               <td className="hidden sm:table-cell">{student.userInfo?.firstName} {student.userInfo?.lastName}</td>
               <td>{student.userInfo?.email}</td>
               <td className="hidden sm:table-cell">{student.group}</td>
-              <td className="hidden sm:table-cell">{student.groupGrade}</td>
+              <td>{student.groupGrade}</td>
               <td>{student.coGrade}</td>
               <td>{student.finalGrade}</td>
             </tr>
