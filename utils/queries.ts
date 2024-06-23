@@ -280,7 +280,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
   const newGrades: Grade[] = []
   for (const [userInfoId, grade] of Object.entries(newGradesByUserInfoId)) {
     const grades = await getGrades(evaluation, userInfoId)
-    const groupGrade = parseFloat(grades?.groupGrade || '0.0') ?? 4.0
+    const groupGrade = parseFloat(grades?.groupGrade ?? '4.0')
     const newGrade = {
       evaluationId: evaluation.id,
       userInfoId,
