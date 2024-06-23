@@ -28,9 +28,14 @@ export default async function Page({ params }: { params: { abbreviature: string,
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3'>
       <h1 className='text-3xl font-bold'>{evaluation.title}</h1>
       {isCourseProfessor && (
-        <HoverableLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`}>
-          Configurar Evaluación
-        </HoverableLink>
+        <div className='flex gap-4'>
+          <HoverableLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`}>
+            Configurar Evaluación
+          </HoverableLink>
+          <HoverableLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/resultados`}>
+            Resultados
+          </HoverableLink>
+        </div>
       )}
       <EvaluationForm evaluation={evaluation} userInfoId={userInfo.id} />
     </div>

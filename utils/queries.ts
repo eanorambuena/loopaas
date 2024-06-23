@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { createClient } from "./supabase/server"
 import { Course, Evaluation, LinearQuestion, Question, QuestionCriterion, Response } from "./schema"
 import { User } from "@supabase/supabase-js"
+import { sendEmail } from "./resend"
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
@@ -175,6 +176,7 @@ export async function getResponses(evaluation: Evaluation) {
     .select('*')
     .eq('evaluationId', evaluation.id)
     .order('created_at', { ascending: false })
+  console.log({ responses })
   if (!responses) return
   const grouped: ResponsesByUserInfoId = {}
   for (const response of responses) {
@@ -199,6 +201,26 @@ interface ResponseWithWeights {
   data: {
     [key: string]: LinearQuestionWithValues
   }
+}
+
+export async function getCourseById(courseId: string) {
+  const supabase = createClient()
+  const { data: course } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("id", courseId)
+    .single()
+  return course as Course | null
+}
+
+export async function getUserInfoById(userInfoId: string) {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from("userInfo")
+    .select("*")
+    .eq("id", userInfoId)
+    .single()
+  return data
 }
 
 export async function saveGrades(evaluation: Evaluation, grades: any) {
@@ -227,5 +249,16 @@ export async function saveGrades(evaluation: Evaluation, grades: any) {
     const mapValue = (value: number) => (value - 3) * maxValue / 2
     const newCoGrade = responseDataWithWeights.reduce((acc, { value, weight }) => acc + mapValue(value) * weight / totalWeight, 0)
     console.log({ userInfoId, newCoGrade })
+  })
+  console.log({ grades })
+  const course = await getCourseById(evaluation.courseId)
+  if (!course) return
+  const professorUserInfo = await getUserInfoById(course.teacherInfoId)
+  sendEmail({
+    from: 'onboarding@resend.dev',
+    to: professorUserInfo.email,
+    subject: 'IDSApp | Envío de Notas',
+    html: `<h1>Notas</h1>
+    <p>${JSON.stringify(grades)}</p>`
   })
 }

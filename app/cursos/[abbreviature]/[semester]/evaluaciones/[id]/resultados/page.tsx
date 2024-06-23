@@ -62,6 +62,9 @@ export default async function Page({ params }: Props) {
   return (
     <div className="animate-in flex-1 flex flex-col gap-6 p-8 opacity-0">
       <h1 className='text-3xl font-bold'>Resultados {evaluation.title}</h1>
+      {new Date(evaluation.deadLine) > new Date() && (
+        <p className="text-red-500 w-full">Advertencia: La evaluación aún no ha finalizado</p>
+      )}
       <table className="table-auto text-sm sm:text-inherit max-w-[95%]">
         <thead className="h-fit">
           <tr className="text-left sm:*:px-6 *:py-3">

@@ -78,16 +78,6 @@ export default function ConfigForm({ evaluation }: Props) {
     delete evaluation.questions[id]
     setQuestions({ ...questions })
   }
-
-  const addQuestion = () => {
-    const id = Object.keys(questions).length
-    evaluation.questions[id] = {
-      type: 'linear',
-      required: false,
-      criteria: []
-    }
-    setQuestions({ ...questions })
-  }
   
   return (
     <form className='animate-in flex-1 flex flex-col w-full justify-center items-center gap-6 text-foreground' onSubmit={handleSubmit}>
@@ -97,9 +87,6 @@ export default function ConfigForm({ evaluation }: Props) {
       { Object.entries(questions).map(([id, question]) => (
         <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
       )) }
-      <SecondaryButton onClick={addQuestion} className='w-full'>
-        Agregar pregunta
-      </SecondaryButton>
       <MainButton pendingText='Guardando evaluación...' className='w-full'>
         Guardar evaluación
       </MainButton>

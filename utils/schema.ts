@@ -1,6 +1,7 @@
 export type Evaluation = {
   id: string
   title: string
+  courseId: string
   instructions: string
   deadLine: string
   sections: Array<string>
