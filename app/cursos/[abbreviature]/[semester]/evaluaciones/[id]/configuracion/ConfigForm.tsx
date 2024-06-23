@@ -7,6 +7,7 @@ import { Evaluation, LinearQuestion } from "@/utils/schema"
 import { createClient } from "@/utils/supabase/client"
 import QuestionForm from "./QuestionForm"
 import SecondaryButton from "@/components/SecondaryButton"
+import { useState } from "react"
 
 interface Props {
   evaluation: Evaluation
@@ -15,6 +16,7 @@ interface Props {
 export default function ConfigForm({ evaluation }: Props) {
   const supabase = createClient()
   const { toast } = useToast()
+  const [questions, setQuestions] = useState<Record<string, LinearQuestion>>(evaluation.questions)
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
@@ -27,30 +29,31 @@ export default function ConfigForm({ evaluation }: Props) {
         [['id-0-criterion, 'criterion'], ['id-0-weight', '1'], ['id-1-criterion', 'criterion1'], ['id-1-weight', '2']]
     */
    // TODO: add support for non-linear questions
-    const questions: Record<string, LinearQuestion> = {}
+    const _questions: Record<string, LinearQuestion> = {}
     questionData.forEach(([key, value]) => {
       const [id, index, type] = key.split('-')
-      if (!questions[id]) {
+      if (!_questions[id]) {
         const required = entries[`${id}-required`] === 'on'
-        questions[id] = {
+        _questions[id] = {
           type: 'linear',
           required: required,
           criteria: []
         } as LinearQuestion
       }
       if (type === 'criterion') {
-        questions[id].criteria.push({
+        _questions[id].criteria.push({
           label: value as string,
           weight: parseInt(entries[`${id}-${index}-weight`] as string)
         })
       }
     })
+    setQuestions(_questions)
 
     const newEvaluation = {
       title: entries.title,
       instructions: entries.instructions,
       deadLine: entries.deadLine,
-      questions
+      questions: _questions
     }
 
     const { error } = await supabase
@@ -73,34 +76,39 @@ export default function ConfigForm({ evaluation }: Props) {
 
   const deleteQuestion = (id: string) => {
     delete evaluation.questions[id]
+    setQuestions(evaluation.questions)
+  }
+
+  const calculateResults = () => {
+    console.log('Calculating results...')
   }
   
   return (
-    <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground" onSubmit={handleSubmit}>
-      <SecondaryButton onClick={() => {}} className="mb-6">
+    <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-6 text-foreground" onSubmit={handleSubmit}>
+      <SecondaryButton onClick={calculateResults}>
         Calcular resultados
       </SecondaryButton>
-      <fieldset className="flex flex-col gap-6">
-        <Input label="Título" name="title" required defaultValue={evaluation.title} />
-        <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} />
-        <Input type="date" label="Fecha de entrega" name="deadLine"required defaultValue={evaluation.deadLine} />
-        { Object.entries(evaluation.questions).map(([id, question]) => (
-          <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
-        )) }
-        <SecondaryButton onClick={() => {
+      <Input label="Título" name="title" required defaultValue={evaluation.title} />
+      <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} />
+      <Input type="date" label="Fecha de entrega" name="deadLine"required defaultValue={evaluation.deadLine} />
+      { Object.entries(questions).map(([id, question]) => (
+        <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
+      )) }
+      <SecondaryButton onClick={() => {
           const id = Object.keys(evaluation.questions).length
           evaluation.questions[id] = {
             type: 'linear',
             required: false,
             criteria: []
-          }}}
-        >
-          Agregar pregunta
-        </SecondaryButton>
-        <MainButton pendingText="Guardando evaluación...">
-          Guardar evaluación
-        </MainButton>
-      </fieldset>
+          }
+          setQuestions(evaluation.questions)
+        }}
+      >
+        Agregar pregunta
+      </SecondaryButton>
+      <MainButton pendingText="Guardando evaluación...">
+        Guardar evaluación
+      </MainButton>
     </form>
   )
 }

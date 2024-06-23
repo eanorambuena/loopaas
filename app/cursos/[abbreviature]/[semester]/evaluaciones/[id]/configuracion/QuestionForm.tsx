@@ -1,6 +1,7 @@
 import Input from "@/components/Input"
 import SecondaryButton from "@/components/SecondaryButton"
-import { Question } from "@/utils/schema"
+import { LinearQuestion, Question } from "@/utils/schema"
+import { useState } from "react"
 
 interface Props {
   id: string
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export default function QuestionForm({ id, question, deleteQuestion }: Props) {
+  const [questionState, setQuestion] = useState<Question>(question)
+
   if (question.type !== 'linear') return (
     <fieldset className="flex flex-col gap-4 border-t border-b border-foreground/20 p-4">
       <div className="flex gap-4 justify-between items-center">
@@ -20,8 +23,14 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
     </fieldset>
   )
 
-  const handleClick = () => {
+  const addCriterion = () => {
     question.criteria.push({ label: '', weight: 0 })
+    setQuestion({ ...question })
+  }
+
+  const deleteCriterion = (index: number) => {
+    question.criteria.splice(index, 1)
+    setQuestion({ ...question })
   }
 
   return (
@@ -31,14 +40,16 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
         <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className="!flex-row justify-center items-center" />
         <SecondaryButton onClick={() => deleteQuestion(id)}>Eliminar pregunta</SecondaryButton>
       </div>
-      {question.criteria.map((criterion, i) => (
+      {(questionState as LinearQuestion).criteria.map((criterion, i) => (
         <div key={i} className="flex gap-4">
           <Input label="Criterio" name={`${id}-${i}-criterion`} required defaultValue={criterion.label} />
           <Input label="Peso" name={`${id}-${i}-weight`} type="number" required defaultValue={criterion.weight.toString()} />
-          <SecondaryButton onClick={() => question.criteria.splice(i, 1)}>Eliminar criterio</SecondaryButton>
+          <SecondaryButton onClick={() => deleteCriterion(i)}>
+            Eliminar criterio
+          </SecondaryButton>
         </div>
       ))}
-      <SecondaryButton key={id} pendingText="Añadiendo criterio..." onClick={handleClick}>
+      <SecondaryButton key={id} pendingText="Añadiendo criterio..." onClick={addCriterion}>
         Agregar criterio
       </SecondaryButton>
     </fieldset>
