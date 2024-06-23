@@ -13,8 +13,8 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
   const [questionState, setQuestion] = useState<Question>(question)
 
   if (question.type !== 'linear') return (
-    <fieldset className="flex flex-col gap-4 border-t border-b border-foreground/20 p-4">
-      <div className="flex gap-4 justify-between items-center">
+    <fieldset className="flex flex-col gap-4 w-full border-t border-b border-foreground/20 p-4">
+      <div className="flex gap-4 justify-between items-center w-full">
         <legend className="text-xl font-bold">Pregunta {id}</legend>
         <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className="!flex-row justify-center items-center" />
         <SecondaryButton onClick={() => deleteQuestion(id)}>Eliminar pregunta</SecondaryButton>
@@ -34,8 +34,8 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
   }
 
   return (
-    <fieldset className="flex flex-col gap-4 border-t border-b border-foreground/20 p-4">
-      <div className="flex gap-4 justify-between items-center">
+    <fieldset className="flex flex-col gap-4 w-full border-t border-b border-foreground/20 p-4">
+      <div className="flex gap-4 justify-between items-center w-full">
         <legend className="text-xl font-bold">Pregunta {id}</legend>
         <Input label='Requerida' name={`${id}-required`} type='checkbox' defaultChecked={question.required} className="!flex-row justify-center items-center" />
         <SecondaryButton onClick={() => deleteQuestion(id)}>Eliminar pregunta</SecondaryButton>

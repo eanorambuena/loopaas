@@ -8,4 +8,4 @@ export default function EvaluationIcon({ size = 24 } : { size?: number }){
       <path d="M9 15l4 0" />
     </svg>
   )
-};
+}

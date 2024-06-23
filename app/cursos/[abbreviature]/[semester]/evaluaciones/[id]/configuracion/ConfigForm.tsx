@@ -80,14 +80,15 @@ export default function ConfigForm({ evaluation }: Props) {
   }
 
   const calculateResults = () => {
-    console.log('Calculating results...')
+    // get all the responses for this evaluation
+    // calculate the results for each student
+    // save the results in the database
+
+
   }
   
   return (
     <form className="animate-in flex-1 flex flex-col w-full justify-center items-center gap-6 text-foreground" onSubmit={handleSubmit}>
-      <SecondaryButton onClick={calculateResults}>
-        Calcular resultados
-      </SecondaryButton>
       <Input label="Título" name="title" required defaultValue={evaluation.title} />
       <Input type="textarea" label="Instrucciones" name="instructions" required defaultValue={evaluation.instructions} />
       <Input type="date" label="Fecha de entrega" name="deadLine"required defaultValue={evaluation.deadLine} />
