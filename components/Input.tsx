@@ -8,7 +8,7 @@ interface Props extends OptionalInputProps {
   className?: string
   label: string
   name: string
-  type?: 'text' | 'email' | 'password' | 'number' | 'textarea' | 'datetime-local'
+  type?: 'text' | 'email' | 'password' | 'number' | 'textarea' | 'datetime-local' | 'date' | 'time' | 'file'
 }
 
 export default function Input({ className = '', label, name, type = 'text', ...props }: Props) {
@@ -19,7 +19,7 @@ export default function Input({ className = '', label, name, type = 'text', ...p
     <div className={`flex flex-col gap-2 ${className}`}>
       <label htmlFor={name} className="text-md">{label}</label>
       {type === 'textarea' ? (
-        <textarea {...commonProps} />
+        <textarea {...commonProps} rows={4} />
       ) : (
         <input type={type} {...commonProps} />
       )}

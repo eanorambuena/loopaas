@@ -12,3 +12,21 @@ export type Course = {
   semester: string
   teacherInfoId: string
 }
+
+type QuestionCriterion = {
+  label: string
+  weight: number
+}
+
+type QuestionCriteria = Array<QuestionCriterion>
+
+type LinearQuestion = {
+  type: 'linear'
+  required: boolean
+  criteria: QuestionCriteria
+}
+
+export type Question = LinearQuestion | {
+  type: 'text' | 'radio' | 'checkbox' | 'select' | 'file'
+  required: boolean
+}
