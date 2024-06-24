@@ -2,7 +2,6 @@ import { redirect } from "next/navigation"
 import { createClient } from "./supabase/server"
 import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section } from "./schema"
 import { User } from "@supabase/supabase-js"
-import { sendEmail } from "./resend"
 import { evaluationPath } from "./paths"
 
 export async function getCourse(abbreviature: string, semester: string) {
@@ -296,18 +295,6 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     const { data: error } = await supabase
       .from('grades')
       .upsert(grade)
-    if (error) redirect(`${evaluationPath(pathParams)}/${evaluation.id}/resultados?message=No se pudieron guardar las notas`)
+    if (error) redirect(`${evaluationPath(pathParams)}/resultados?message=No se pudieron guardar las notas`)
   }
-
-  const professorUserInfo = await getUserInfoById(course.teacherInfoId)
-  const sendReport = async (html: any) => {
-    await sendEmail({
-      from: 'onboarding@resend.dev',
-      to: professorUserInfo.email,
-      subject: `IDSApp | Notas de Evaluación ${evaluation.title}`,
-      html
-    })
-    redirect(`${evaluationPath(pathParams)}/${evaluation.id}/resultados?message=Reporte enviado con éxito`)
-  }
-  return sendReport
 }
