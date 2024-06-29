@@ -33,25 +33,36 @@ export async function getAuthorizationHeader() {
 }
 
 export async function fetchGroups(course: any) {
-  let response = await fetch(`${CANVAS_URL}/api/v1/courses/${course.canvasId}/groups`, await getAuthorizationHeader())
+  const response = await fetch(`${CANVAS_URL}/api/v1/courses/${course.canvasId}/groups`, await getAuthorizationHeader())
   let groups = (await response.json())
     .map((group: any) => ({
       id: group.id,
       name: group.name,
-      students: group.users,
     }))
 
   for (const group of groups) {
-    let response = await fetch(`${CANVAS_URL}/api/v1/groups/${group.id}/users`, await getAuthorizationHeader())
-    let students = (await response.json())
-      .map((student: any) => ({
+    const response = await fetch(`${CANVAS_URL}/api/v1/groups/${group.id}/users`, await getAuthorizationHeader())
+    const studentsData = await response.json()
+
+    let students: any[] = []
+    for (const studentData of studentsData) {
+      const response = await fetch(`${CANVAS_URL}/api/v1/users/${studentData.id}/profile`, await getAuthorizationHeader())
+      const student = await response.json()
+      const sortableNameData = student.sortable_name.split(", ")
+      const firstName = sortableNameData[1]
+      const lastName = sortableNameData[0]
+      const email = `${student.login_id}@estudiante.uc.cl`
+      students.push({
         id: student.id,
-        name: student.name,
-      }))
+        avatarUrl: student.avatar_url,
+        firstName,
+        lastName,
+        email,
+      })
+    }
     group.students = students
   }
-  
-  return groups
+  return groups.filter((group: any) => group.students.length > 0)
 }
 
 export async function fetchCourse(canvasId: string) {

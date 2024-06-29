@@ -1,8 +1,9 @@
-import { redirect } from "next/navigation"
-import { createClient } from "./supabase/server"
-import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section } from "./schema"
 import { User } from "@supabase/supabase-js"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 import { evaluationPath } from "./paths"
+import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section } from "./schema"
+import { createClient } from "./supabase/server"
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
@@ -41,42 +42,42 @@ export async function getCourseStudents(course: any) {
 
 export async function createCourseStudents(course: any, groups: any) {
   const supabase = createClient()
-
-  console.log({s: groups.students})
-  return
-  for (const user in groups.students)
-  {
-    const student = user as any
-    const { email } = student
-    const password = "a"
-    await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    })
-    const { data } = await supabase
-      .from("userInfo")
-      .insert([
-        {
-          email,
-          firstName: "a",
-          lastName: "b",
-          img: "c"
-        }
-      ])
-    if (!data) continue
-    supabase
-      .from("students")
-      .insert([
-        {
-          courseId: course.id,
-          userInfoId: (data as any)[0].id,
-          group: student.group
-        }
-      ])
+  let students: any[] = []
+  for (const group of groups) {
+    for (const student of group.students) {
+      const { email, firstName, lastName, img } = student
+      const password = "a"
+      const origin = headers().get("origin")
+      await supabase.auth.signUp({
+        email: 'eanorambuena@uc.cl',
+        password,
+        options: {
+          emailRedirectTo: `${origin}/auth/callback`,
+        },
+      })
+      const { data } = await supabase
+        .from("userInfo")
+        .insert([
+          {
+            email,
+            firstName,
+            lastName,
+            img
+          }
+        ])
+      if (!data) continue
+      students.push({
+        courseId: course.id,
+        userInfoId: (data as any)[0].id,
+        group: group.name
+      })
+    }
   }
+  await supabase
+    .from("students")
+    .insert(students)
+
+  return redirect(`/cursos/${course.abbreviature}/${course.semester}/estudiantes`)
 }
 
 interface PathParams {
@@ -84,7 +85,6 @@ interface PathParams {
   semester: string
   id: string
 }
-
 
 export async function getEvaluationByParams(params: PathParams) {
   const supabase = createClient()
