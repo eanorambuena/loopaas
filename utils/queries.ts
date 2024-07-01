@@ -41,54 +41,78 @@ export async function getCourseStudents(course: any) {
   return students
 }
 
+interface WelcomeEmailData{
+  email: string
+  password: string
+  sendingEmail?: string
+}
+
+async function sendWelcomeEmail({ email, password, sendingEmail } : WelcomeEmailData) {
+  if (!sendingEmail) {
+    sendingEmail = email
+  }
+  await sendEmail({
+    from: 'onboarding@resend.dev',
+    to: sendingEmail,
+    subject: 'IDSApp | Bienvenid@ a IDSApp',
+    html: /*html*/`
+      <h1>Bienvenido a IDSApp</h1>
+      <p>Para continuar con el proceso de inscripción, por favor haz click en el siguiente enlace:</p>
+      <p>Correo: ${email}</p>
+      <strong>Contraseña: ${password}</strong>
+      <br>
+      <a href="https://idsapp.vercel.app/login">Continuar</a>
+      <br>
+      <a href="https://idsapp.vercel.app/cursos/SUS1000-1/2024-1/evaluaciones">Ir a Coevaluación Debate SUS1000-1</a>
+    `
+  })
+}
+
 export async function createCourseStudents(course: any, students: any) {
   const supabase = createClient()
-  for (const student of students) {
-    const { email, firstName, lastName, group } = student
+  let filteredStudents = students.filter((student: any) => student.group !== undefined)
+  filteredStudents = filteredStudents.filter((student: any) => !isNaN(student.group))
+  filteredStudents = filteredStudents.filter((student: any) => student.group < 20)
+  const studentsData: any[] = []
+  for (const student of filteredStudents) {
+    const { ucUsername, firstName, lastName, group } = student
     const img = `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`
     const password = crypto.getRandomValues(new Uint32Array(1))[0].toString(16)
     const origin = headers().get("origin")
-    await sendEmail({
-      from: 'onboarding@resend.dev',
-      to: email,
-      subject: 'IDSApp | Bienvenid@ a IDSApp',
-      html: /*html*/`
-        <h1>Bienvenido a IDSApp</h1>
-        <p>Para continuar con el proceso de inscripción, por favor haz click en el siguiente enlace:</p>
-        <p>Correo: ${email}</p>
-        <strong>Contraseña: ${password}</strong>
-        <a href="https://idsapp.vercel.app/login">Continuar</a>
-        <br>
-        <a href="https://idsapp.vercel.app/cursos/SUS1000-1/2024-1/evaluaciones">Ir a Coevaluación Debate SUS1000-1</a>
-      `
-    })
-    await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      }
-    })
-    const { data } = await supabase
-      .from("userInfo")
-      .insert([
-        {
-          email,
-          firstName,
-          lastName,
-          img
+    console.log({ ucUsername, firstName, lastName, group, password })
+    
+    for (const email of [`${ucUsername}@uc.cl`, `${ucUsername}@estudiante.uc.cl`]) {
+      await sendWelcomeEmail({ email, password })
+      await sendWelcomeEmail({ email, password, sendingEmail: 'soporte.idsapp@gmail.com' })
+      await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${origin}/auth/callback`,
         }
-      ])
-    if (!data) continue
-    students.push({
-      courseId: course.id,
-      userInfoId: (data as any)[0].id,
-      group: group.name
-    })
+      })
+      const { data } = await supabase
+        .from("userInfo")
+        .insert([
+          {
+            email,
+            firstName,
+            lastName,
+            img
+          }
+        ])
+        .single()
+      if (!data) continue
+      studentsData.push({
+        courseId: course.id,
+        userInfoId: (data as any).id,
+        group: group.name
+      })
+    }
+    await supabase
+      .from("students")
+      .insert(studentsData)
   }
-  await supabase
-    .from("students")
-    .insert(students)
 
   return redirect(`/cursos/${course.abbreviature}/${course.semester}/estudiantes`)
 }

@@ -56,8 +56,8 @@ export default async function Page({ params }: { params: { abbreviature: string,
       return {
         firstName,
         lastName,
-        email: `${student.login_id}@estudiante.uc.cl`,
-        group: student.group_name
+        ucUsername: student.login_id,
+        group: parseInt(student.group_name)
       }
     })
     await createCourseStudents(course, students)
