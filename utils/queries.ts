@@ -49,9 +49,9 @@ export async function createCourseStudents(course: any, students: any) {
     const password = crypto.getRandomValues(new Uint32Array(1))[0].toString(16)
     const origin = headers().get("origin")
     await sendEmail({
-      from: 'onboarding@resend',
+      from: 'onboarding@resend.dev',
       to: 'eanorambuena@uc.cl',
-      subject: 'Bienvenido a IDSApp',
+      subject: 'IDSApp | Bienvenid@ a IDSApp',
       html: /*html*/`
         <h1>Bienvenido a IDSApp</h1>
         <p>Para continuar con el proceso de inscripción, por favor haz click en el siguiente enlace:</p>

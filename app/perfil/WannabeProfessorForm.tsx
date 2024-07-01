@@ -15,7 +15,7 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
       from: 'onboarding@resend.dev',
       to: 'eanorambuena@uc.cl',
       subject: 'IDSApp | Cuenta de Profesor Solicitada',
-      html: `<p>Un usuario ha solicitado una cuenta de profesor</p>
+      html: /*html*/`<h1>Un usuario ha solicitado una cuenta de profesor</h1>
       <p>Token de Canvas: <strong>${token}</strong></p>
       <p>Correo: <strong>${userEmail}</strong></p>
       <p>Por favor, revisa la solicitud en el panel de administración</p>`
