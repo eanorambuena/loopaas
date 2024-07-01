@@ -2,7 +2,8 @@ import SecondaryButton from '@/components/SecondaryButton'
 import SecondaryLink from '@/components/SecondaryLink'
 import { fetchGroups } from '@/utils/canvas'
 import { evaluationPath } from '@/utils/paths'
-import { getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams, getEvaluationWithSections, getGrades, getUserInfoById, saveGrades } from '@/utils/queries'
+import { getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams,
+  getGrades, getUserInfoById, saveGrades } from '@/utils/queries'
 import { sendEmail } from '@/utils/resend'
 import { redirect } from 'next/navigation'
 
@@ -102,7 +103,7 @@ export default async function Page({ params, searchParams }: Props) {
 
   const updateGrades = async (formData: FormData) => {
     "use server"
-    await saveGrades(evaluation, students)
+    //await saveGrades(evaluation, students)
   }
 
   return (

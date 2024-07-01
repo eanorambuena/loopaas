@@ -6,6 +6,7 @@ interface OptionalInputProps {
   defaultValue?: string
   defaultChecked?: boolean
   placeholder?: string
+  accept?: string
 }
 
 interface Props extends OptionalInputProps {

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { evaluationPath } from "./paths"
 import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section } from "./schema"
 import { createClient } from "./supabase/server"
+import { sendEmail } from "./resend"
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
@@ -40,38 +41,48 @@ export async function getCourseStudents(course: any) {
   return students
 }
 
-export async function createCourseStudents(course: any, groups: any) {
+export async function createCourseStudents(course: any, students: any) {
   const supabase = createClient()
-  let students: any[] = []
-  for (const group of groups) {
-    for (const student of group.students) {
-      const { email, firstName, lastName, img } = student
-      const password = "a"
-      const origin = headers().get("origin")
-      await supabase.auth.signUp({
-        email: 'eanorambuena@uc.cl',
-        password,
-        options: {
-          emailRedirectTo: `${origin}/auth/callback`,
-        },
-      })
-      const { data } = await supabase
-        .from("userInfo")
-        .insert([
-          {
-            email,
-            firstName,
-            lastName,
-            img
-          }
-        ])
-      if (!data) continue
-      students.push({
-        courseId: course.id,
-        userInfoId: (data as any)[0].id,
-        group: group.name
-      })
-    }
+  for (const student of students) {
+    const { email, firstName, lastName, group } = student
+    const img = `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`
+    const password = crypto.getRandomValues(new Uint32Array(1))[0].toString(16)
+    const origin = headers().get("origin")
+    await sendEmail({
+      from: 'onboarding@resend',
+      to: 'eanorambuena@uc.cl',
+      subject: 'Bienvenido a IDSApp',
+      html: /*html*/`
+        <h1>Bienvenido a IDSApp</h1>
+        <p>Para continuar con el proceso de inscripción, por favor haz click en el siguiente enlace:</p>
+        <p>Correo: ${email}</p>
+        <strong>Contraseña: ${password}</strong>
+        <a href="${origin}/auth/callback">Continuar</a>
+      `
+    })
+    await supabase.auth.signUp({
+      email: 'eanorambuena@uc.cl',
+      password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
+      },
+    })
+    const { data } = await supabase
+      .from("userInfo")
+      .insert([
+        {
+          email,
+          firstName,
+          lastName,
+          img
+        }
+      ])
+    if (!data) continue
+    students.push({
+      courseId: course.id,
+      userInfoId: (data as any)[0].id,
+      group: group.name
+    })
   }
   await supabase
     .from("students")

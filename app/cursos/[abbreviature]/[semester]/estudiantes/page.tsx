@@ -1,8 +1,10 @@
+import Input from "@/components/Input"
+import SecondaryButton from "@/components/SecondaryButton"
+import { fetchGroups } from "@/utils/canvas"
+import { createCourseStudents, getCourse, getCourseStudents } from "@/utils/queries"
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
-import { fetchGroups } from "@/utils/canvas"
-import { getCourse, createCourseStudents, getCourseStudents } from "@/utils/queries"
-import SecondaryButton from "@/components/SecondaryButton"
+import * as XLSX from "xlsx"
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
   const supabase = createClient()
@@ -42,23 +44,43 @@ export default async function Page({ params }: { params: { abbreviature: string,
     }
   }
 
-  async function saveStudents() {
+  async function saveStudents(formData: FormData) {
     "use server"
-    console.log({ groups })
-    await createCourseStudents(course, groups)
+    const file = formData.get('file') as File
+    const data = await file.arrayBuffer()
+    const workbook = XLSX.read(data, { type: 'array' })
+    const sheet = workbook.Sheets[workbook.SheetNames[0]]
+    const studentsData = XLSX.utils.sheet_to_json(sheet)
+    const students = studentsData.map((student: any) => {
+      const [lastName, firstName] = student.nombre.split(', ')
+      return {
+        firstName,
+        lastName,
+        email: `${student.login_id}@estudiante.uc.cl`,
+        group: student.group_name
+      }
+    })
+    await createCourseStudents(course, students)
   }
 
   return (
     <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3">
       <h1 className='text-3xl font-bold'>Estudiantes {course.title ?? params.abbreviature} {params.semester}</h1>
-      <form>
+      <form className="flex flex-row gap-4 border border-foreground/20 rounded-md p-4" encType="multipart/form-data">
+        <Input
+          type="file"
+          name="file"
+          label="Archivo de estudiantes"
+          accept=".xlsx"
+          required
+        />
         <SecondaryButton
           className="w-full"
           type="submit"
           formAction={saveStudents}
           pendingText="Guardando estudiantes..."
         >
-          Obtener estudiantes de Canvas
+          Importar estudiantes desde archivo
         </SecondaryButton>
       </form>
       <table className="table-auto">
