@@ -56,7 +56,7 @@ async function sendWelcomeEmail({ email, password, sendingEmail } : WelcomeEmail
     to: sendingEmail,
     subject: 'IDSApp | Bienvenid@ a IDSApp',
     html: /*html*/`
-      <h1>Bienvenido a IDSApp</h1>
+      <h1>Bienvenido a IDS App</h1>
       <p>Para continuar con el proceso de inscripción, por favor haz click en el siguiente enlace:</p>
       <p>Correo: ${email}</p>
       <strong>Contraseña: ${password}</strong>
@@ -68,11 +68,11 @@ async function sendWelcomeEmail({ email, password, sendingEmail } : WelcomeEmail
   })
 }
 
-export async function createCourseStudents(course: any, students: any) {
+export async function createCourseStudents(course: any, students: any, minGroup: number, maxGroup: number) {
   const supabase = createClient()
   let filteredStudents = students.filter((student: any) => student.group !== undefined)
   filteredStudents = filteredStudents.filter((student: any) => !isNaN(student.group))
-  filteredStudents = filteredStudents.filter((student: any) => student.group < 20)
+  filteredStudents = filteredStudents.filter((student: any) => student.group >= minGroup && student.group <= maxGroup)
   const studentsData: any[] = []
   for (const student of filteredStudents) {
     const { ucUsername, firstName, lastName, group } = student
@@ -82,7 +82,6 @@ export async function createCourseStudents(course: any, students: any) {
     console.log({ ucUsername, firstName, lastName, group, password })
     
     for (const email of [`${ucUsername}@uc.cl`, `${ucUsername}@estudiante.uc.cl`]) {
-      await sendWelcomeEmail({ email, password })
       await sendWelcomeEmail({ email, password, sendingEmail: 'soporte.idsapp@gmail.com' })
       await supabase.auth.signUp({
         email,
@@ -109,12 +108,10 @@ export async function createCourseStudents(course: any, students: any) {
         group: group.name
       })
     }
-    await supabase
-      .from("students")
-      .insert(studentsData)
   }
-
-  return redirect(`/cursos/${course.abbreviature}/${course.semester}/estudiantes`)
+  await supabase
+    .from("students")
+    .insert(studentsData)
 }
 
 interface PathParams {

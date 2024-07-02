@@ -13,7 +13,7 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
     const token = formData.get("token")
     sendEmail({
       from: 'onboarding@resend.dev',
-      to: 'eanorambuena@uc.cl',
+      to: 'soporte.idsapp@gmail.com',
       subject: 'IDSApp | Cuenta de Profesor Solicitada',
       html: /*html*/`<h1>Un usuario ha solicitado una cuenta de profesor</h1>
       <p>Token de Canvas: <strong>${token}</strong></p>
