@@ -1,18 +1,18 @@
-import { User } from "@supabase/supabase-js"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
-import { evaluationPath } from "./paths"
-import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section } from "./schema"
-import { createClient } from "./supabase/server"
-import { sendEmail } from "./resend"
+import { User } from '@supabase/supabase-js'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { evaluationPath } from './paths'
+import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section } from './schema'
+import { createClient } from './supabase/server'
+import { sendEmail } from './resend'
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
   const { data: course } = await supabase
-    .from("courses")
-    .select("*")
-    .eq("abbreviature", abbreviature)
-    .eq("semester", semester)
+    .from('courses')
+    .select('*')
+    .eq('abbreviature', abbreviature)
+    .eq('semester', semester)
     .single()
   return course as Course | null
 }
@@ -21,19 +21,19 @@ export async function getCourseStudents(course: any) {
   const supabase = createClient()
 
   let students = (await supabase
-    .from("students")
-    .select("*")
-    .eq("courseId", course.id)
-    .order("created_at", { ascending: false }))
+    .from('students')
+    .select('*')
+    .eq('courseId', course.id)
+    .order('created_at', { ascending: false }))
     .data
 
   if (!students) return []
 
   for (const student of students) {
     const { data: userInfo } = await supabase
-      .from("userInfo")
-      .select("*")
-      .eq("id", student.userInfoId)
+      .from('userInfo')
+      .select('*')
+      .eq('id', student.userInfoId)
 
     student.userInfo = userInfo?.[0]
   }
@@ -78,7 +78,7 @@ export async function createCourseStudents(course: any, students: any, minGroup:
     const { ucUsername, firstName, lastName, group } = student
     const img = `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`
     const password = crypto.getRandomValues(new Uint32Array(1))[0].toString(16)
-    const origin = headers().get("origin")
+    const origin = headers().get('origin')
     console.log({ ucUsername, firstName, lastName, group, password })
     
     for (const email of [`${ucUsername}@uc.cl`, `${ucUsername}@estudiante.uc.cl`]) {
@@ -91,7 +91,7 @@ export async function createCourseStudents(course: any, students: any, minGroup:
         }
       })
       const { data } = await supabase
-        .from("userInfo")
+        .from('userInfo')
         .insert([
           {
             email,
@@ -110,7 +110,7 @@ export async function createCourseStudents(course: any, students: any, minGroup:
     }
   }
   await supabase
-    .from("students")
+    .from('students')
     .insert(studentsData)
 }
 
@@ -191,9 +191,9 @@ export async function getCurrentUser() {
 export async function getUserInfo(userId: string) {
   const supabase = createClient()
   const { data } = await supabase
-    .from("userInfo")
-    .select("*")
-    .eq("userId", userId)
+    .from('userInfo')
+    .select('*')
+    .eq('userId', userId)
     .single()
   return data
 }
@@ -237,9 +237,9 @@ export async function getResponsesByUserInfoId(evaluation: Evaluation) {
 export async function getCourseById(courseId: string) {
   const supabase = createClient()
   const { data: course } = await supabase
-    .from("courses")
-    .select("*")
-    .eq("id", courseId)
+    .from('courses')
+    .select('*')
+    .eq('id', courseId)
     .single()
   return course as Course | null
 }
@@ -247,9 +247,9 @@ export async function getCourseById(courseId: string) {
 export async function getUserInfoById(userInfoId: string) {
   const supabase = createClient()
   const { data } = await supabase
-    .from("userInfo")
-    .select("*")
-    .eq("id", userInfoId)
+    .from('userInfo')
+    .select('*')
+    .eq('id', userInfoId)
     .single()
   return data
 }

@@ -27,10 +27,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GoBackLink />
           <section className="flex-1 w-full flex flex-col gap-5 items-center">
             {children}
+            <Toaster />
             <Footer />
           </section>
         </main>
-        <Toaster />
       </body>
     </html>
   )
