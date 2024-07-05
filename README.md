@@ -5,10 +5,12 @@
 IDS App es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable, principalmente sus coevaluaciones y autoevaluaciones.
 
 ## Tecnologías (Stack)
-- Next.js
-- Supabase
-- Resend
-- Tailwind CSS
+- **JavaScript Runtime**: Bun
+- **Framework**: Next.js
+- **Estilos**: Tailwind CSS
+- **Base de datos y autenticación**: Supabase
+- **Mailer**: Resend
+- **Linter**: ESLint
 
 ### APIs externas
 - Canvas LMS
@@ -19,6 +21,12 @@ IDS App es una aplicación web para gestionar los cursos del Instituto para el D
 
 ## Variables de entorno
 Crear un archivo `.env.local` y rellenar las variables de entorno que se encuentran en el archivo `.env.local.example`.
+
+## Linter
+Para correr el linter, ejecutar el siguiente comando:
+```bash
+bun lint
+```
 
 <br />
 <hr />
