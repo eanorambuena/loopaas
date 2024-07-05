@@ -1,10 +1,10 @@
-import Input from "@/components/Input"
-import SecondaryButton from "@/components/SecondaryButton"
-import { fetchGroups } from "@/utils/canvas"
-import { createCourseStudents, getCourse, getCourseStudents } from "@/utils/queries"
-import { createClient } from "@/utils/supabase/server"
-import { redirect } from "next/navigation"
-import * as XLSX from "xlsx"
+import Input from '@/components/Input'
+import SecondaryButton from '@/components/SecondaryButton'
+import { fetchGroups } from '@/utils/canvas'
+import { createCourseStudents, getCourse, getCourseStudents } from '@/utils/queries'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
+import * as XLSX from 'xlsx'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
   const supabase = createClient()
@@ -13,7 +13,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) return redirect("/login")
+  if (!user) return redirect('/login')
 
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) {
@@ -45,7 +45,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
   }
 
   async function saveStudents(formData: FormData) {
-    "use server"
+    'use server'
     const file = formData.get('file') as File
     const minGroup = parseInt(formData.get('minGroup') as string) || 0
     const maxGroup = parseInt(formData.get('maxGroup') as string) || 1000

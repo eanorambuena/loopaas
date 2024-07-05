@@ -1,4 +1,4 @@
-import { QuestionType } from "@/utils/schema"
+import { QuestionType } from '@/utils/schema'
 
 interface OptionalInputProps {
   autocomplete?: string

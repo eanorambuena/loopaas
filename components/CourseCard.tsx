@@ -1,14 +1,14 @@
-import { createClient } from "@/utils/supabase/server"
-import Link from "next/link"
-import Badge from "@/components/Badge"
+import { createClient } from '@/utils/supabase/server'
+import Link from 'next/link'
+import Badge from '@/components/Badge'
 
 export default async function CourseCard({ course }: { course: any }) {
   const supabase = createClient()
 
   const { data: teacher } = await supabase
-    .from("userInfo")
-    .select("*")
-    .eq("id", course.teacherInfoId)
+    .from('userInfo')
+    .select('*')
+    .eq('id', course.teacherInfoId)
 
   if (!teacher) return null
 

@@ -1,6 +1,6 @@
-import AuthButton from "@/components/AuthButton"
-import { createClient } from "@/utils/supabase/server"
-import HoverableLink from "./HoverableLink"
+import AuthButton from '@/components/AuthButton'
+import { createClient } from '@/utils/supabase/server'
+import HoverableLink from './HoverableLink'
 
 export default async function Header() {
   const canInitSupabaseClient = () => {
@@ -37,13 +37,19 @@ export default async function Header() {
 
   if (!user) return noUserOrUserInfoFallback
 
-  const { data: userInfo } = await supabase
-    .from("userInfo")
-    .select("*")
-    .eq("userId", user.id)
-    .single()
-
-  if (!userInfo) return noUserOrUserInfoFallback
+  try {
+    const { data: userInfo } = await supabase
+      .from('userInfo')
+      .select('*')
+      .eq('userId', user.id)
+      .single()
+    
+    if (!userInfo) return noUserOrUserInfoFallback
+  }
+  catch (error) {
+    console.error('Error fetching user info:', error)
+    return noUserOrUserInfoFallback
+  }
 
   return (
     <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">

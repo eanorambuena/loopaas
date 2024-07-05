@@ -1,8 +1,8 @@
-import { createClient } from "@/utils/supabase/server"
-import { redirect } from "next/navigation"
-import CourseCard from "@/components/CourseCard"
-import Card from "@/components/Card"
-import PlusIcon from "@/components/icons/PlusIcon"
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
+import CourseCard from '@/components/CourseCard'
+import Card from '@/components/Card'
+import PlusIcon from '@/components/icons/PlusIcon'
 
 export default async function CursosPage() {
   const supabase = createClient()
@@ -11,25 +11,25 @@ export default async function CursosPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) return redirect("/login")
+  if (!user) return redirect('/login')
 
   const { data: courses } = await supabase
-    .from("courses")
-    .select("*")
-    .order("created_at", { ascending: false })
+    .from('courses')
+    .select('*')
+    .order('created_at', { ascending: false })
 
   const { data: userInfo } = await supabase
-    .from("userInfo")
-    .select("*")
-    .eq("userId", user.id)
+    .from('userInfo')
+    .select('*')
+    .eq('userId', user.id)
     .single()
 
-  if (!userInfo) return redirect("/login")
+  if (!userInfo) return redirect('/login')
 
   const { data: professor } = await supabase
-    .from("professors")
-    .select("*")
-    .eq("teacherInfoId", userInfo.id)
+    .from('professors')
+    .select('*')
+    .eq('teacherInfoId', userInfo.id)
     .single()
   const isProfessor = !!professor
 

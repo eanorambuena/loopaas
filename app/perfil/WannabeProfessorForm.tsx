@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { SubmitButton } from "@/components/SubmitButton"
-import { useToast } from "@/components/ui/use-toast"
-import { sendEmail } from "@/utils/resend"
+import { SubmitButton } from '@/components/SubmitButton'
+import { useToast } from '@/components/ui/use-toast'
+import { sendEmail } from '@/utils/resend'
 
 export default function WannabeProfessorForm({ userEmail }: { userEmail: string }) {
   const { toast } = useToast()
@@ -10,7 +10,7 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    const token = formData.get("token")
+    const token = formData.get('token')
     sendEmail({
       from: 'onboarding@resend.dev',
       to: 'soporte.idsapp@gmail.com',

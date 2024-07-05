@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { useFormStatus } from "react-dom"
-import { type ComponentProps } from "react"
+import { useFormStatus } from 'react-dom'
+import { type ComponentProps } from 'react'
 
-export type SubmitButtonProps = ComponentProps<"button"> & {
+export type SubmitButtonProps = ComponentProps<'button'> & {
   pendingText?: string
   type?: 'submit' | 'button'
 }

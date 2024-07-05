@@ -1,14 +1,15 @@
-import { headers } from "next/headers"
-import { createClient } from "@/utils/supabase/server"
-import { redirect } from "next/navigation"
-import { SubmitButton } from "@/components/SubmitButton"
+'use client'
+
+import { headers } from 'next/headers'
+import { createClient } from '@/utils/supabase/client'
+import { redirect } from 'next/navigation'
+import { SubmitButton } from '@/components/SubmitButton'
+import { useState } from 'react'
 
 export default function Login({ searchParams }: { searchParams: { message: string } }) {
   const signIn = async (formData: FormData) => {
-    "use server"
-
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
     const supabase = createClient()
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -17,23 +18,22 @@ export default function Login({ searchParams }: { searchParams: { message: strin
     })
 
     if (error) {
-      return redirect("/login?message=No se pudo autenticar al usuario")
+      console.log(error)
+      return redirect('/login?message=No se pudo autenticar al usuario')
     }
 
-    return redirect("/cursos")
+    return redirect('/cursos')
   }
 
   const signUp = async (formData: FormData) => {
-    "use server"
-
-    const origin = headers().get("origin")
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
+    const origin = headers().get('origin')
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
     const supabase = createClient()
 
-    const isUC = email.endsWith("uc.cl")
+    const isUC = true//email.endsWith("uc.cl")
     if (!isUC) {
-      return redirect("/login?message=Debes usar un correo UC")
+      return redirect('/login?message=Debes usar un correo UC')
     }
 
     const { error } = await supabase.auth.signUp({
@@ -45,14 +45,28 @@ export default function Login({ searchParams }: { searchParams: { message: strin
     })
 
     if (error) {
-      return redirect("/login?message=No se pudo autenticar al usuario")
+      console.log(error)
+      return redirect('/login?message=No se pudo autenticar al usuario')
     }
-    return redirect("/login?message=Revisa tu correo para continuar con el proceso de inicio de sesión")
+    return redirect('/login?message=Revisa tu correo para continuar con el proceso de inicio de sesión')
+  }
+
+  const [action, setAction] = useState<'signIn' | 'signUp'>('signIn')
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const form = event.currentTarget
+    const formData = new FormData(form)
+    if (action === 'signIn') {
+      await signIn(formData)
+    } else {
+      await signUp(formData)
+    }
   }
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-      <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
+      <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground" onSubmit={handleSubmit}>
         <label className="text-md" htmlFor="email">
           Correo UC
         </label>
@@ -73,14 +87,12 @@ export default function Login({ searchParams }: { searchParams: { message: strin
           required
         />
         <SubmitButton
-          formAction={signIn}
           className="bg-emerald-700 rounded-md px-4 py-2 text-emerald-50 mb-2 font-bold"
           pendingText="Iniciando Sesión..."
         >
           Iniciar Sesión
         </SubmitButton>
         <SubmitButton
-          formAction={signUp}
           className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
           pendingText="Creando cuenta..."
         >

@@ -1,6 +1,6 @@
-import { createClient } from "@/utils/supabase/server"
-import WannabeProfessorForm from "./WannabeProfessorForm"
-import { redirect } from "next/navigation"
+import { createClient } from '@/utils/supabase/server'
+import WannabeProfessorForm from './WannabeProfessorForm'
+import { redirect } from 'next/navigation'
 
 export default async function Page() {
   const supabase = createClient()
@@ -9,15 +9,15 @@ export default async function Page() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) return redirect("/login")
+  if (!user) return redirect('/login')
 
   const { data: userInfo } = await supabase
-    .from("userInfo")
-    .select("*")
-    .eq("userId", user.id)
+    .from('userInfo')
+    .select('*')
+    .eq('userId', user.id)
     .single()
 
-  if (!userInfo) return redirect("/login")
+  if (!userInfo) return redirect('/login')
 
   return (
     <div className="animate-in flex-1 flex flex-col w-full sm:max-w-lg px-8 justify-center gap-6">

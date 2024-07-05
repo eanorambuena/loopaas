@@ -1,6 +1,6 @@
-import { createClient } from "@/utils/supabase/server"
-import { redirect } from "next/navigation"
-import NewCourseForm from "./NewCourseForm"
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
+import NewCourseForm from './NewCourseForm'
 
 export default async function Page() {
   const supabase = createClient()
@@ -9,23 +9,23 @@ export default async function Page() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) return redirect("/login")
+  if (!user) return redirect('/login')
 
   const { data: userInfo } = await supabase
-    .from("userInfo")
-    .select("*")
-    .eq("userId", user.id)
+    .from('userInfo')
+    .select('*')
+    .eq('userId', user.id)
     .single()
 
-  if (!userInfo) return redirect("/login")
+  if (!userInfo) return redirect('/login')
 
   const { data: professor } = await supabase
-    .from("professors")
-    .select("*")
-    .eq("teacherInfoId", userInfo.id)
+    .from('professors')
+    .select('*')
+    .eq('teacherInfoId', userInfo.id)
     .single()
 
-  if (!professor) return redirect("/cursos")
+  if (!professor) return redirect('/cursos')
 
   return (
     <div className="animate-in flex-1 flex flex-col justify-center items-center gap-6 p-6 opacity-0 px-3 w-full md:max-w-md">

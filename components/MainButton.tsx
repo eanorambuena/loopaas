@@ -1,4 +1,4 @@
-import { SubmitButton, SubmitButtonProps } from "./SubmitButton"
+import { SubmitButton, SubmitButtonProps } from './SubmitButton'
 
 interface Props extends SubmitButtonProps {
   children: React.ReactNode

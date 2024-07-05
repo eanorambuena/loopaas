@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 
 export default function FormGroup({ children, htmlFor, label, type, required, ...rest } : { children?: React.ReactNode, htmlFor: string, label: string, type?: string, required?: boolean }) {
   return (

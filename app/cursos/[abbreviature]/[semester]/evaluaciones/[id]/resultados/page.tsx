@@ -102,7 +102,7 @@ export default async function Page({ params, searchParams }: Props) {
   }
 
   const updateGrades = async (formData: FormData) => {
-    "use server"
+    'use server'
     //await saveGrades(evaluation, students)
   }
 
