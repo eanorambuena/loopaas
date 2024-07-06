@@ -36,14 +36,8 @@ export default async function Header() {
 
   if (!user) return noUserOrUserInfoFallback
 
-  try {
-    const userInfo = await getUserInfo(user.id, false)
-    if (!userInfo) return noUserOrUserInfoFallback
-  }
-  catch (error) {
-    console.error('Error fetching user info:', error)
-    return noUserOrUserInfoFallback
-  }
+  const userInfo = await getUserInfo(user.id, false)
+  if (!userInfo) return noUserOrUserInfoFallback
 
   return (
     <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">

@@ -8,13 +8,19 @@ import { sendEmail } from './resend'
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
-  const { data: course } = await supabase
-    .from('courses')
-    .select('*')
-    .eq('abbreviature', abbreviature)
-    .eq('semester', semester)
-    .single()
-  return course as Course | null
+  try {
+    const { data: course, error } = await supabase
+      .from('courses')
+      .select('*')
+      .eq('abbreviature', abbreviature)
+      .eq('semester', semester)
+      .single()
+    if (error) throw error
+    return course as Course | null
+  }
+  catch (error) {
+    console.error('Error fetching course:', error)
+  }
 }
 
 export async function getCourseStudents(course: any) {
@@ -82,37 +88,49 @@ export async function createCourseStudents(course: any, students: any, minGroup:
     console.log({ ucUsername, firstName, lastName, group, password })
     
     for (const email of [`${ucUsername}@uc.cl`, `${ucUsername}@estudiante.uc.cl`]) {
-      await sendWelcomeEmail({ email, password, sendingEmail: 'soporte.idsapp@gmail.com' })
-      const { data: { user }, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${origin}/auth/callback`,
-        }
-      })
-      if (error) console.error({ error })
-      if (!user) continue
-      const { data: userInfo } = await supabase
-        .from('userInfo')
-        .insert({
-          userId: user.id,
+      try {
+        await sendWelcomeEmail({ email, password, sendingEmail: 'soporte.idsapp@gmail.com' })
+        const { data: { user }, error: signUpError } = await supabase.auth.signUp({
           email,
-          firstName,
-          lastName,
-          img
+          password,
+          options: {
+            emailRedirectTo: `${origin}/auth/callback`,
+          }
         })
-        .single()
-      if (!userInfo) continue
-      studentsData.push({
-        courseId: course.id,
-        userInfoId: (userInfo as UserInfoSchema).id,
-        group: group.name
-      })
+        if (signUpError) throw signUpError
+        if (!user) throw new Error('No user')
+        const { data: userInfo, error: userInfoError } = await supabase
+          .from('userInfo')
+          .insert({
+            userId: user.id,
+            email,
+            firstName,
+            lastName,
+            img
+          })
+          .single()
+        if (userInfoError) throw userInfoError
+        if (!userInfo) throw new Error('No user info')
+        studentsData.push({
+          courseId: course.id,
+          userInfoId: (userInfo as UserInfoSchema).id,
+          group: group.name
+        })
+      }
+      catch (error) {
+        console.error('Error creating student:', error)
+      }
     }
   }
-  await supabase
-    .from('students')
-    .insert(studentsData)
+  try {
+    const { error } = await supabase
+      .from('students')
+      .insert(studentsData)
+    if (error) throw error
+  }
+  catch (error) {
+    console.error('Error inserting students:', error)
+  }
 }
 
 interface PathParams {
@@ -123,56 +141,75 @@ interface PathParams {
 
 export async function getEvaluationByParams(params: PathParams) {
   const supabase = createClient()
-  const { data: evaluation } = await supabase
-    .from('evaluations')
-    .select('*')
-    .eq('id', params.id)
-    .single()
-  if (!evaluation) return redirect(evaluationPath(params))
-  return evaluation as Evaluation
+  try {
+    const { data: evaluation, error } = await supabase
+      .from('evaluations')
+      .select('*')
+      .eq('id', params.id)
+      .single()
+    if (error) throw error
+    if (!evaluation) return redirect(evaluationPath(params))
+    return evaluation as Evaluation
+  }
+  catch (error) {
+    console.error('Error fetching evaluation:', error)
+  }
 }
 
 export async function getGroupMates(params: PathParams, userInfoId: string, evaluation: Evaluation) {
   const REDIRECT_PATH = evaluationPath(params)
   const supabase = createClient()
+  try {
+    const { data: student, error: studentError } = await supabase
+      .from('students')
+      .select('*')
+      .eq('courseId', evaluation.courseId)
+      .eq('userInfoId', userInfoId)
+      .single()
+    if (studentError) throw studentError
+    if (!student) return redirect(REDIRECT_PATH)
 
-  const { data: student } = await supabase
-    .from('students')
-    .select('*')
-    .eq('courseId', evaluation.courseId)
-    .eq('userInfoId', userInfoId)
-    .single()
-  if (!student) return redirect(REDIRECT_PATH)
+    const { data: groupStudents, error: groupStudentsError } = await supabase
+      .from('students')
+      .select('*')
+      .eq('courseId', evaluation.courseId)
+      .neq('userInfoId', userInfoId)
+      .eq('group', student.group)
+    if (groupStudentsError) throw groupStudentsError
+    if (!groupStudents) return redirect(REDIRECT_PATH)
 
-  const { data: groupStudents } = await supabase
-    .from('students')
-    .select('*')
-    .eq('courseId', evaluation.courseId)
-    .neq('userInfoId', userInfoId)
-    .eq('group', student.group)
-  if (!groupStudents) return redirect(REDIRECT_PATH)
-
-  return groupStudents
+    return groupStudents
+  }
+  catch (error) {
+    console.error('Error fetching group mates:', error)
+  }
 }
 
 export async function getEvaluationWithSections(params: PathParams, user: User) {
   const supabase = createClient()
   const evaluation = await getEvaluationByParams(params)
   const userInfo = await getUserInfo(user.id)
-  if (!userInfo) return redirect(evaluationPath(params))
+  if (!evaluation) return redirect(evaluationPath(params))
   const groupStudents = await getGroupMates(params, userInfo?.id ?? '', evaluation)
+  if (!groupStudents) return redirect(evaluationPath(params))
 
   const sections: Section[] = []
   for (const mate of groupStudents) {
-    const { data: mateInfo } = await supabase
-      .from('userInfo')
-      .select('*')
-      .eq('id', mate.userInfoId)
-      .single()
-    sections.push({
-      title: `Por favor, califica a ${mateInfo.firstName} ${mateInfo.lastName}`,
-      mateId: mate.userInfoId,
-    })
+    try {
+      const { data: mateInfo, error } = await supabase
+        .from('userInfo')
+        .select('*')
+        .eq('id', mate.userInfoId)
+        .single()
+      if (error) throw error
+      sections.push({
+        title: `Por favor, califica a ${mateInfo.firstName} ${mateInfo.lastName}`,
+        mateId: mate.userInfoId,
+      })
+    }
+    catch (error) {
+      console.error('Error fetching group mate info:', error)
+    }
   }
   return {
     ...evaluation,
@@ -191,14 +228,20 @@ export async function getCurrentUser() {
 
 export async function getUserInfo(userId: string, autoRedirect = true) {
   const supabase = createClient()
-  const { data, error } = await supabase
-    .from('userInfo')
-    .select('*')
-    .eq('userId', userId)
-    .single()
-  if (error) throw error
-  if (!data && autoRedirect) return redirect('/perfil')
-  return data as UserInfoSchema | undefined
+  try {
+    const { data, error } = await supabase
+      .from('userInfo')
+      .select('*')
+      .eq('userId', userId)
+      .single()
+    if (error) throw error
+    if (!data && autoRedirect) return redirect('/perfil')
+    return data as UserInfoSchema | undefined
+  }
+  catch (error) {
+    console.error('Error fetching user info:', error)
+    if (autoRedirect) return redirect('/perfil')
+  }
 }
 
 export async function getIsCourseProfessor(course: Course, user: User) {
@@ -208,13 +251,19 @@ export async function getIsCourseProfessor(course: Course, user: User) {
 
 export async function getGrades(evaluation: Evaluation, userInfoId: string) {
   const supabase = createClient()
-  const { data: grades } = await supabase
-    .from('grades')
-    .select('*')
-    .eq('evaluationId', evaluation.id)
-    .eq('userInfoId', userInfoId)
-    .single()
-  return grades
+  try {
+    const { data: grades, error } = await supabase
+      .from('grades')
+      .select('*')
+      .eq('evaluationId', evaluation.id)
+      .eq('userInfoId', userInfoId)
+      .single()
+    if (error) throw error
+    return grades
+  }
+  catch (error) {
+    console.error('Error fetching grades:', error)
+  }
 }
 
 interface ResponsesByUserInfoId {
@@ -239,22 +288,34 @@ export async function getResponsesByUserInfoId(evaluation: Evaluation) {
 
 export async function getCourseById(courseId: string) {
   const supabase = createClient()
-  const { data: course } = await supabase
-    .from('courses')
-    .select('*')
-    .eq('id', courseId)
-    .single()
-  return course as Course | null
+  try {
+    const { data: course, error } = await supabase
+      .from('courses')
+      .select('*')
+      .eq('id', courseId)
+      .single()
+    if (error) throw error
+    return course as Course | null
+  }
+  catch (error) {
+    console.error('Error fetching course:', error)
+  }
 }
 
 export async function getUserInfoById(userInfoId: string) {
   const supabase = createClient()
-  const { data } = await supabase
-    .from('userInfo')
-    .select('*')
-    .eq('id', userInfoId)
-    .single()
-  return data
+  try {
+    const { data, error } = await supabase
+      .from('userInfo')
+      .select('*')
+      .eq('id', userInfoId)
+      .single()
+    if (error) throw error
+    return data
+  }
+  catch (error) {
+    console.error('Error fetching user info:', error)
+  }
 }
 
 export async function saveGrades(evaluation: Evaluation, students: any) {
@@ -276,6 +337,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
 
   for (const student of students) {
     const groupMates = await getGroupMates(pathParams, student.userInfoId, evaluation)
+    if (!groupMates) continue
 
     const studentCriteriaScores: Record<string, number[]> = {}
     groupMates.forEach((mate: any) => {
