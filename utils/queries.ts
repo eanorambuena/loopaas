@@ -5,6 +5,7 @@ import { evaluationPath } from './paths'
 import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section, UserInfoSchema } from './schema'
 import { createClient } from './supabase/server'
 import { sendEmail } from './resend'
+import { userInfo } from 'os'
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
@@ -23,28 +24,48 @@ export async function getCourse(abbreviature: string, semester: string) {
   }
 }
 
+interface CourseStudentWithUserInfo {
+  id: string
+  courseId: string
+  userInfoId: string
+  group: string
+  userInfo: UserInfoSchema
+  groupGrade?: string
+  coGrade?: string
+  finalGrade?: string
+}
+
 export async function getCourseStudents(course: any) {
   const supabase = createClient()
-
-  let students = (await supabase
-    .from('students')
-    .select('*')
-    .eq('courseId', course.id)
-    .order('created_at', { ascending: false }))
-    .data
-
-  if (!students) return []
-
-  for (const student of students) {
-    const { data: userInfo } = await supabase
-      .from('userInfo')
+  try {
+    let { data: students, error: studentsError } = await supabase
+      .from('students')
       .select('*')
-      .eq('id', student.userInfoId)
+      .eq('courseId', course.id)
+      .order('created_at', { ascending: false })
+    if (studentsError) throw studentsError
+    if (!students) return [] as CourseStudentWithUserInfo[]
 
-    student.userInfo = userInfo?.[0]
+    try {
+      for (const student of students) {
+        const { data: userInfo, error: userInfoError } = await supabase
+          .from('userInfo')
+          .select('*')
+          .eq('id', student.userInfoId)
+          .single()
+        if (userInfoError) throw userInfoError
+        if (!userInfo) continue
+        student.userInfo = userInfo as UserInfoSchema
+      }
+      return students as CourseStudentWithUserInfo[]
+    }
+    catch (error) {
+      console.error('Error fetching students userInfo:', error)
+    }
   }
-
-  return students
+  catch (error) {
+    console.error('Error fetching students:', error)
+  }
 }
 
 interface WelcomeEmailData{
