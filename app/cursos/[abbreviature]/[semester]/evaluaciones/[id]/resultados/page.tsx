@@ -53,6 +53,13 @@ export default async function Page({ params, searchParams }: Props) {
 
   const professorUserInfo = await getUserInfoById(course.teacherInfoId)
   const evaluation = await getEvaluationByParams(params)
+  if (!evaluation) {
+    return (
+      <h1 className='text-3xl font-bold'>
+        No se encontró la evaluación
+      </h1>
+    )
+  }
 
   const sendReport = async (html: any) => {
     await sendEmail({
