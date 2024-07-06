@@ -22,11 +22,12 @@ function getNumberOfQuestions(evaluation: Evaluation) {
 
 interface Props {
   evaluation: Evaluation
-  userInfoId: string
+  userInfoId?: string
 }
 
 export default function EvaluationForm({ evaluation, userInfoId }: Props) {
   const { toast } = useToast()
+  if (!userInfoId) return null
 
   const deadLineDay = evaluation.deadLine?.split('-')[2]
   const deadLineMonth = evaluation.deadLine?.split('-')[1]
@@ -71,7 +72,7 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
     })
 
     ;(async () => {
-      const error = await createResponse(evaluation, userInfoId, valuesList)
+      const error = await createResponse(evaluation, userInfoId as string, valuesList)
       if (error) return toast({
         title: 'Error',
         description: 'Hubo un error al enviar la evaluación',
