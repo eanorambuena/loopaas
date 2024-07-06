@@ -1,13 +1,12 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import CourseCard from '@/components/CourseCard'
+import { getCurrentUser } from '@/utils/queries'
 
 export default async function Page({ params }: { params: { abbreviature: string } }) {
   const supabase = createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
 
   if (!user) return redirect('/login')
 

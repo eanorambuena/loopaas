@@ -3,12 +3,13 @@
 import MainButton from '@/components/MainButton'
 import SecondaryButton from '@/components/SecondaryButton'
 import { useToast } from '@/components/ui/use-toast'
+import { Auth } from '@/utils/auth'
 import { ErrorWithStatus, useToastError } from '@/utils/hooks/useToastError'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-export default function Login({ searchParams }: { searchParams: { message: string } }) {
+export default function Login() {
   const router = useRouter()
   const toastError = useToastError()
   const { toast } = useToast()
@@ -16,23 +17,20 @@ export default function Login({ searchParams }: { searchParams: { message: strin
   const signIn = async (formData: FormData) => {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
-    const supabase = createClient()
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
-
-    if (error) {
-      console.log({error})
-      return toastError(error as ErrorWithStatus)
+    try {
+      Auth.SignIn(email, password)
+      toast({
+        title: 'Inicio de sesión exitoso',
+        description: 'Redirigiendo a cursos',
+        variant: 'success'
+      })
+      router.push('/cursos')
     }
-    toast({
-      title: 'Inicio de sesión exitoso',
-      description: 'Redirigiendo a cursos',
-      variant: 'success'
-    })
-    router.push('/cursos')
+    catch (error) {
+      console.log({error})
+      toastError(error as ErrorWithStatus)
+    }
   }
 
   const signUp = async (formData: FormData) => {
@@ -73,11 +71,10 @@ export default function Login({ searchParams }: { searchParams: { message: strin
     event.preventDefault()
     const form = event.currentTarget
     const formData = new FormData(form)
-    if (action === 'signIn') {
-      await signIn(formData)
-    } else {
-      await signUp(formData)
-    }
+    if (action === 'signIn')
+      return await signIn(formData)
+    
+    await signUp(formData)
   }
 
   return (
@@ -114,11 +111,6 @@ export default function Login({ searchParams }: { searchParams: { message: strin
         >
           Registrarse
         </SecondaryButton>
-        {searchParams?.message && (
-          <p className="mt-4 bg-foreground/10 text-foreground text-center group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full destructive group border-red-300 bg-red-500 text-slate-50 dark:border-red-500 dark:bg-red-700 dark:text-slate-50">
-            {searchParams.message}
-          </p>
-        )}
       </form>
     </div>
   )

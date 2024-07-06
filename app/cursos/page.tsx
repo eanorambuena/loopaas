@@ -3,28 +3,22 @@ import { redirect } from 'next/navigation'
 import CourseCard from '@/components/CourseCard'
 import Card from '@/components/Card'
 import PlusIcon from '@/components/icons/PlusIcon'
+import { getCurrentUser, getUserInfo } from '@/utils/queries'
 
 export default async function CursosPage() {
   const supabase = createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const user = await getCurrentUser()
   if (!user) return redirect('/login')
+
+  const userInfo = await getUserInfo(user.id)
+  console.log({userInfo})
+  if (!userInfo) return redirect('/perfil')
 
   const { data: courses } = await supabase
     .from('courses')
     .select('*')
     .order('created_at', { ascending: false })
-
-  const { data: userInfo } = await supabase
-    .from('userInfo')
-    .select('*')
-    .eq('userId', user.id)
-    .single()
-
-  if (!userInfo) return redirect('/login')
 
   const { data: professor } = await supabase
     .from('professors')

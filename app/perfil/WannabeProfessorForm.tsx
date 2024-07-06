@@ -1,6 +1,7 @@
 'use client'
 
-import { SubmitButton } from '@/components/SubmitButton'
+import Input from '@/components/Input'
+import MainButton from '@/components/MainButton'
 import { useToast } from '@/components/ui/use-toast'
 import { sendEmail } from '@/utils/resend'
 
@@ -33,23 +34,12 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
       <p className="text-foreground">
         Para solicitar una cuenta de profesor, ingresa tu token de Canvas
       </p>
-      <form className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center gap-2 text-foreground" onSubmit={handleSubmit}>
-        <label className="text-md" htmlFor="email">
-          Token de Canvas
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="token"
-          type="text"
-          placeholder="Token de Canvas"
-          required
-        />
-        <SubmitButton
-          className="bg-emerald-700 rounded-md px-4 py-2 text-emerald-50 mb-2 font-bold"
-          pendingText="Iniciando Sesión..."
-        >
-          Solicitar Cuenta de Profesor
-        </SubmitButton>
+      <form
+        className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center gap-2 text-foreground"
+        onSubmit={handleSubmit}
+      >
+        <Input label="Token de Canvas" name="token" required />
+        <MainButton>Solicitar Cuenta de Profesor</MainButton>
       </form>
     </section>
   )

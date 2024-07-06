@@ -2,7 +2,7 @@ import { User } from '@supabase/supabase-js'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { evaluationPath } from './paths'
-import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section } from './schema'
+import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section, UserInfoSchema } from './schema'
 import { createClient } from './supabase/server'
 import { sendEmail } from './resend'
 
@@ -159,7 +159,7 @@ export async function getEvaluationWithSections(params: PathParams, user: User) 
   const evaluation = await getEvaluationByParams(params)
   const userInfo = await getUserInfo(user.id)
   if (!userInfo) return redirect(evaluationPath(params))
-  const groupStudents = await getGroupMates(params, userInfo.id, evaluation)
+  const groupStudents = await getGroupMates(params, userInfo?.id ?? '', evaluation)
 
   const sections: Section[] = []
   for (const mate of groupStudents) {
@@ -188,19 +188,21 @@ export async function getCurrentUser() {
   return user
 }
 
-export async function getUserInfo(userId: string) {
+export async function getUserInfo(userId: string, autoRedirect = true) {
   const supabase = createClient()
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('userInfo')
     .select('*')
     .eq('userId', userId)
     .single()
-  return data
+  if (error) throw error
+  if (!data && autoRedirect) return redirect('/perfil')
+  return data as UserInfoSchema | undefined
 }
 
 export async function getIsCourseProfessor(course: Course, user: User) {
   const userInfo = await getUserInfo(user.id)
-  return course.teacherInfoId === userInfo.id
+  return course.teacherInfoId === userInfo?.id
 }
 
 export async function getGrades(evaluation: Evaluation, userInfoId: string) {

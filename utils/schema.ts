@@ -57,3 +57,11 @@ export interface Grade {
   evaluationGrade: string
   finalGrade: string
 }
+
+export interface UserInfoSchema {
+  id?: string
+  userId: string
+  firstName: string
+  lastName: string
+  email: string
+}

@@ -34,9 +34,9 @@ export function useToastError() {
 
   const toastError = useCallback((error: ErrorWithStatus) => {
     const { message, suffix } = supportErrors[error.name] ?? supportErrors.default
-    const errorCode = `${error.status}${suffix}`
+    const errorCode = `${error.status ?? (error as any)?.code ?? 500}${suffix}`
+    console.error({ error })
     toast({
-      
       title: `Error ${errorCode}`,
       description: message,
       variant: 'destructive'
