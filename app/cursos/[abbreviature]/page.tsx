@@ -1,22 +1,19 @@
 import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
 import CourseCard from '@/components/CourseCard'
 import { getCurrentUser } from '@/utils/queries'
 
 export default async function Page({ params }: { params: { abbreviature: string } }) {
   const supabase = createClient()
+  await getCurrentUser()
 
-  const user = await getCurrentUser()
-
-  if (!user) return redirect('/login')
-
-  const { data: courses } = await supabase
+  const { data: courses, error } = await supabase
     .from('courses')
     .select('*')
     .eq('abbreviature', params.abbreviature)
     .order('created_at', { ascending: false })
+  if (error) console.error(error)
 
-  if (courses?.length === 0) {
+  if (error || !courses || courses?.length === 0) {
     return (
       <h1 className='text-3xl font-bold'>
         No se encontraron cursos

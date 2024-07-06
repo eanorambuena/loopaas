@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
   }
 
   const students = await getCourseStudents(course)
-  if (students?.length === 0 || !students) {
+  if (!students ||students?.length === 0) {
     return (
       <h1 className='text-3xl font-bold'>
         No hay estudiantes inscritos en el curso
@@ -54,6 +54,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
     const sheet = workbook.Sheets[workbook.SheetNames[0]]
     const studentsData = XLSX.utils.sheet_to_json(sheet)
     if (!studentsData) return
+    console.log(studentsData)
     const students = studentsData.map((student: any) => {
       const [lastName, firstName] = student.nombre.split(', ')
       return {
