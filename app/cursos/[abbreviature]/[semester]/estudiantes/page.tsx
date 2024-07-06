@@ -53,6 +53,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
     const workbook = XLSX.read(data, { type: 'array' })
     const sheet = workbook.Sheets[workbook.SheetNames[0]]
     const studentsData = XLSX.utils.sheet_to_json(sheet)
+    if (!studentsData) return
     const students = studentsData.map((student: any) => {
       const [lastName, firstName] = student.nombre.split(', ')
       return {
@@ -108,7 +109,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
           </tr>
         </thead>
         <tbody className="text-left">
-          {students.map((student) => (
+          {students?.map((student) => (
             <tr key={student.id} className="*:px-6 *:py-3">
               <td>{student.userInfo?.firstName} {student.userInfo?.lastName}</td>
               <td>{student.userInfo?.email}</td>

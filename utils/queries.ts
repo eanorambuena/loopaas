@@ -5,7 +5,6 @@ import { evaluationPath } from './paths'
 import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section, UserInfoSchema } from './schema'
 import { createClient } from './supabase/server'
 import { sendEmail } from './resend'
-import { userInfo } from 'os'
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
@@ -17,7 +16,7 @@ export async function getCourse(abbreviature: string, semester: string) {
       .eq('semester', semester)
       .single()
     if (error) throw error
-    return course as Course | null
+    return course as Course
   }
   catch (error) {
     console.error('Error fetching course:', error)
@@ -366,6 +365,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
       if (!mateResponse) return
 
       const mateData = JSON.parse(mateResponse.data) as string[]
+      if (!mateData) return
       const parsedMateData = mateData.map((value) => value.split('--'))
 
       const studentScores = parsedMateData.filter(value => value[0] === student.userInfoId)

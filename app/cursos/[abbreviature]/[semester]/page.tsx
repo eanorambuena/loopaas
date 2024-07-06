@@ -2,18 +2,11 @@ import Card from '@/components/Card'
 import EvaluationIcon from '@/components/icons/EvaluationIcon'
 import UsersIcon from '@/components/icons/UsersIcon'
 import { evaluationPath, studentsPath } from '@/utils/paths'
-import { getCourse } from '@/utils/queries'
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+import { getCourse, getCurrentUser, getUserInfo } from '@/utils/queries'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
-  const supabase = createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return redirect('/login')
+  const user = await getCurrentUser()
+  const userInfo = await getUserInfo(user.id)
 
   const course = await getCourse(params.abbreviature, params.semester)
 
@@ -24,12 +17,6 @@ export default async function Page({ params }: { params: { abbreviature: string,
       </h1>
     )
   }
-
-  const { data: userInfo } = await supabase
-    .from('userInfo')
-    .select('*')
-    .eq('userId', user.id)
-    .single()
 
   const isCourseProfessor = userInfo?.id === course.teacherInfoId
 
