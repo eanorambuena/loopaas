@@ -12,9 +12,13 @@ export class Auth {
   }
 
   static async SignUp(email: string, password: string) {
+    const origin = window.location.origin
     const { error } = await supabase.auth.signUp({
       email,
-      password
+      password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
+      }
     })
     if (error) throw error
   }

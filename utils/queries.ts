@@ -83,28 +83,29 @@ export async function createCourseStudents(course: any, students: any, minGroup:
     
     for (const email of [`${ucUsername}@uc.cl`, `${ucUsername}@estudiante.uc.cl`]) {
       await sendWelcomeEmail({ email, password, sendingEmail: 'soporte.idsapp@gmail.com' })
-      await supabase.auth.signUp({
+      const { data: { user }, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: `${origin}/auth/callback`,
         }
       })
-      const { data } = await supabase
+      if (error) console.error({ error })
+      if (!user) continue
+      const { data: userInfo } = await supabase
         .from('userInfo')
-        .insert([
-          {
-            email,
-            firstName,
-            lastName,
-            img
-          }
-        ])
+        .insert({
+          userId: user.id,
+          email,
+          firstName,
+          lastName,
+          img
+        })
         .single()
-      if (!data) continue
+      if (!userInfo) continue
       studentsData.push({
         courseId: course.id,
-        userInfoId: (data as any).id,
+        userInfoId: (userInfo as UserInfoSchema).id,
         group: group.name
       })
     }

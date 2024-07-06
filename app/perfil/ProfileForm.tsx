@@ -53,7 +53,7 @@ export default function ProfileForm({ user, userInfo }: Props) {
     <section className="flex flex-col gap-4 border border-foreground/20 rounded-md p-4">
       <h2 className="text-xl font-bold">Información Personal</h2>
       <form
-        className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center gap-2 text-foreground"
+        className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center gap-4 text-foreground"
         onSubmit={handleSubmit}
       >
         <Input label="Nombre (s)" name="firstName" required defaultValue={userInfo?.firstName} />

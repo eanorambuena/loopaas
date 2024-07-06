@@ -5,7 +5,6 @@ import SecondaryButton from '@/components/SecondaryButton'
 import { useToast } from '@/components/ui/use-toast'
 import { Auth } from '@/utils/auth'
 import { ErrorWithStatus, useToastError } from '@/utils/hooks/useToastError'
-import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -19,7 +18,7 @@ export default function Login() {
     const password = formData.get('password') as string
 
     try {
-      Auth.SignIn(email, password)
+      await Auth.SignIn(email, password)
       toast({
         title: 'Inicio de sesión exitoso',
         description: 'Redirigiendo a cursos',
@@ -34,10 +33,8 @@ export default function Login() {
   }
 
   const signUp = async (formData: FormData) => {
-    const origin = window.location.origin
     const email = formData.get('email') as string
     const password = formData.get('password') as string
-    const supabase = createClient()
 
     const isUC = email.endsWith('uc.cl')
     if (!isUC) {
@@ -47,22 +44,18 @@ export default function Login() {
       })
     }
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    })
-
-    if (error) {
-      return toastError(error as ErrorWithStatus)
+    try {
+      await Auth.SignUp(email, password)
+      toast({
+        title: 'Registro exitoso',
+        description: 'Revisa tu correo para continuar con el proceso de inicio de sesión',
+        variant: 'success'
+      })
+      router.push('/cursos')
     }
-    toast({
-      title: 'Registro exitoso',
-      description: 'Revisa tu correo para continuar con el proceso de inicio de sesión',
-      variant: 'success'
-    })
+    catch (error) {
+      toastError(error as ErrorWithStatus)
+    }
   }
 
   const [action, setAction] = useState<'signIn' | 'signUp'>('signIn')
@@ -73,13 +66,15 @@ export default function Login() {
     const formData = new FormData(form)
     if (action === 'signIn')
       return await signIn(formData)
-    
     await signUp(formData)
   }
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-      <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground" onSubmit={handleSubmit}>
+      <form
+        className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
+        onSubmit={handleSubmit}
+      >
         <label className="text-md" htmlFor="email">
           Correo UC
         </label>

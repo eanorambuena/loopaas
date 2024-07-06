@@ -35,7 +35,7 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
         Para solicitar una cuenta de profesor, ingresa tu token de Canvas
       </p>
       <form
-        className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center gap-2 text-foreground"
+        className="animate-in flex-1 flex flex-col w-full sm:max-w-md justify-center gap-4 text-foreground"
         onSubmit={handleSubmit}
       >
         <Input label="Token de Canvas" name="token" required />
