@@ -1,3 +1,4 @@
+import Fallback from '@/components/Fallback'
 import SecondaryButton from '@/components/SecondaryButton'
 import SecondaryLink from '@/components/SecondaryLink'
 import { evaluationPath } from '@/utils/paths'
@@ -19,35 +20,18 @@ interface Props {
 }
 
 export default async function Page({ params, searchParams }: Props) {
-  const user = await getCurrentUser()
+  await getCurrentUser()
 
   const course = await getCourse(params.abbreviature, params.semester)
-  if (!course) {
-    return (
-      <h1 className='text-3xl font-bold'>
-        No se encontró el curso
-      </h1>
-    )
-  }
+  if (!course) return <Fallback>No se encontró el curso</Fallback>
 
   const students = await getCourseStudents(course)
-  if (students?.length === 0 || !students) {
-    return (
-      <h1 className='text-3xl font-bold'>
-        No hay estudiantes inscritos en el curso
-      </h1>
-    )
-  }
+  if (students?.length === 0 || !students)
+    return <Fallback>No hay estudiantes inscritos en el curso</Fallback>
 
   const professorUserInfo = await getUserInfoById(course.teacherInfoId)
   const evaluation = await getEvaluationByParams(params)
-  if (!evaluation) {
-    return (
-      <h1 className='text-3xl font-bold'>
-        No se encontró la evaluación
-      </h1>
-    )
-  }
+  if (!evaluation) return <Fallback>No se encontró la evaluación</Fallback>
 
   const sendReport = async (html: any) => {
     await sendEmail({
@@ -67,7 +51,7 @@ export default async function Page({ params, searchParams }: Props) {
   }
 
   if (searchParams.sendReport && sendReport) {
-    sendReport(`
+    sendReport(/*html*/`
       <h1>Resultados de la evaluación ${evaluation.title}</h1>
       <table>
         <thead>
@@ -81,7 +65,7 @@ export default async function Page({ params, searchParams }: Props) {
           </tr>
         </thead>
         <tbody>
-          ${students.map((student) => `
+          ${students.map((student) => /*html*/`
             <tr>
               <td>${student.userInfo?.firstName} ${student.userInfo?.lastName}</td>
               <td>${student.userInfo?.email}</td>

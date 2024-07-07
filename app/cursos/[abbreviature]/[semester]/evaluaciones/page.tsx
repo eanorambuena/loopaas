@@ -1,32 +1,28 @@
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
 import EvaluationCard from '@/components/EvaluationCard'
+import Fallback from '@/components/Fallback'
+import { getCurrentUser } from '@/utils/queries'
+import { createClient } from '@/utils/supabase/server'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
+  await getCurrentUser()
   const supabase = createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return redirect('/login')
-
-  const { data: courses } = await supabase
+  const { data: courses, error: coursesError } = await supabase
     .from('courses')
     .select('*')
     .eq('abbreviature', params.abbreviature)
     .eq('semester', params.semester)
     .order('created_at', { ascending: false })
+  if (coursesError || !courses || courses?.length === 0)
+    return <Fallback>No se encontró el curso</Fallback>
 
-  if (courses?.length === 0) {
-    return <div>Course not found</div>
-  }
-
-  const { data: courseEvaluations } = await supabase
+  const { data: courseEvaluations, error: courseEvaluationsError } = await supabase
     .from('evaluations')
     .select('*')
     .eq('courseId', courses?.[0].id)
     .order('created_at', { ascending: false })
+  if (courseEvaluationsError || !courseEvaluations || courseEvaluations?.length === 0)
+    return <Fallback>No se encontraron evaluaciones</Fallback>
 
   return (
     <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3">

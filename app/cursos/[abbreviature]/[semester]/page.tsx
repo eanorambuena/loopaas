@@ -1,4 +1,5 @@
 import Card from '@/components/Card'
+import Fallback from '@/components/Fallback'
 import EvaluationIcon from '@/components/icons/EvaluationIcon'
 import UsersIcon from '@/components/icons/UsersIcon'
 import { evaluationPath, studentsPath } from '@/utils/paths'
@@ -10,13 +11,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
 
   const course = await getCourse(params.abbreviature, params.semester)
 
-  if (!course) {
-    return (
-      <h1 className='text-3xl font-bold'>
-        No se encontró el curso
-      </h1>
-    )
-  }
+  if (!course) return <Fallback>No se encontró el curso</Fallback>
 
   const isCourseProfessor = userInfo?.id === course.teacherInfoId
 

@@ -1,25 +1,16 @@
 import SecondaryLink from '@/components/SecondaryLink'
 import { getCourse, getCurrentUser, getEvaluationWithSections, getIsCourseProfessor, getUserInfo } from '@/utils/queries'
 import EvaluationForm from './EvaluationForm'
+import Fallback from '@/components/Fallback'
+import { UserInfoSchema } from '@/utils/schema'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string, id: string } }) {
   const user = await getCurrentUser()
-  const userInfo = await getUserInfo(user.id)
-  if (!userInfo) {
-    return (
-      <h1 className='text-3xl font-bold'>
-        No se encontró el usuario
-      </h1>
-    )
-  }
+  const userInfo = await getUserInfo(user.id) as UserInfoSchema
+
   const course = await getCourse(params.abbreviature, params.semester)
-  if (!course) {
-    return (
-      <h1 className='text-3xl font-bold'>
-        No se encontró el curso
-      </h1>
-    )
-  }
+  if (!course) return <Fallback>No se encontró el curso</Fallback>
+
   const isCourseProfessor = await getIsCourseProfessor(course, user)
   const evaluation = await getEvaluationWithSections(params, user)
 

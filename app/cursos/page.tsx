@@ -6,14 +6,10 @@ import PlusIcon from '@/components/icons/PlusIcon'
 import { getCurrentUser, getUserInfo } from '@/utils/queries'
 
 export default async function CursosPage() {
-  const supabase = createClient()
-
   const user = await getCurrentUser()
-  if (!user) return redirect('/login')
-
   const userInfo = await getUserInfo(user.id)
-  console.log({userInfo})
-  if (!userInfo) return redirect('/perfil')
+
+  const supabase = createClient()
 
   const { data: courses } = await supabase
     .from('courses')
@@ -23,7 +19,7 @@ export default async function CursosPage() {
   const { data: professor } = await supabase
     .from('professors')
     .select('*')
-    .eq('teacherInfoId', userInfo.id)
+    .eq('teacherInfoId', userInfo?.id)
     .single()
   const isProfessor = !!professor
 

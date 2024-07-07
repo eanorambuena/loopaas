@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import CourseCard from '@/components/CourseCard'
 import { getCurrentUser } from '@/utils/queries'
+import Fallback from '@/components/Fallback'
 
 export default async function Page({ params }: { params: { abbreviature: string } }) {
   const supabase = createClient()
@@ -11,15 +12,9 @@ export default async function Page({ params }: { params: { abbreviature: string 
     .select('*')
     .eq('abbreviature', params.abbreviature)
     .order('created_at', { ascending: false })
-  if (error) console.error(error)
 
-  if (error || !courses || courses?.length === 0) {
-    return (
-      <h1 className='text-3xl font-bold'>
-        No se encontraron cursos
-      </h1>
-    )
-  }
+  if (error || !courses || courses?.length === 0)
+    return <Fallback>No se encontraron cursos</Fallback>
 
   return (
     <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3">

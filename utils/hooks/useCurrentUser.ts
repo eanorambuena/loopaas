@@ -1,5 +1,6 @@
 import useSWR from 'swr'
 import { createClient } from '../supabase/client'
+import { user } from '@nextui-org/react'
 
 const supabase = createClient()
 

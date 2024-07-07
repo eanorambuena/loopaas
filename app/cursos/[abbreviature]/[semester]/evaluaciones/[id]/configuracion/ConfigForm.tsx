@@ -6,7 +6,6 @@ import { useToast } from '@/components/ui/use-toast'
 import { Evaluation, LinearQuestion } from '@/utils/schema'
 import { createClient } from '@/utils/supabase/client'
 import QuestionForm from './QuestionForm'
-import SecondaryButton from '@/components/SecondaryButton'
 import { useState } from 'react'
 
 interface Props {

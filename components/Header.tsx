@@ -14,7 +14,7 @@ export default function Header() {
       </div>
     </nav>
   )
-
+  
   if (isLoading || error || !user) return noUserOrUserInfoFallback
 
   return (

@@ -1,23 +1,14 @@
+import { getCurrentUser, getUserInfo } from '@/utils/queries'
+import { UserInfoSchema } from '@/utils/schema'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import NewCourseForm from './NewCourseForm'
 
 export default async function Page() {
+  const user = await getCurrentUser()
+  const userInfo = await getUserInfo(user.id) as UserInfoSchema
+
   const supabase = createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return redirect('/login')
-
-  const { data: userInfo } = await supabase
-    .from('userInfo')
-    .select('*')
-    .eq('userId', user.id)
-    .single()
-
-  if (!userInfo) return redirect('/login')
 
   const { data: professor } = await supabase
     .from('professors')

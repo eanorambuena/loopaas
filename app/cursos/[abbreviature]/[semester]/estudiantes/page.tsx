@@ -1,3 +1,6 @@
+'use server'
+
+import Fallback from '@/components/Fallback'
 import Input from '@/components/Input'
 import SecondaryButton from '@/components/SecondaryButton'
 import { createCourseStudents, getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
@@ -7,22 +10,11 @@ export default async function Page({ params }: { params: { abbreviature: string,
   await getCurrentUser()
 
   const course = await getCourse(params.abbreviature, params.semester)
-  if (!course) {
-    return (
-      <h1 className='text-3xl font-bold'>
-        No se encontró el curso
-      </h1>
-    )
-  }
+  if (!course) return <Fallback>No se encontró el curso</Fallback>
 
   const students = await getCourseStudents(course)
-  if (!students ||students?.length === 0) {
-    return (
-      <h1 className='text-3xl font-bold'>
-        No hay estudiantes inscritos en el curso
-      </h1>
-    )
-  }
+  if (!students ||students?.length === 0)
+    return <Fallback>No hay estudiantes inscritos en el curso</Fallback>
 
   async function saveStudents(formData: FormData) {
     'use server'

@@ -9,12 +9,14 @@ import { createClient } from '@/utils/supabase/client'
 const DEFAULT_COLOR = '#eeeeee'
 
 interface Props {
-  userInfoId: string
+  userInfoId?: string
 }
 
 export default function NewCourseForm({ userInfoId }: Props) {
-  const supabase = createClient()
   const { toast } = useToast()
+  const supabase = createClient()
+
+  if (!userInfoId) return null
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
@@ -68,14 +70,14 @@ export default function NewCourseForm({ userInfoId }: Props) {
   }
 
   return (
-    <form className='animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground' onSubmit={handleSubmit}>
+    <form
+      className='animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground'
+      onSubmit={handleSubmit}
+    >
       <fieldset className='flex flex-col gap-6 max-w-md'>
         <Input label='ID Canvas' name='canvasId' required />
-        <label htmlFor='color' className='text-md'>Color</label>
-        <input type='color' id='color' name='color' defaultValue={DEFAULT_COLOR} className='rounded-md bg-inherit border mb-6' />
-        <MainButton pendingText='Creando curso...'>
-          Crear Curso
-        </MainButton>
+        <Input label='Color' name='color' type='color' defaultValue={DEFAULT_COLOR} />
+        <MainButton pendingText='Creando curso...'>Crear Curso</MainButton>
       </fieldset>
     </form>
   )

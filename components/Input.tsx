@@ -1,4 +1,5 @@
 import { QuestionType } from '@/utils/schema'
+import { input } from '@nextui-org/react'
 
 interface OptionalInputProps {
   autocomplete?: string
@@ -12,13 +13,14 @@ interface OptionalInputProps {
 
 interface Props extends OptionalInputProps {
   className?: string
+  inputClassName?: string
   label: string
   name: string
-  type?: 'text' | 'email' | 'password' | 'number' | 'textarea' | 'datetime-local' | 'date' | 'time' | 'file' | QuestionType
+  type?: 'text' | 'email' | 'password' | 'number' | 'textarea' | 'datetime-local' | 'date' | 'time' | 'file' | 'color' | QuestionType
 }
 
-export default function Input({ className = '', label, name, type = 'text', ...props }: Props) {
-  const inputStyles = 'rounded-md px-4 py-2 bg-inherit border'
+export default function Input({ className = '', label, name, type = 'text', inputClassName = '', ...props }: Props) {
+  const inputStyles = `rounded-md ${type === 'color' ? '' : 'px-4 py-2'} bg-inherit border ${inputClassName}`
   const commonProps = { id: name, name, className: inputStyles, ...props }
 
   return (
