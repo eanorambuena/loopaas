@@ -1,18 +1,10 @@
 import Input from '@/components/Input'
 import SecondaryButton from '@/components/SecondaryButton'
-import { createCourseStudents, getCourse, getCourseStudents } from '@/utils/queries'
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+import { createCourseStudents, getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
 import * as XLSX from 'xlsx'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
-  const supabase = createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return redirect('/login')
+  await getCurrentUser()
 
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) {
@@ -56,50 +48,50 @@ export default async function Page({ params }: { params: { abbreviature: string,
   }
 
   return (
-    <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3">
+    <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3'>
       <h1 className='text-3xl font-bold'>Estudiantes {course.title ?? params.abbreviature} {params.semester}</h1>
-      <form className="flex flex-col gap-4 border border-foreground/20 rounded-md p-4" encType="multipart/form-data">
+      <form className='flex flex-col gap-4 border border-foreground/20 rounded-md p-4' encType='multipart/form-data'>
         <Input
-          type="file"
-          name="file"
-          label="Archivo de estudiantes"
-          accept=".xlsx"
+          type='file'
+          name='file'
+          label='Archivo de estudiantes'
+          accept='.xlsx'
           required
         />
         <Input
-          type="number"
-          name="minGroup"
-          label="Grupo mínimo"
-          defaultValue="0"
+          type='number'
+          name='minGroup'
+          label='Grupo mínimo'
+          defaultValue='0'
           required
         />
         <Input
-          type="number"
-          name="maxGroup"
-          label="Grupo máximo"
-          defaultValue="1000"
+          type='number'
+          name='maxGroup'
+          label='Grupo máximo'
+          defaultValue='1000'
           required
         />
         <SecondaryButton
-          className="w-full"
-          type="submit"
+          className='w-full'
+          type='submit'
           formAction={saveStudents}
-          pendingText="Guardando estudiantes..."
+          pendingText='Guardando estudiantes...'
         >
           Importar estudiantes desde archivo
         </SecondaryButton>
       </form>
-      <table className="table-auto">
+      <table className='table-auto'>
         <thead>
-          <tr className="text-left *:px-6 *:py-3">
+          <tr className='text-left *:px-6 *:py-3'>
             <th>Nombre</th>
             <th>Correo</th>
             <th>Grupo</th>
           </tr>
         </thead>
-        <tbody className="text-left">
+        <tbody className='text-left'>
           {students?.map((student) => (
-            <tr key={student.id} className="*:px-6 *:py-3">
+            <tr key={student.id} className='*:px-6 *:py-3'>
               <td>{student.userInfo?.firstName} {student.userInfo?.lastName}</td>
               <td>{student.userInfo?.email}</td>
               <td>{student.group}</td>
