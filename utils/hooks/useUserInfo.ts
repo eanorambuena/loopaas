@@ -18,10 +18,15 @@ export default function useUserInfo(userId?: string) {
   if (error)
     router.push('/perfil')
 
+  const refetch = async () => {
+    if (!userId) return
+    mutate()
+  }
+
   return {
     userInfo: data?.userInfo,
     isLoading,
     error,
-    mutateUserInfo: mutate,
+    refetch,
   }
 }

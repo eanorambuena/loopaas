@@ -15,7 +15,7 @@ export default function Login() {
   const toastError = useToastError()
   const { toast } = useToast()
   const { mutate, user } = useCurrentUser()
-  const { mutateUserInfo } = useUserInfo(user?.id)
+  const { refetch } = useUserInfo(user?.id)
 
   const signIn = async (formData: FormData) => {
     const email = formData.get('email') as string
@@ -29,7 +29,7 @@ export default function Login() {
         variant: 'success'
       })
       mutate({ user })
-      mutateUserInfo()
+      refetch()
       router.push('/cursos')
     }
     catch (error) {
