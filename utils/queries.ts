@@ -36,14 +36,36 @@ interface CourseStudentWithUserInfo {
   finalGrade?: string
 }
 
-export async function getCourseStudents(course: any, limit: number = 1000) {
+interface CourseStudentsParams {
+  course: any
+  rangeMin?: number
+  rangeMax?: number
+}
+
+export async function getCourseStudents({course, rangeMin = 0, rangeMax} : CourseStudentsParams) {
   const supabase = createClient()
   try {
-    let { data: students, error: studentsError } = await supabase
-      .from('students')
-      .select('*')
-      .eq('courseId', course.id)
-      .limit(limit)
+    let students, studentsError
+    if (!rangeMax) {
+      let { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .eq('courseId', course.id)
+        .order('group', { ascending: true })
+      students = data
+      studentsError = error
+    }
+    else {
+      let { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .eq('courseId', course.id)
+        .order('group', { ascending: true })
+        .range(rangeMin, rangeMax)
+      students = data
+      studentsError = error
+    }
+    
     if (studentsError) throw studentsError
     if (!students) return [] as CourseStudentWithUserInfo[]
 

@@ -12,7 +12,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
-  const students = await getCourseStudents(course)
+  const students = await getCourseStudents({ course })
   if (!students ||students?.length === 0)
     return <Fallback>No hay estudiantes inscritos en el curso</Fallback>
 

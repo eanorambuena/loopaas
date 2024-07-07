@@ -2,10 +2,10 @@ import Fallback from '@/components/Fallback'
 import SecondaryButton from '@/components/SecondaryButton'
 import SecondaryLink from '@/components/SecondaryLink'
 import { evaluationPath } from '@/utils/paths'
-import { getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams,
-  getGrades, getUserInfoById, saveGrades } from '@/utils/queries'
-import { sendEmail } from '@/utils/resend'
-import { redirect } from 'next/navigation'
+import {
+  getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams,
+  getGrades, saveGrades
+} from '@/utils/queries'
 
 interface Props {
   params: {
@@ -15,7 +15,7 @@ interface Props {
   }
   searchParams: {
     sendReport: boolean
-    message: string
+    page: string
   }
 }
 
@@ -25,23 +25,16 @@ export default async function Page({ params, searchParams }: Props) {
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
-  const students = await getCourseStudents(course, 10)
+  const page = parseInt(searchParams.page) || 1
+  const itemsPerPage = 5
+  const rangeMin = (page - 1) * itemsPerPage
+  const rangeMax = rangeMin - 1 + itemsPerPage
+  const students = await getCourseStudents({ course, rangeMin, rangeMax })
   if (students?.length === 0 || !students)
     return <Fallback>No hay estudiantes inscritos en el curso</Fallback>
 
-  const professorUserInfo = await getUserInfoById(course.teacherInfoId)
   const evaluation = await getEvaluationByParams(params)
   if (!evaluation) return <Fallback>No se encontró la evaluación</Fallback>
-
-  const sendReport = async (html: any) => {
-    await sendEmail({
-      from: 'onboarding@resend.dev',
-      to: professorUserInfo.email,
-      subject: `IDSApp | Notas de Evaluación ${evaluation.title}`,
-      html
-    })
-    redirect(`${evaluationPath(params)}/resultados?message=Reporte enviado con éxito`)
-  }
 
   for (const student of students) {
     const grades = await getGrades(evaluation, student.userInfoId)
@@ -50,51 +43,18 @@ export default async function Page({ params, searchParams }: Props) {
     student.finalGrade = grades?.finalGrade ?? 'N/A'
   }
 
-  if (searchParams.sendReport && sendReport) {
-    sendReport(/*html*/`
-      <h1>Resultados de la evaluación ${evaluation.title}</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Grupo</th>
-            <th>Nota Grupal</th>
-            <th>Coevaluación</th>
-            <th>Nota Final</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${students.map((student) => /*html*/`
-            <tr>
-              <td>${student.userInfo?.firstName} ${student.userInfo?.lastName}</td>
-              <td>${student.userInfo?.email}</td>
-              <td>${student.group}</td>
-              <td>${student.groupGrade}</td>
-              <td>${student.coGrade}</td>
-              <td>${student.finalGrade}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `)
-  }
-
   const updateGrades = async (formData: FormData) => {
     'use server'
-    //await saveGrades(evaluation, students)
+    await saveGrades(evaluation, students)
   }
+
+  const baseUrl = `${evaluationPath(params)}/resultados`
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-8 opacity-0'>
       <h1 className='text-3xl font-bold'>Resultados {evaluation.title}</h1>
       {new Date(evaluation.deadLine) > new Date() && (
         <p className='text-red-500 w-full'>Advertencia: La evaluación aún no ha finalizado</p>
-      )}
-      {searchParams?.message && (
-        <p className='mt-4 bg-foreground/10 text-foreground text-center group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full destructive group border-red-300 bg-red-500 text-slate-50 dark:border-red-500 dark:bg-red-700 dark:text-slate-50'>
-          {searchParams.message}
-        </p>
       )}
       <form className='flex gap-4'>
         <SecondaryButton
@@ -139,6 +99,27 @@ export default async function Page({ params, searchParams }: Props) {
           ))}
         </tbody>
       </table>
+      <section className='flex justify-center items-center gap-4'>
+        {page > 1 ? (
+          <SecondaryLink
+            href={`${baseUrl}?page=${page - 1}`}
+            className='w-fit'
+          >
+            Página Anterior
+          </SecondaryLink>
+        ) : <SecondaryButton className='w-fit opacity-50' disabled>Página Anterior</SecondaryButton>
+        }
+        <strong>{page}</strong>
+        {students.length === itemsPerPage ? (
+          <SecondaryLink
+            href={`${baseUrl}?page=${page + 1}`}
+            className='w-fit'
+          >
+            Página Siguiente
+          </SecondaryLink>
+        ) : <SecondaryButton className='w-fit opacity-50' disabled>Página Siguiente</SecondaryButton>
+        }
+      </section>
     </div>
   )
 }
