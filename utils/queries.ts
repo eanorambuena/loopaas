@@ -47,16 +47,17 @@ export async function getCourseStudents(course: any) {
     if (!students) return [] as CourseStudentWithUserInfo[]
 
     try {
-      for (const student of students) {
+      await Promise.all(
+        students.map(async (student) => {
         const { data: userInfo, error: userInfoError } = await supabase
           .from('userInfo')
           .select('*')
           .eq('id', student.userInfoId)
           .single()
         if (userInfoError) throw userInfoError
-        if (!userInfo) continue
+        if (!userInfo) return
         student.userInfo = userInfo as UserInfoSchema
-      }
+      }))
       return students as CourseStudentWithUserInfo[]
     }
     catch (error) {
