@@ -1,6 +1,5 @@
 import SecondaryButton from '@/components/SecondaryButton'
 import SecondaryLink from '@/components/SecondaryLink'
-import { fetchGroups } from '@/utils/canvas'
 import { evaluationPath } from '@/utils/paths'
 import { getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams,
   getGrades, getUserInfoById, saveGrades } from '@/utils/queries'
@@ -38,17 +37,6 @@ export default async function Page({ params, searchParams }: Props) {
         No hay estudiantes inscritos en el curso
       </h1>
     )
-  }
-
-  const groups = await fetchGroups(course)
-
-  for (const group of groups) {
-    for (const student of group.students) {
-      const studentIndex = students.findIndex(({ id }) => id === student.id)
-      if (studentIndex !== -1) {
-        students[studentIndex].group = group.name
-      }
-    }
   }
 
   const professorUserInfo = await getUserInfoById(course.teacherInfoId)

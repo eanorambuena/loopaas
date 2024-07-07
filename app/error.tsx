@@ -1,6 +1,7 @@
 'use client' // Error components must be Client Components
  
 import { UhOhIcon } from '@/components/icons/UhOhIcon'
+import MainButton from '@/components/MainButton'
 import { useEffect } from 'react'
  
 export default function Error({
@@ -17,16 +18,16 @@ export default function Error({
  
   return (
     <div className='flex flex-col items-center justify-center h-full gap-4 text-center'>
-      <h1>Algo salió mal</h1>
-      <button
+      <h1 className='text-3xl font-bold'>Algo salió mal</h1>
+      <UhOhIcon />
+      <MainButton
         onClick={
           // Attempt to recover by trying to re-render the segment
           () => reset()
         }
       >
         Intenta de nuevo
-      </button>
-      <UhOhIcon />
+      </MainButton>
     </div>
   )
 }
