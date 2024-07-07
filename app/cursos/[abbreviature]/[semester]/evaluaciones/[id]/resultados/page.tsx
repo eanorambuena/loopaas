@@ -25,7 +25,7 @@ export default async function Page({ params, searchParams }: Props) {
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
-  const students = await getCourseStudents(course, 10)
+  const students = await getCourseStudents(course)
   if (students?.length === 0 || !students)
     return <Fallback>No hay estudiantes inscritos en el curso</Fallback>
 

@@ -36,16 +36,13 @@ interface CourseStudentWithUserInfo {
   finalGrade?: string
 }
 
-export async function getCourseStudents(course: any, limit: number = 1000) {
+export async function getCourseStudents(course: any) {
   const supabase = createClient()
   try {
     let { data: students, error: studentsError } = await supabase
       .from('students')
       .select('*')
       .eq('courseId', course.id)
-      .order('firstName', { ascending: true })
-      .order('group', { ascending: true })
-      .limit(limit)
     if (studentsError) throw studentsError
     if (!students) return [] as CourseStudentWithUserInfo[]
 
