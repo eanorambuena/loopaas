@@ -12,8 +12,6 @@ export default function AuthButton() {
   const { user } = useCurrentUser()
   const { userInfo, error: userInfoError } = useUserInfo(user?.id)
 
-  let name = userInfo?.firstName
-
   const signOut = async () => {
     await supabase.auth.signOut()
     return router.push('/login')
@@ -21,7 +19,7 @@ export default function AuthButton() {
 
   return user ? (
     <div className="flex items-center gap-4">
-      {name && <span className="hidden sm:inline">Hola, {name}!</span>}
+      {userInfo?.firstName && <span className="hidden sm:inline">Hola, {userInfo?.firstName}!</span>}
       <button
         className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
         onClick={signOut}

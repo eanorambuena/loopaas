@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { Auth } from '@/utils/auth'
 import useCurrentUser from '@/utils/hooks/useCurrentUser'
 import { ErrorWithStatus, useToastError } from '@/utils/hooks/useToastError'
+import useUserInfo from '@/utils/hooks/useUserInfo'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -13,7 +14,8 @@ export default function Login() {
   const router = useRouter()
   const toastError = useToastError()
   const { toast } = useToast()
-  const { mutate } = useCurrentUser()
+  const { mutate, user } = useCurrentUser()
+  const { mutateUserInfo } = useUserInfo(user?.id)
 
   const signIn = async (formData: FormData) => {
     const email = formData.get('email') as string
@@ -27,6 +29,7 @@ export default function Login() {
         variant: 'success'
       })
       mutate({ user })
+      mutateUserInfo()
       router.push('/cursos')
     }
     catch (error) {

@@ -13,7 +13,7 @@ const fetcher = (url: string) => supabase
 
 export default function useUserInfo(userId?: string) {
   const router = useRouter()
-  const { data, error, isLoading } = useSWR(userId, fetcher)
+  const { data, error, isLoading, mutate } = useSWR(userId, fetcher)
 
   if (error)
     router.push('/perfil')
@@ -21,6 +21,7 @@ export default function useUserInfo(userId?: string) {
   return {
     userInfo: data?.userInfo,
     isLoading,
-    error
+    error,
+    mutateUserInfo: mutate,
   }
 }
