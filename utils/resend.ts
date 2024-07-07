@@ -1,6 +1,6 @@
-"use server"
+'use server'
 
-import { Resend } from "resend"
+import { Resend } from 'resend'
 
 const RESEND_API_TOKEN = process.env.NEXT_RESEND_API_TOKEN
 
@@ -11,7 +11,8 @@ type Email = {
   html: string
 }
 
+const resend = new Resend(RESEND_API_TOKEN)
+
 export async function sendEmail(email: Email) {
-  const resend = new Resend(RESEND_API_TOKEN)
   return await resend.emails.send(email)
 }

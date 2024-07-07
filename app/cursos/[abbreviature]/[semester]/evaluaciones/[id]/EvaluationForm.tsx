@@ -59,7 +59,7 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
     names.forEach((name) => {
       for (var i = 0; i < radios.length; i++) {
         if (radios[i].type === 'radio' && radios[i].checked && radios[i].name === name) {
-          values[name] = radios[i].id;      
+          values[name] = radios[i].id      
         }
       }
     })
