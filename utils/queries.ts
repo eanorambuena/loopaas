@@ -5,6 +5,8 @@ import { evaluationPath } from './paths'
 import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section, UserInfoSchema } from './schema'
 import { createClient } from './supabase/server'
 import { sendEmail } from './resend'
+import { getEmail } from './emailExtensionApi'
+import { sign } from './jwt'
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
@@ -100,55 +102,49 @@ export async function createCourseStudents(course: any, students: any, minGroup:
   filteredStudents = filteredStudents.filter((student: any) => !isNaN(student.group))
   filteredStudents = filteredStudents.filter((student: any) => student.group >= minGroup && student.group <= maxGroup)
   const studentsData: any[] = []
-  filteredStudents = [{
-    ucUsername: 'mrojasmuller',
-    firstName: 'Martín',
-    lastName: 'Rojas Müller',
-    group: 13
-  }]
+  //filteredStudents = filteredStudents.filter((student: any) => student.ucUsername === 'mrojasmuller')
+  const credentials: Record<string, string> = {}
+
   for (const student of filteredStudents) {
     const { ucUsername, firstName, lastName, group } = student
-    const password = crypto.getRandomValues(new Uint32Array(1))[0].toString(16)
-    const origin = headers().get('origin')
-    console.log({ ucUsername, firstName, lastName, group, password })
     
-    for (const email of [`${ucUsername}@uc.cl`, `${ucUsername}@estudiante.uc.cl`]) {
-      try {
-        //await sendWelcomeEmail({ email, password, sendingEmail: 'soporte.idsapp@gmail.com' })
-        const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({
+    const email = await getEmail(ucUsername)
+    if (!email) continue
+
+    const password = sign({ ucUsername }).slice(0, 8)
+    credentials[email] = password
+
+    try {
+      const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true
+      })
+      if (signUpError) throw signUpError
+      if (!user) throw new Error('No user')
+
+      const { error: userInfoError } = await supabase
+        .from('userInfo')
+        .insert({
+          userId: user.id,
           email,
-          password,
-          email_confirm: true
+          firstName,
+          lastName
         })
-        /*const { data: { user }, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${origin}/auth/callback`,
-          }
-        })*/
-        if (signUpError) throw signUpError
-        if (!user) throw new Error('No user')
-        const { data: userInfo, error: userInfoError } = await supabase
-          .from('userInfo')
-          .insert({
-            userId: user.id,
-            email,
-            firstName,
-            lastName
-          })
-          .single()
-        if (userInfoError) throw userInfoError
-        if (!userInfo) throw new Error('No user info')
-        studentsData.push({
-          courseId: course.id,
-          userInfoId: (userInfo as UserInfoSchema).id,
-          group: group.name
-        })
-      }
-      catch (error) {
-        console.error('Error creating student:', error)
-      }
+        .single()
+      if (userInfoError) throw userInfoError
+
+      const userInfo = await getUserInfo(user.id, false)
+      if (!userInfo) throw new Error('No user info')
+
+      studentsData.push({
+        courseId: course.id,
+        userInfoId: (userInfo as UserInfoSchema).id,
+        group
+      })
+    }
+    catch (error) {
+      console.error('Error creating student:', error)
     }
   }
   try {
@@ -160,6 +156,8 @@ export async function createCourseStudents(course: any, students: any, minGroup:
   catch (error) {
     console.error('Error inserting students:', error)
   }
+
+  console.log({ credentials })
 }
 
 interface PathParams {

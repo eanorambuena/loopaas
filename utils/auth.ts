@@ -11,6 +11,7 @@ export class Auth {
       password
     })
     if (error) throw error
+    return user
   }
 
   static async SignUp(email: string, password: string) {

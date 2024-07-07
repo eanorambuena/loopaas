@@ -11,7 +11,7 @@ export interface Payload {
 export const sign = (payload: Payload) => {
   payload.iat = Math.floor(Date.now() / 1000)
   payload.sub = payload.ucUsername
-  return jwt.sign(payload, secret, { expiresIn: '1h' })
+  return jwt.sign(payload, secret)
 }
 
 export const verify = (token: string) => {

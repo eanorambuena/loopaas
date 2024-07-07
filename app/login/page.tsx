@@ -20,13 +20,13 @@ export default function Login() {
     const password = formData.get('password') as string
 
     try {
-      await Auth.SignIn(email, password)
+      const user = await Auth.SignIn(email, password)
       toast({
         title: 'Inicio de sesión exitoso',
         description: 'Redirigiendo a cursos',
         variant: 'success'
       })
-      mutate()
+      mutate({ user })
       router.push('/cursos')
     }
     catch (error) {
@@ -104,7 +104,7 @@ export default function Login() {
         </MainButton>
         <SecondaryButton
           onClick={() => setAction('signUp')}
-          type='submit'
+          //type='submit'
         >
           Registrarse
         </SecondaryButton>
