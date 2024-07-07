@@ -64,4 +64,5 @@ export interface UserInfoSchema {
   firstName: string
   lastName: string
   email: string
+  canvasToken?: string
 }

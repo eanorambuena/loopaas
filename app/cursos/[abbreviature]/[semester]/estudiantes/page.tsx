@@ -1,6 +1,5 @@
 import Input from '@/components/Input'
 import SecondaryButton from '@/components/SecondaryButton'
-import { fetchGroups } from '@/utils/canvas'
 import { createCourseStudents, getCourse, getCourseStudents } from '@/utils/queries'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
@@ -31,17 +30,6 @@ export default async function Page({ params }: { params: { abbreviature: string,
         No hay estudiantes inscritos en el curso
       </h1>
     )
-  }
-
-  const groups = await fetchGroups(course)
-
-  for (const group of groups) {
-    for (const student of group.students) {
-      const studentIndex = students.findIndex(({ id }) => id === student.id)
-      if (studentIndex !== -1) {
-        students[studentIndex].group = group.name
-      }
-    }
   }
 
   async function saveStudents(formData: FormData) {
