@@ -1,8 +1,4 @@
-'use server'
-
-import { Resend } from 'resend'
-
-const RESEND_API_TOKEN = process.env.NEXT_RESEND_API_TOKEN
+import { sendEmail as se  } from '@/utils/resendConfig'
 
 type Email = {
   from: string
@@ -11,8 +7,6 @@ type Email = {
   html: string
 }
 
-const resend = new Resend(RESEND_API_TOKEN)
-
 export async function sendEmail(email: Email) {
-  return await resend.emails.send(email)
+  //return await se(email)
 }
