@@ -100,23 +100,33 @@ export async function createCourseStudents(course: any, students: any, minGroup:
   filteredStudents = filteredStudents.filter((student: any) => !isNaN(student.group))
   filteredStudents = filteredStudents.filter((student: any) => student.group >= minGroup && student.group <= maxGroup)
   const studentsData: any[] = []
+  filteredStudents = [{
+    ucUsername: 'mrojasmuller',
+    firstName: 'Martín',
+    lastName: 'Rojas Müller',
+    group: 13
+  }]
   for (const student of filteredStudents) {
     const { ucUsername, firstName, lastName, group } = student
-    const img = `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`
     const password = crypto.getRandomValues(new Uint32Array(1))[0].toString(16)
     const origin = headers().get('origin')
     console.log({ ucUsername, firstName, lastName, group, password })
     
     for (const email of [`${ucUsername}@uc.cl`, `${ucUsername}@estudiante.uc.cl`]) {
       try {
-        await sendWelcomeEmail({ email, password, sendingEmail: 'soporte.idsapp@gmail.com' })
-        const { data: { user }, error: signUpError } = await supabase.auth.signUp({
+        //await sendWelcomeEmail({ email, password, sendingEmail: 'soporte.idsapp@gmail.com' })
+        const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true
+        })
+        /*const { data: { user }, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${origin}/auth/callback`,
           }
-        })
+        })*/
         if (signUpError) throw signUpError
         if (!user) throw new Error('No user')
         const { data: userInfo, error: userInfoError } = await supabase
@@ -125,8 +135,7 @@ export async function createCourseStudents(course: any, students: any, minGroup:
             userId: user.id,
             email,
             firstName,
-            lastName,
-            img
+            lastName
           })
           .single()
         if (userInfoError) throw userInfoError
