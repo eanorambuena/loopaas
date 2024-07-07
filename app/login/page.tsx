@@ -4,6 +4,7 @@ import MainButton from '@/components/MainButton'
 import SecondaryButton from '@/components/SecondaryButton'
 import { useToast } from '@/components/ui/use-toast'
 import { Auth } from '@/utils/auth'
+import useCurrentUser from '@/utils/hooks/useCurrentUser'
 import { ErrorWithStatus, useToastError } from '@/utils/hooks/useToastError'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -12,6 +13,7 @@ export default function Login() {
   const router = useRouter()
   const toastError = useToastError()
   const { toast } = useToast()
+  const { mutate } = useCurrentUser()
 
   const signIn = async (formData: FormData) => {
     const email = formData.get('email') as string
@@ -24,6 +26,7 @@ export default function Login() {
         description: 'Redirigiendo a cursos',
         variant: 'success'
       })
+      mutate()
       router.push('/cursos')
     }
     catch (error) {
@@ -51,7 +54,6 @@ export default function Login() {
         description: 'Revisa tu correo para continuar con el proceso de inicio de sesión',
         variant: 'success'
       })
-      router.push('/cursos')
     }
     catch (error) {
       toastError(error as ErrorWithStatus)

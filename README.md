@@ -7,6 +7,7 @@ IDS App es una aplicación web para gestionar los cursos del Instituto para el D
 ## Tecnologías (Stack)
 - **JavaScript Runtime**: Bun
 - **Framework**: Next.js
+- **Gestión de estado en cliente**: SWR
 - **Estilos**: Tailwind CSS
 - **Base de datos y autenticación**: Supabase
 - **Mailer**: Resend

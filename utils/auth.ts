@@ -1,10 +1,12 @@
+'use client'
+
 import { createClient } from '@/utils/supabase/client'
 
 const supabase = createClient()
 
 export class Auth {
   static async SignIn(email: string, password: string) {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error, data: { user } } = await supabase.auth.signInWithPassword({
       email,
       password
     })

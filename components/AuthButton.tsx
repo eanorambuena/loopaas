@@ -1,40 +1,33 @@
-import { getUserInfo } from '@/utils/queries'
-import { createClient } from '@/utils/supabase/server'
+'use client'
+
+import useCurrentUser from '@/utils/hooks/useCurrentUser'
+import useUserInfo from '@/utils/hooks/useUserInfo'
+import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
-export default async function AuthButton() {
+export default function AuthButton() {
   const supabase = createClient()
+  const router = useRouter()
+  const { user } = useCurrentUser()
+  const { userInfo, error: userInfoError } = useUserInfo(user?.id)
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  let name
-  if (user) {
-    const userInfo = await getUserInfo(user.id, false)
-    name = userInfo?.firstName
-  }
+  let name = userInfo?.firstName
 
   const signOut = async () => {
-    'use server'
-    const supabase = createClient()
     await supabase.auth.signOut()
-    return redirect('/login')
-  };
+    return router.push('/login')
+  }
 
   return user ? (
     <div className="flex items-center gap-4">
-      {name && (
-        <span className="hidden sm:inline">
-          Hola, {name}!
-        </span>
-      )}
-      <form action={signOut}>
-        <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
-          Cerrar sesión
-        </button>
-      </form>
+      {name && <span className="hidden sm:inline">Hola, {name}!</span>}
+      <button
+        className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+        onClick={signOut}
+      >
+        Cerrar sesión
+      </button>
     </div>
   ) : (
     <Link
