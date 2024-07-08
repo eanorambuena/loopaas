@@ -1,7 +1,8 @@
 'use client'
 
+import MainButton from '@/components/MainButton'
 import Question from '@/components/Question'
-import { SubmitButton } from '@/components/SubmitButton'
+import SecondaryButton from '@/components/SecondaryButton'
 import { useToast } from '@/components/ui/use-toast'
 import { createResponse } from '@/utils/clientQueries'
 import { Evaluation } from '@/utils/schema'
@@ -94,7 +95,11 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
   )
   
   return (
-    <form onSubmit={ handleSubmit } className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'>
+    <form
+      className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'
+      id='printJS-form'
+      onSubmit={ handleSubmit }
+    >
       <h1 className='text-2xl font-bold dark:text-gray-100'>{ evaluation.title }</h1>
       <p className='dark:text-gray-100'>{ evaluation.instructions }</p>
       <p className='dark:text-gray-100'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
@@ -111,12 +116,8 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
           ))}
         </fieldset>
       ))}
-      <SubmitButton
-        className="w-full bg-emerald-700 rounded-md px-4 py-2 text-white mb-2 font-bold"
-        pendingText="Enviando evaluación..."
-      >
-        Enviar
-      </SubmitButton>
+      <MainButton>Enviar</MainButton>
+      <SecondaryButton onClick={() => window.print()}>Imprimir</SecondaryButton>
     </form>
   )
 }
