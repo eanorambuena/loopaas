@@ -106,10 +106,12 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
       id='printJS-form'
       onSubmit={ handleSubmit }
     >
-      <h1 className='text-2xl font-bold'>{ evaluation.title }</h1>
-      <p>{ evaluation.instructions }</p>
-      <p>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
-      <p>Respondiendo como: <strong>{ `${userInfo.firstName} ${userInfo.lastName} ` }<em>{userInfo.email}</em></strong></p>
+      <legend className='flex flex-col gap-4'>
+        <h1 className='text-2xl font-bold'>{ evaluation.title }</h1>
+        <p>{ evaluation.instructions }</p>
+        <p className='font-semibold text-red-500'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
+        <p className='text-gray-700 dark:text-gray-300 text-sm'>Respondiendo como: <strong>{ `${userInfo.firstName} ${userInfo.lastName} ` }<em>{userInfo.email}</em></strong></p>
+      </legend>
       { [ ...evaluation.sections].map((section, index) => (
         <fieldset key={ section.mateId } className='w-full flex flex-col justify-center items-center'>
           <legend className='text-lg font-bold dark:text-gray-100'>{ section.title }</legend>
