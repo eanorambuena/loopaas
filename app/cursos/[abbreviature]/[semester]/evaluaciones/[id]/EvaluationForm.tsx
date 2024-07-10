@@ -5,7 +5,7 @@ import Question from '@/components/Question'
 import SecondaryButton from '@/components/SecondaryButton'
 import { useToast } from '@/components/ui/use-toast'
 import { createResponse } from '@/utils/clientQueries'
-import { Evaluation } from '@/utils/schema'
+import { Evaluation, UserInfoSchema } from '@/utils/schema'
 
 function getNumberOfQuestions(evaluation: Evaluation) {
   let numberOfQuestions = 0;
@@ -23,12 +23,12 @@ function getNumberOfQuestions(evaluation: Evaluation) {
 
 interface Props {
   evaluation: Evaluation
-  userInfoId?: string
+  userInfo: UserInfoSchema
 }
 
-export default function EvaluationForm({ evaluation, userInfoId }: Props) {
+export default function EvaluationForm({ evaluation, userInfo }: Props) {
   const { toast } = useToast()
-  if (!userInfoId) return null
+  if (!userInfo) return null
 
   const deadLineDay = evaluation.deadLine?.split('-')[2]
   const deadLineMonth = evaluation.deadLine?.split('-')[1]
@@ -73,7 +73,7 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
     })
 
     ;(async () => {
-      const error = await createResponse(evaluation, userInfoId as string, valuesList)
+      const error = await createResponse(evaluation, userInfo.id as string, valuesList)
       if (error) return toast({
         title: 'Error',
         description: 'Hubo un error al enviar la evaluación',
@@ -96,13 +96,14 @@ export default function EvaluationForm({ evaluation, userInfoId }: Props) {
   
   return (
     <form
-      className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'
+      className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 dark:text-gray-100 p-6 rounded-md'
       id='printJS-form'
       onSubmit={ handleSubmit }
     >
-      <h1 className='text-2xl font-bold dark:text-gray-100'>{ evaluation.title }</h1>
-      <p className='dark:text-gray-100'>{ evaluation.instructions }</p>
-      <p className='dark:text-gray-100'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
+      <h1 className='text-2xl font-bold'>{ evaluation.title }</h1>
+      <p>{ evaluation.instructions }</p>
+      <p>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
+      <p>Respondiendo como: <strong>{ `${userInfo.firstName} ${userInfo.lastName} ` }<em>{userInfo.email}</em></strong></p>
       { [ ...evaluation.sections].map((section, index) => (
         <fieldset key={ section.mateId } className='w-full flex flex-col justify-center items-center'>
           <legend className='text-lg font-bold dark:text-gray-100'>{ section.title }</legend>

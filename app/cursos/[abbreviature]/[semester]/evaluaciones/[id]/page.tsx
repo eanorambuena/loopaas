@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
           </SecondaryLink>
         </div>
       )}
-      <EvaluationForm evaluation={evaluation} userInfoId={userInfo.id} />
+      <EvaluationForm evaluation={evaluation} userInfo={userInfo} />
     </div>
   )
 }
