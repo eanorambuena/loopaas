@@ -1,8 +1,10 @@
-# Documentación IDS App
+# IDSApp
 
 ## Introducción
 
-IDS App es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable, principalmente sus coevaluaciones y autoevaluaciones.
+IDSApp es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable, principalmente sus coevaluaciones y autoevaluaciones.
+
+**Sitio web:** [idsapp.vercel.app](https://idsapp.vercel.app)
 
 ### Tecnologías (Stack)
 - **JavaScript Runtime**: Bun
@@ -29,11 +31,61 @@ Para correr el linter, ejecutar el siguiente comando:
 bun lint
 ```
 
+## Diseño
+
+### Usuarios / clientes
+
+Los usuarios de la aplicación son los alumnos, ayudantes y docentes del Instituto para el Desarrollo Sustentable.
+
+### Usuarios simultáneos
+
+La aplicación soporta múltiples usuarios simultáneos:
+- 2024-1: **372 usuarios simultáneos**
+
+### Uso de la base de datos y autenticación
+
+La semana de Coevaluaciones 2024-1 (solo alumnos SUS1000) se mostró un uso de la base de datos y autenticación con picos de **7035 solicitudes a la base de datos** y **5196 solicitudes de autenticación**.
+
+![Uso de la base de datos y autenticación 2024-1](./docs/db_usage.png)
+
+### Historia de IDSApp
+
+IDSApp fue creada para facilitar la coevaluación y autoevaluación de los alumnos del Instituto para el Desarrollo Sustentable.
+
+Hasta 2023-2 se utilizaba una planilla de Google Sheets con scripts de Google Apps Script para gestionar las coevaluaciones. Este generaba un Google Form para que los alumnos ingresaran sus coevaluaciones.
+
+#### Problemas de la planilla de Google Sheets
+
+- **Código no mantenible**: El código de Google Apps Script era difícil de mantener y no se podía versionar. Era frágil y con alto acoplamiento.
+
+- **Solo se podía acceder con cuenta Gmail UC, o dejar público para todos**: La planilla de Google Sheets solo podía ser accedida por cuentas Gmail UC, lo que dificultaba la colaboración con personas externas a la UC. La única alternativa era hacer la planilla pública, lo que no era seguro.
+
+- **Si alguien respondía dos veces, afectaba la nota a todo su grupo**: Si un alumno respondía dos veces, afectaba la nota de todo su grupo. Esto era un problema común. La planilla no tenía mecanismos para evitar esto, por lo que se debía revisar manualmente e insistir a los alumnos que no respondieran dos veces.
+
+- **Para crear una nueva coevaluación, se debía copiar la planilla original y modificarla**: Para cada coevaluación, se debía copiar la planilla original y modificarla. Esto era tedioso y propenso a errores. Además, no preservaba mejoras al código hechas en coevaluaciones anteriores.
+
+- **Transición de la UC hacia Microsoft 365**: La UC está migrando sus servicios hacia Microsoft 365, lo que implica que Google Sheets no es una herramienta oficial de la UC.
+
+Esta planilla ha sido utilizada por múltiples cursos del Instituto para el Desarrollo Sustentable, y ha generado una gran cantidad de datos que no se pueden migrar fácilmente a una nueva plataforma.
+
+#### Pensando en una nueva solución
+
+En 2023-2, se decidió crear una nueva aplicación web para gestionar las coevaluaciones y autoevaluaciones. Esta aplicación se llamó **SusApp**.
+
+- Enero 2024-1: Se creó un prototipo de SusApp, SusApp Mockup. [Ir al sitio web](https://susapp-mockup.vercel.app/)
+- Febrero y Marzo 2024: Se creó la primera versión de SusApp, la cual cambió de nombre a **IDSApp** y posteriormente a **IDSApp Legacy**. Estaba hecha con Vite, React y Tailwind CSS. [Ir al sitio web](https://idsapp-legacy.vercel.app/)
+- Abril 2024 hasta la fecha: Se creó la segunda versión de IDSApp, la cual se encuentra en producción. [Ir al sitio web](https://idsapp.vercel.app)
+
+
 ## Documentación
 
 ### Base de datos (supabase)
 
-![Diagrama de la base de datos](./docs/db-diagram.png)
+#### Diagrama de la base de datos
+![Diagrama de la base de datos](./docs/db_diagram.png)
+
+
+
 
 <br />
 <hr />
