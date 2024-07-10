@@ -115,8 +115,11 @@ Esta planilla ha sido utilizada por múltiples cursos del Instituto para el Desa
 En 2023-2, se decidió crear una nueva aplicación web para gestionar las coevaluaciones y autoevaluaciones. Esta aplicación se llamó **SusApp**.
 
 - Enero 2024-1: Se creó un prototipo de SusApp, SusApp Mockup. [Ir al sitio web](https://susapp-mockup.vercel.app/)
+![SusApp Mockup](./docs/susapp_mockup.png)
 - Febrero y Marzo 2024: Se creó la primera versión de SusApp, la cual cambió de nombre a **IDSApp** y posteriormente a **IDSApp Legacy**. Estaba hecha con Vite, React y Tailwind CSS. [Ir al sitio web](https://idsapp-legacy.vercel.app/)
+![IDSApp Legacy](./docs/idsapp_legacy.png)
 - Abril 2024 hasta la fecha: Se creó la segunda versión de IDSApp, la cual se encuentra en producción. [Ir al sitio web](https://idsapp.vercel.app)
+![IDSApp](./docs/idsapp.png)
 
 ## Resultados
 
