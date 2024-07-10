@@ -6,6 +6,28 @@ IDSApp es una aplicación web para gestionar los cursos del Instituto para el De
 
 **Sitio web:** [idsapp.vercel.app](https://idsapp.vercel.app)
 
+## Quick Start
+
+Clonar el repositorio. Por ejemplo, con SSH:
+```bash
+git clone git@github.com:eanorambuena/idsapp-v2.git
+```
+
+Si no tienes Bun, puedes instalarlo con npm:
+```bash
+npm install -g bun
+```
+
+Instalar las dependencias:
+```bash
+bun install
+```
+
+Correr el servidor de desarrollo:
+```bash
+bun dev
+```
+
 ### Tecnologías (Stack)
 - **JavaScript Runtime**: Bun
 - **Framework**: Next.js
@@ -37,24 +59,44 @@ bun lint
 
 Los usuarios de la aplicación son los alumnos, ayudantes y docentes del Instituto para el Desarrollo Sustentable.
 
-### Usuarios simultáneos
+### Colores
 
-La aplicación soporta múltiples usuarios simultáneos:
-- 2024-1: **372 usuarios simultáneos**
+Se utilizan los colores de Tailwind CSS, cuidando la accesibilidad e identidad visual de IDSApp.
 
-### Uso de la base de datos y autenticación
+- **Verde Acento**: `emerald-700`
+- **Gris Fondo y Texto**: `gray`
+- **Verde Éxito**: `green-500`
+- **Rojo Error**: `red-500`
+- **Amarillo Advertencia**: `yellow-500`
+- **Azul Información**: `blue-500`
 
-La semana de Coevaluaciones 2024-1 (solo alumnos SUS1000) se mostró un uso de la base de datos y autenticación con picos de **7035 solicitudes a la base de datos** y **5196 solicitudes de autenticación**.
+Se debe evitar el uso de negro y blanco puros, y se debe priorizar el uso de los colores de la paleta de Tailwind CSS.
 
-![Uso de la base de datos y autenticación 2024-1](./docs/db_usage.png)
+### Espacios
 
-### Historia de IDSApp
+Se usa *padding 4* para elementos cohesionados, *padding 6* para distinguir elementos.
+
+Se evita el uso de margin, para separar elementos en un contenedor se usa *gap 6*
+
+### Bordes
+
+Se usa borde redondo `rounded-md`
+
+### Formularios y enlaces
+
+Se usa color sólido para *Call To Action*, usando `<MainButton>`. Para botones o enlaces secundarios se usa `<SecondaryButton>` o `<SecondaryLink>`. Para botones "hoverables" se usa `<HovereableLink>`.
+
+### Íconos
+
+Los íconos son extraídos principalmente de [Tabler Icons](https://tabler.io/icons). Es importante cuidar la coherencia del estilo visual de los íconos.
+
+## Historia de IDSApp
 
 IDSApp fue creada para facilitar la coevaluación y autoevaluación de los alumnos del Instituto para el Desarrollo Sustentable.
 
 Hasta 2023-2 se utilizaba una planilla de Google Sheets con scripts de Google Apps Script para gestionar las coevaluaciones. Este generaba un Google Form para que los alumnos ingresaran sus coevaluaciones.
 
-#### Problemas de la planilla de Google Sheets
+### Problemas de la planilla de Google Sheets
 
 - **Código no mantenible**: El código de Google Apps Script era difícil de mantener y no se podía versionar. Era frágil y con alto acoplamiento.
 
@@ -68,7 +110,7 @@ Hasta 2023-2 se utilizaba una planilla de Google Sheets con scripts de Google Ap
 
 Esta planilla ha sido utilizada por múltiples cursos del Instituto para el Desarrollo Sustentable, y ha generado una gran cantidad de datos que no se pueden migrar fácilmente a una nueva plataforma.
 
-#### Pensando en una nueva solución
+### Pensando en una nueva solución
 
 En 2023-2, se decidió crear una nueva aplicación web para gestionar las coevaluaciones y autoevaluaciones. Esta aplicación se llamó **SusApp**.
 
@@ -76,6 +118,20 @@ En 2023-2, se decidió crear una nueva aplicación web para gestionar las coeval
 - Febrero y Marzo 2024: Se creó la primera versión de SusApp, la cual cambió de nombre a **IDSApp** y posteriormente a **IDSApp Legacy**. Estaba hecha con Vite, React y Tailwind CSS. [Ir al sitio web](https://idsapp-legacy.vercel.app/)
 - Abril 2024 hasta la fecha: Se creó la segunda versión de IDSApp, la cual se encuentra en producción. [Ir al sitio web](https://idsapp.vercel.app)
 
+## Resultados
+
+### Métricas
+
+#### Usuarios simultáneos
+
+La aplicación soporta múltiples usuarios simultáneos:
+- 2024-1: **372 usuarios simultáneos**
+
+#### Uso de la base de datos y autenticación
+
+La semana de Coevaluaciones 2024-1 (solo alumnos SUS1000) se mostró un uso de la base de datos y autenticación con picos de **7035 solicitudes a la base de datos** y **5196 solicitudes de autenticación**.
+
+![Uso de la base de datos y autenticación 2024-1](./docs/db_usage.png)
 
 ## Documentación
 
@@ -89,6 +145,8 @@ En 2023-2, se decidió crear una nueva aplicación web para gestionar las coeval
 
 <br />
 <hr />
+
+## Documentación original
 
 > A continuación está la documentación entregada por la plantilla de Next.js y Supabase.
 
