@@ -325,18 +325,24 @@ interface ResponsesByUserInfoId {
 
 export async function getResponsesByUserInfoId(evaluation: Evaluation) {
   const supabase = createClient()
-  const { data: responses } = await supabase
-    .from('responses')
-    .select('*')
-    .eq('evaluationId', evaluation.id)
-    .order('created_at', { ascending: false })
-  if (!responses) return
-  const grouped: ResponsesByUserInfoId = {}
-  for (const response of responses) {
-    if (!grouped[response.userInfoId]) grouped[response.userInfoId] = [response]
-    else grouped[response.userInfoId].push(response)
+  try {
+    const { data: responses, error } = await supabase
+      .from('responses')
+      .select('*')
+      .eq('evaluationId', evaluation.id)
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    if (!responses) return
+    const grouped: ResponsesByUserInfoId = {}
+    for (const response of responses) {
+      if (!grouped[response.userInfoId]) grouped[response.userInfoId] = [response]
+      else grouped[response.userInfoId].push(response)
+    }
+    return grouped
   }
-  return grouped
+  catch (error) {
+    console.error('Error fetching responses:', error)
+  }
 }
 
 export async function getCourseById(courseId: string) {
@@ -372,7 +378,9 @@ export async function getUserInfoById(userInfoId: string) {
 }
 
 export async function saveGrades(evaluation: Evaluation, students: any) {
+  console.log({ evaluation, students })
   const responsesByUserInfoId = await getResponsesByUserInfoId(evaluation)
+  console.log({ responsesByUserInfoId })
   if (!responsesByUserInfoId) return
 
   const lastResponseByUserInfoId: Record<string, Response> = {}
