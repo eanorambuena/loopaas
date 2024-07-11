@@ -13,6 +13,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
 
   const isCourseProfessor = await getIsCourseProfessor(course, user)
   console.log(user.email, `isCourseProfessor: ${isCourseProfessor}`)
+
   const evaluation = await getEvaluationWithSections(params, user)
 
   return (
@@ -28,7 +29,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
           </SecondaryLink>
         </div>
       )}
-      <EvaluationForm evaluation={evaluation} userInfo={userInfo} />
+      {evaluation && <EvaluationForm evaluation={evaluation} userInfo={userInfo} />}
     </div>
   )
 }

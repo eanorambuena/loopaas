@@ -1,5 +1,4 @@
 import { User } from '@supabase/supabase-js'
-import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { evaluationPath } from './paths'
 import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section, UserInfoSchema } from './schema'
@@ -260,6 +259,7 @@ export async function getEvaluationWithSections(params: PathParams, user: User) 
     catch (error) {
       console.error('Error fetching group mate info:', error)
     }
+    return evaluation
   }
   return {
     ...evaluation,
