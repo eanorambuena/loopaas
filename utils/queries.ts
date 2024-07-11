@@ -430,6 +430,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
         scores.push(...missingScores)
       }
       const averageScore = scores.reduce((acc, score) => acc + score, 0) / numberOfGroupMates
+      console.log({ criterionLabel, scores, averageScore, weight, weightsSum })
       return acc + (averageScore * weight) / weightsSum
     }, 0)
     
