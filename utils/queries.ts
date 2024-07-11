@@ -437,7 +437,8 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
       return acc + (averageScore * weight) / weightsSum
     }, 0)
     
-    const evaluationGrade = (evaluationScore - nullScore) * (maxGrade / (nullScore - minScore))
+    const rawEvaluationGrade = (evaluationScore - nullScore) * (maxGrade / (nullScore - minScore))
+    const evaluationGrade = Math.min(1, Math.max(-1, rawEvaluationGrade))
     newGradesByUserInfoId[student.userInfoId] = evaluationGrade
   }
 
