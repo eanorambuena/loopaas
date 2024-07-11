@@ -310,9 +310,8 @@ export async function getGrades(evaluation: Evaluation, userInfoId: string) {
       .select('*')
       .eq('evaluationId', evaluation.id)
       .eq('userInfoId', userInfoId)
-      .single()
     if (error) throw error
-    return grades
+    return grades?.[0] as Grade | undefined
   }
   catch (error) {
     console.error('Error fetching grades:', error)
