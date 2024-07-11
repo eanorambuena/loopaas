@@ -422,10 +422,13 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
 
     const weightsSum = firstQuestion.criteria.reduce((acc, criterion) => acc + criterion.weight, 0)
     const numberOfGroupMates = groupMates.length
+
+    const slugifyCriterionLabel = (label: string) => label.toLowerCase().replace(/\s/g, '-')
+
     const evaluationScore = Object.entries(studentCriteriaScores).reduce((acc, [criterionLabel, scores]) => {
-      const criterion = firstQuestion.criteria.find((criterion: QuestionCriterion) => criterion.label === criterionLabel)
+      const criterion = firstQuestion.criteria.find((criterion: QuestionCriterion) => slugifyCriterionLabel(criterion.label) === criterionLabel)
       const weight = criterion?.weight ?? 0
-      console.log({ criteria: firstQuestion.criteria, criterion, weight})
+      console.log({ criteria: firstQuestion.criteria, criterion, weight, slugifyCriterionLabel: slugifyCriterionLabel(criterionLabel) })
       if (scores.length < numberOfGroupMates) {
         const missingScores = Array(numberOfGroupMates - scores.length).fill(nullScore)
         scores.push(...missingScores)
