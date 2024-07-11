@@ -47,7 +47,6 @@ export default async function Page({ params, searchParams }: Props) {
 
   const updateGrades = async (formData: FormData) => {
     'use server'
-    const students = await getCourseStudents({ course })
     await saveGrades(evaluation, students)
     const file = formData.get('file') as File
     if (!file) return
