@@ -425,7 +425,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     const evaluationScore = Object.entries(studentCriteriaScores).reduce((acc, [criterionLabel, scores]) => {
       const criterion = firstQuestion.criteria.find((criterion: QuestionCriterion) => criterion.label === criterionLabel)
       const weight = criterion?.weight ?? 0
-      console.log({ criterion, weight})
+      console.log({ criteria: firstQuestion.criteria, criterion, weight})
       if (scores.length < numberOfGroupMates) {
         const missingScores = Array(numberOfGroupMates - scores.length).fill(nullScore)
         scores.push(...missingScores)
