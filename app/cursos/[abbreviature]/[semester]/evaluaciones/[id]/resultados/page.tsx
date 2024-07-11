@@ -1,4 +1,5 @@
 import Fallback from '@/components/Fallback'
+import Input from '@/components/Input'
 import SecondaryButton from '@/components/SecondaryButton'
 import SecondaryLink from '@/components/SecondaryLink'
 import { evaluationPath } from '@/utils/paths'
@@ -59,6 +60,7 @@ export default async function Page({ params, searchParams }: Props) {
       )}
       <section className='flex gap-4'>
         <form className='flex gap-4 border border-gray-300 rounded-md p-4'>
+          <Input label='Notas Grupales' type='file' name='file' accept='.xlsx' required />
           <SecondaryButton
             className='w-fit'
             formAction={updateGrades}
