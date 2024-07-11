@@ -26,7 +26,7 @@ export default async function Page({ params, searchParams }: Props) {
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
   const page = parseInt(searchParams.page) || 1
-  const itemsPerPage = 10
+  const itemsPerPage = 100
   const rangeMin = (page - 1) * itemsPerPage
   const rangeMax = rangeMin - 1 + itemsPerPage
   const students = await getCourseStudents({ course, rangeMin, rangeMax })
@@ -56,22 +56,24 @@ export default async function Page({ params, searchParams }: Props) {
       {new Date(evaluation.deadLine) > new Date() && (
         <p className='text-red-500 w-full'>Advertencia: La evaluación aún no ha finalizado</p>
       )}
-      <form className='flex gap-4'>
-        <SecondaryButton
-          className='w-fit'
-          formAction={updateGrades}
-          type='submit'
-          pendingText='Actualizando Notas...'
-        >
-          Actualizar Notas
-        </SecondaryButton>
+      <section className='flex gap-4'>
+        <form className='flex gap-4'>
+          <SecondaryButton
+            className='w-fit'
+            formAction={updateGrades}
+            type='submit'
+            pendingText='Actualizando Notas...'
+          >
+            Actualizar Notas
+          </SecondaryButton>
+        </form>
         <SecondaryLink
           className='w-fit'
           href={`${evaluationPath(params)}/resultados?sendReport=true`}
         >
           Enviar Reporte al correo
         </SecondaryLink>
-      </form>
+      </section>
       <table className='table-auto text-sm sm:text-inherit max-w-[95%]'>
         <thead className='h-fit'>
           <tr className='text-left sm:*:px-6 *:py-3'>

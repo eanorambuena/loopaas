@@ -428,17 +428,16 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     const evaluationScore = Object.entries(studentCriteriaScores).reduce((acc, [criterionLabel, scores]) => {
       const criterion = firstQuestion.criteria.find((criterion: QuestionCriterion) => slugifyCriterionLabel(criterion.label) === criterionLabel)
       const weight = criterion?.weight ?? 0
-      console.log({ criteria: firstQuestion.criteria, criterion, weight, slugifyCriterionLabel: slugifyCriterionLabel(criterionLabel) })
+
       if (scores.length < numberOfGroupMates) {
         const missingScores = Array(numberOfGroupMates - scores.length).fill(nullScore)
         scores.push(...missingScores)
       }
       const averageScore = scores.reduce((acc, score) => acc + score, 0) / numberOfGroupMates
-      console.log({ criterionLabel, scores, averageScore, weight, weightsSum })
+
       return acc + (averageScore * weight) / weightsSum
     }, 0)
     
-    console.log({ student, studentCriteriaScores, evaluationScore })
     const evaluationGrade = (evaluationScore - nullScore) * (maxGrade / (nullScore - minScore))
     newGradesByUserInfoId[student.userInfoId] = evaluationGrade
   }
