@@ -51,14 +51,14 @@ export default async function Page({ params, searchParams }: Props) {
     await saveGrades(evaluation, students)
     const file = formData.get('file') as File
     if (!file) // reload page with next.js
-      return redirect(`${evaluationPath(params)}/resultados`)
+      return redirect(`${evaluationPath(params)}/resultados?page=${page}`)
     const data = await file.arrayBuffer()
     const workbook = XLSX.read(data, { type: 'array' })
     const sheet = workbook.Sheets[workbook.SheetNames[0]]
     const groupsGradesData = XLSX.utils.sheet_to_json(sheet)
-    if (!groupsGradesData) return redirect(`${evaluationPath(params)}/resultados`)
+    if (!groupsGradesData) return redirect(`${evaluationPath(params)}/resultados?page=${page}`)
     console.log(groupsGradesData)
-    return redirect(`${evaluationPath(params)}/resultados`)
+    return redirect(`${evaluationPath(params)}/resultados?page=${page}`)
   }
 
   const baseUrl = `${evaluationPath(params)}/resultados`
