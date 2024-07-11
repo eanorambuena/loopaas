@@ -242,9 +242,9 @@ export async function getEvaluationWithSections(params: PathParams, user: User) 
   const groupStudents = await getGroupMates(params, userInfo?.id ?? '', evaluation)
   if (!groupStudents) return redirect(evaluationPath(params))
 
-  const sections: Section[] = []
-  for (const mate of groupStudents) {
-    try {
+  try {
+    const sections: Section[] = []
+    for (const mate of groupStudents) {
       const { data: mateInfo, error } = await supabase
         .from('userInfo')
         .select('*')
@@ -256,15 +256,15 @@ export async function getEvaluationWithSections(params: PathParams, user: User) 
         mateId: mate.userInfoId,
       })
     }
-    catch (error) {
-      console.error('Error fetching group mate info:', error)
-    }
+    return {
+      ...evaluation,
+      sections,
+    } as Evaluation
+  }
+  catch (error) {
+    console.warn('Error fetching group mate info:', error)
     return evaluation
   }
-  return {
-    ...evaluation,
-    sections,
-  } as Evaluation
 }
 
 export async function getCurrentUser() {
