@@ -45,6 +45,7 @@ export default async function Page({ params, searchParams }: Props) {
 
   const updateGrades = async (formData: FormData) => {
     'use server'
+    const students = await getCourseStudents({ course })
     await saveGrades(evaluation, students)
   }
 
@@ -57,7 +58,7 @@ export default async function Page({ params, searchParams }: Props) {
         <p className='text-red-500 w-full'>Advertencia: La evaluación aún no ha finalizado</p>
       )}
       <section className='flex gap-4'>
-        <form className='flex gap-4'>
+        <form className='flex gap-4 border border-gray-300 rounded-md p-4'>
           <SecondaryButton
             className='w-fit'
             formAction={updateGrades}
