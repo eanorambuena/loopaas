@@ -7,6 +7,7 @@ import {
   getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams,
   getGrades, saveGrades
 } from '@/utils/queries'
+import { redirect } from 'next/navigation'
 import * as XLSX from 'xlsx'
 
 interface Props {
@@ -49,13 +50,15 @@ export default async function Page({ params, searchParams }: Props) {
     'use server'
     await saveGrades(evaluation, students)
     const file = formData.get('file') as File
-    if (!file) return
+    if (!file) // reload page with next.js
+      return redirect(`${evaluationPath(params)}/resultados`)
     const data = await file.arrayBuffer()
     const workbook = XLSX.read(data, { type: 'array' })
     const sheet = workbook.Sheets[workbook.SheetNames[0]]
     const groupsGradesData = XLSX.utils.sheet_to_json(sheet)
-    if (!groupsGradesData) return
+    if (!groupsGradesData) return redirect(`${evaluationPath(params)}/resultados`)
     console.log(groupsGradesData)
+    return redirect(`${evaluationPath(params)}/resultados`)
   }
 
   const baseUrl = `${evaluationPath(params)}/resultados`
