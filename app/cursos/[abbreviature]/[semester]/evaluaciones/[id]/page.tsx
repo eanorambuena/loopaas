@@ -12,6 +12,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
   const isCourseProfessor = await getIsCourseProfessor(course, user)
+  console.log(user.email, `isCourseProfessor: ${isCourseProfessor}`)
   const evaluation = await getEvaluationWithSections(params, user)
 
   return (
