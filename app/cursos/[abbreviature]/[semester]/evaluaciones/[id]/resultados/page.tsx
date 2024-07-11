@@ -26,7 +26,7 @@ export default async function Page({ params, searchParams }: Props) {
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
   const page = parseInt(searchParams.page) || 1
-  const itemsPerPage = 100
+  const itemsPerPage = parseInt(process.env.NEXT_ITEMS_PER_PAGE ?? '10')
   const rangeMin = (page - 1) * itemsPerPage
   const rangeMax = rangeMin - 1 + itemsPerPage
   const students = await getCourseStudents({ course, rangeMin, rangeMax })
