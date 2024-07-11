@@ -263,7 +263,10 @@ export async function getEvaluationWithSections(params: PathParams, user: User) 
   }
   catch (error) {
     console.warn('Error fetching group mate info:', error)
-    return evaluation
+    return {
+      ...evaluation,
+      sections: [],
+    } as Evaluation
   }
 }
 
