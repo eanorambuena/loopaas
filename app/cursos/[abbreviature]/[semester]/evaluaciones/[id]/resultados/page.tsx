@@ -7,6 +7,7 @@ import {
   getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams,
   getGrades, saveGrades
 } from '@/utils/queries'
+import * as XLSX from 'xlsx'
 
 interface Props {
   params: {
@@ -48,6 +49,14 @@ export default async function Page({ params, searchParams }: Props) {
     'use server'
     const students = await getCourseStudents({ course })
     await saveGrades(evaluation, students)
+    const file = formData.get('file') as File
+    if (!file) return
+    const data = await file.arrayBuffer()
+    const workbook = XLSX.read(data, { type: 'array' })
+    const sheet = workbook.Sheets[workbook.SheetNames[0]]
+    const groupsGradesData = XLSX.utils.sheet_to_json(sheet)
+    if (!groupsGradesData) return
+    console.log(groupsGradesData)
   }
 
   const baseUrl = `${evaluationPath(params)}/resultados`
@@ -60,7 +69,7 @@ export default async function Page({ params, searchParams }: Props) {
       )}
       <section className='flex gap-4'>
         <form className='flex gap-4 border border-gray-300 rounded-md p-4'>
-          <Input label='Notas Grupales' type='file' name='file' accept='.xlsx' required />
+          <Input label='Notas Grupales' type='file' name='file' accept='.xlsx' />
           <SecondaryButton
             className='w-fit'
             formAction={updateGrades}
@@ -71,7 +80,7 @@ export default async function Page({ params, searchParams }: Props) {
           </SecondaryButton>
         </form>
         <SecondaryLink
-          className='w-fit'
+          className='w-fit hidden'
           href={`${evaluationPath(params)}/resultados?sendReport=true`}
         >
           Enviar Reporte al correo
@@ -112,8 +121,7 @@ export default async function Page({ params, searchParams }: Props) {
           >
             Página Anterior
           </SecondaryLink>
-        ) : <SecondaryButton className='w-fit opacity-50' disabled>Página Anterior</SecondaryButton>
-        }
+        ) : <SecondaryButton className='w-fit opacity-50' disabled>Página Anterior</SecondaryButton>}
         <strong>{page}</strong>
         {students.length === itemsPerPage ? (
           <SecondaryLink
@@ -122,8 +130,7 @@ export default async function Page({ params, searchParams }: Props) {
           >
             Página Siguiente
           </SecondaryLink>
-        ) : <SecondaryButton className='w-fit opacity-50' disabled>Página Siguiente</SecondaryButton>
-        }
+        ) : <SecondaryButton className='w-fit opacity-50' disabled>Página Siguiente</SecondaryButton>}
       </section>
     </div>
   )
