@@ -22,6 +22,7 @@ function getNumberOfQuestions(evaluation: Evaluation) {
 }
 
 const isDateOlderByAtLeastOneDay = (firstDate: Date, secondDate: Date) => {
+  return false
   const differeceInTime = firstDate.getTime() - secondDate.getTime()
   const differenceInDays = differeceInTime / (1000 * 3600 * 24)
   return differenceInDays >= 1
