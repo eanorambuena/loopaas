@@ -3,6 +3,7 @@ import CourseCard from '@/components/CourseCard'
 import Card from '@/components/Card'
 import PlusIcon from '@/components/icons/PlusIcon'
 import { getCurrentUser, getUserInfo } from '@/utils/queries'
+import Fallback from '@/components/Fallback'
 
 export default async function CursosPage() {
   const user = await getCurrentUser()
@@ -28,6 +29,9 @@ export default async function CursosPage() {
       <main className="grid gap-20 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 p-4">
         {isProfessor && (
           <Card icon={PlusIcon} title="Nuevo Curso" path="/cursos/nuevo" />
+        )}
+        {!courses?.length && (
+          <Fallback>No se encontraron cursos</Fallback>
         )}
         {courses?.map((course) => (
           <CourseCard key={course.id} course={course} />
