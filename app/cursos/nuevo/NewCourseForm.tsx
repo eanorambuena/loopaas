@@ -52,7 +52,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
         if (error.code = '23505') {
           return toast({
             title: 'Error',
-            description: 'El curso ya existe',
+            description: 'El curso ya existe. Si crees que esto es un error, por favor ponte en contacto con nosotros.',
             variant: 'destructive'
           })
         }
