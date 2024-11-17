@@ -206,7 +206,7 @@ export async function getEvaluationByParams(params: PathParams) {
 }
 
 export async function getGroupMates(params: PathParams, userInfoId: string, evaluation: Evaluation) {
-  const REDIRECT_PATH = evaluationPath(params)
+  const REDIRECT_PATH = evaluationPath({ abbreviature: params.abbreviature, semester: params.semester })
   const supabase = createClient()
   try {
     const { data: student, error: studentError } = await supabase
@@ -217,6 +217,10 @@ export async function getGroupMates(params: PathParams, userInfoId: string, eval
       .single()
     if (studentError) throw studentError
     if (!student) return redirect(REDIRECT_PATH)
+    if (!student.group){
+      console.log('No group')
+      return redirect(REDIRECT_PATH)
+    }
 
     const { data: groupStudents, error: groupStudentsError } = await supabase
       .from('students')
@@ -225,7 +229,7 @@ export async function getGroupMates(params: PathParams, userInfoId: string, eval
       .neq('userInfoId', userInfoId)
       .eq('group', student.group)
     if (groupStudentsError) throw groupStudentsError
-    if (!groupStudents) return redirect(REDIRECT_PATH)
+    if (!groupStudents) return redirect(evaluationPath(params))
 
     return groupStudents
   }
@@ -462,5 +466,22 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
       .from('grades')
       .upsert(grade)
     if (error) redirect(`${evaluationPath(pathParams)}/resultados?message=No se pudieron guardar las notas`)
+  }
+}
+
+export async function isStudentInCourse(courseId: string, userInfoId: string) {
+  const supabase = createClient()
+  try {
+    const { data, error } = await supabase
+      .from('students')
+      .select('*')
+      .eq('courseId', courseId)
+      .eq('userInfoId', userInfoId)
+      .single()
+    if (error) throw error
+    return !!data
+  }
+  catch (error) {
+    console.error('Error fetching student:', error)
   }
 }
