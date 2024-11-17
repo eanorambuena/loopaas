@@ -34,7 +34,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
     const year = response.start_at?.split('-')[0] ?? new Date().getFullYear()
     const month = parseInt(response.start_at?.split('-')[1]) ?? new Date().getMonth()
     const semester = month < 7 ? 1 : 2
-    const abbreviature = response.course_code.split('-')[0]
+    const abbreviature = response.course_code?.split('-')[0]
     const { error } = await supabase
       .from('courses')
       .insert([
