@@ -105,12 +105,14 @@ export default function Login() {
         <MainButton onClick={() => setAction('signIn')}>
           Iniciar Sesión
         </MainButton>
+        {/*
         <SecondaryButton
-          onClick={() => setAction('signUp')}
-          //type='submit'
+          onClick={() => {setAction('signUp')}}
+          type='submit'
         >
           Registrarse
         </SecondaryButton>
+        */}
       </form>
     </div>
   )
