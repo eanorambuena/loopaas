@@ -485,3 +485,70 @@ export async function isStudentInCourse(courseId: string, userInfoId: string) {
     console.error('Error fetching student:', error)
   }
 }
+
+export async function createAutoConfirmUsers(csv: string) {
+  console.log('\nCreating auto confirm users...\n')
+
+  // asign each user to course with students table
+  // create userInfo for each user
+  // read a csv with the following columns: APELLIDOS;NOMBRES;PASSWORD;CORREO;GRUPO
+
+  const supabase = createClient()
+
+  const rows = csv.split('\n')
+  const students = rows.map((row) => {
+    const [lastName, firstName, password, email, group] = row.split(';')
+    return { lastName, firstName, password, email, group }
+  })
+
+  const { data: courses, error: coursesError } = await supabase
+    .from('courses')
+    .select('*')
+  if (coursesError) throw coursesError
+
+  const course = courses[0]
+
+  for (const student of students) {
+    const { email, password, group } = student
+    const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({
+      email: email.toLowerCase(),
+      password,
+      email_confirm: true
+    })
+    if (signUpError) throw signUpError
+    if (!user) throw new Error('No user')
+
+    const { error: userInfoError } = await supabase
+      .from('userInfo')
+      .insert({
+        userId: user.id,
+        email,
+        firstName: student.firstName,
+        lastName: student.lastName
+      })
+      .single()
+    if (userInfoError) throw userInfoError
+
+    const userInfo = await getUserInfo(user.id, false)
+    if (!userInfo) throw new Error('No user info')
+
+    const { error: studentError } = await supabase
+      .from('students')
+      .insert({
+        courseId: course.id,
+        userInfoId: userInfo.id,
+        group
+      })
+    if (studentError) throw studentError
+  }
+
+  console.log('\nAuto confirm users successfully created\n')
+}
+
+/* Example of csv to create auto confirm users, if you want to test it, uncomment the following line.
+ * It will be runned when an user access to the page in the browser.
+
+createAutoConfirmUsers(`ApellidoA;NombreA;12345678;correoA@uc.cl;2
+ApellidoB;NombreB;01234567;correoB@estudiante.uc.cl;2`)
+
+*/
