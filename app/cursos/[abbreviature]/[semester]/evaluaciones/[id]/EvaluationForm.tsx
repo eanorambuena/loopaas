@@ -6,6 +6,7 @@ import SecondaryButton from '@/components/SecondaryButton'
 import { useToast } from '@/components/ui/use-toast'
 import { createResponse } from '@/utils/clientQueries'
 import { Evaluation, UserInfoSchema } from '@/utils/schema'
+import useChileTime from '@/utils/hooks/useChileTime'
 
 function getNumberOfQuestions(evaluation: Evaluation) {
   let numberOfQuestions = 0;
@@ -21,14 +22,6 @@ function getNumberOfQuestions(evaluation: Evaluation) {
   return numberOfQuestions
 }
 
-const isDateEarlierThanNow = (date: Date) => {
-  const now = new Date().getTime()
-  const differeceInTime = now - date.getTime()
-  console.log({ now, date, differeceInTime })
-  const differenceInSeconds = differeceInTime / 1000
-  return differenceInSeconds >= 1
-}
-
 interface Props {
   evaluation: Evaluation
   userInfo: UserInfoSchema
@@ -36,7 +29,15 @@ interface Props {
 
 export default function EvaluationForm({ evaluation, userInfo }: Props) {
   const { toast } = useToast()
+  const chileTime = useChileTime()
   if (!userInfo) return null
+
+  const isDateEarlierThanNow = (date: Date) => {
+    const differeceInTime = chileTime.getTime() - date.getTime()
+    console.log({ chileTime, date, differeceInTime })
+    const differenceInSeconds = differeceInTime / 1000
+    return differenceInSeconds >= 1
+  }
 
   const deadLineDay = evaluation.deadLine?.split('-')[2]
   const deadLineMonth = evaluation.deadLine?.split('-')[1]
