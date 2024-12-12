@@ -381,9 +381,8 @@ export async function getUserInfoById(userInfoId: string) {
 }
 
 export async function saveGrades(evaluation: Evaluation, students: any) {
-  console.log({ evaluation, students })
   const responsesByUserInfoId = await getResponsesByUserInfoId(evaluation)
-  console.log({ responsesByUserInfoId })
+  
   if (!responsesByUserInfoId) return
 
   const lastResponseByUserInfoId: Record<string, Response> = {}
@@ -428,10 +427,18 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
 
     const slugifyCriterionLabel = (label: string) => label.toLowerCase().replace(/\s/g, '-')
 
+    // Manejo de caso donde no hay respuestas válidas
+    const criteriaLabels = firstQuestion.criteria.map(c => slugifyCriterionLabel(c.label))
+    criteriaLabels.forEach(criterionLabel => {
+      if (!studentCriteriaScores[criterionLabel]) {
+        studentCriteriaScores[criterionLabel] = Array(numberOfGroupMates).fill(nullScore)
+      }
+    })
+
     const evaluationScore = Object.entries(studentCriteriaScores).reduce((acc, [criterionLabel, scores]) => {
       const criterion = firstQuestion.criteria.find((criterion: QuestionCriterion) => slugifyCriterionLabel(criterion.label) === criterionLabel)
       const weight = criterion?.weight ?? 0
-
+      console.log(JSON.stringify({ grou: student.group, criterionLabel, scores, numberOfGroupMates }))
       if (scores.length < numberOfGroupMates) {
         const missingScores = Array(numberOfGroupMates - scores.length).fill(nullScore)
         scores.push(...missingScores)
