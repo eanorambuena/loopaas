@@ -21,10 +21,12 @@ function getNumberOfQuestions(evaluation: Evaluation) {
   return numberOfQuestions
 }
 
-const isDateOlder = (firstDate: Date, secondDate: Date) => {
-  const differeceInTime = firstDate.getTime() - secondDate.getTime()
+const isDateEarlierThanNow = (date: Date) => {
+  const now = new Date().getTime()
+  const differeceInTime = now - date.getTime()
+  console.log({ now, date, differeceInTime })
   const differenceInSeconds = differeceInTime / 1000
-  return differenceInSeconds >= 720
+  return differenceInSeconds >= 1
 }
 
 interface Props {
@@ -72,7 +74,7 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
     })
     const valuesList = Object.values(values)
 
-    if (isDateOlder(new Date(evaluation.deadLine), new Date())) return toast({
+    if (isDateEarlierThanNow(new Date(evaluation.deadLine))) return toast({
       title: 'Error',
       description: `Esta evaluación ya no está disponible. Fecha límite: ${deadLineDay} / ${deadLineMonth} / ${deadLineYear}`,
       variant: 'destructive'
@@ -93,7 +95,7 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
     })()
   }
 
-  if (isDateOlder(new Date(evaluation.deadLine), new Date())) return (
+  if (isDateEarlierThanNow(new Date(evaluation.deadLine))) return (
     <section className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'>
       Esta evaluación ya no está disponible
       <p className='dark:text-gray-100'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
