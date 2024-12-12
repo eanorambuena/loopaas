@@ -7,7 +7,6 @@ import {
   getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams,
   getGrades, saveGrades
 } from '@/utils/queries'
-import { read } from 'fs'
 import { redirect } from 'next/navigation'
 import * as XLSX from 'xlsx'
 
@@ -33,7 +32,7 @@ export default async function Page({ params, searchParams }: Props) {
   const itemsPerPage = parseInt(process.env.NEXT_ITEMS_PER_PAGE ?? '10')
   const rangeMin = (page - 1) * itemsPerPage
   const rangeMax = rangeMin - 1 + itemsPerPage
-  const students = await getCourseStudents({ course, rangeMin, rangeMax })
+  const students = await getCourseStudents({ course})//await getCourseStudents({ course, rangeMin, rangeMax })
   if (students?.length === 0 || !students)
     return <Fallback>No hay estudiantes inscritos en el curso</Fallback>
 
@@ -65,10 +64,29 @@ export default async function Page({ params, searchParams }: Props) {
       return reloadPageInServerSide()
     
     const groupsGradesData = await readXLSX(file)
-    if (!groupsGradesData) return reloadPageInServerSide()
+    if (!groupsGradesData || !Array.isArray(groupsGradesData))
+      return reloadPageInServerSide()
+
     console.log(groupsGradesData)
+
+    const gradesMap: Record<string, { groupGrade?: number, coGrade?: number }> = {}
+    groupsGradesData.forEach((row: any) => {
+      const userInfoId = row['userInfoId'] || row['ID'] // Ajustar según la estructura del archivo
+      if (!userInfoId) return
+
+      gradesMap[userInfoId] = {
+        groupGrade: parseFloat(row['GroupGrade']) || undefined,
+        coGrade: parseFloat(row['CoGrade']) || undefined,
+      }
+    })
     reloadPageInServerSide()
   }
+
+  /* Optional for server side: Print students data
+  students.forEach(student => {
+    console.log(student.userInfo?.email, student.coGrade)
+  })
+  */
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-8 opacity-0'>
