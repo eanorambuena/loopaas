@@ -23,8 +23,8 @@ function getNumberOfQuestions(evaluation: Evaluation) {
 
 const isDateOlderByAtLeastHalfDay = (firstDate: Date, secondDate: Date) => {
   const differeceInTime = firstDate.getTime() - secondDate.getTime()
-  const differenceInDays = differeceInTime / (1000 * 3600 * 12)
-  return differenceInDays >= 1
+  const differenceInDays = differeceInTime / (1000 * 3600 * 24)
+  return differenceInDays >= 0.5
 }
 
 interface Props {
