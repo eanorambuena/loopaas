@@ -7,6 +7,7 @@ import {
   getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams,
   getGrades, saveGrades
 } from '@/utils/queries'
+import { read } from 'fs'
 import { redirect } from 'next/navigation'
 import * as XLSX from 'xlsx'
 
@@ -46,22 +47,28 @@ export default async function Page({ params, searchParams }: Props) {
     student.finalGrade = grades?.finalGrade ?? 'N/A'
   }
 
-  const updateGrades = async (formData: FormData) => {
-    'use server'
-    await saveGrades(evaluation, students)
-    const file = formData.get('file') as File
-    if (!file) // reload page with next.js
-      return redirect(`${evaluationPath(params)}/resultados?page=${page}`)
+  const readXLSX = async (file: File) => {
     const data = await file.arrayBuffer()
     const workbook = XLSX.read(data, { type: 'array' })
     const sheet = workbook.Sheets[workbook.SheetNames[0]]
-    const groupsGradesData = XLSX.utils.sheet_to_json(sheet)
-    if (!groupsGradesData) return redirect(`${evaluationPath(params)}/resultados?page=${page}`)
-    console.log(groupsGradesData)
-    return redirect(`${evaluationPath(params)}/resultados?page=${page}`)
+    return XLSX.utils.sheet_to_json(sheet)
   }
 
   const baseUrl = `${evaluationPath(params)}/resultados`
+
+  const updateGrades = async (formData: FormData) => {
+    'use server'
+    const reloadPageInServerSide = () => redirect(`${baseUrl}?page=${page}`)
+    await saveGrades(evaluation, students)
+    const file = formData.get('file') as File | null
+    if (!file) // reload page with next.js
+      return reloadPageInServerSide()
+    
+    const groupsGradesData = await readXLSX(file)
+    if (!groupsGradesData) return reloadPageInServerSide()
+    console.log(groupsGradesData)
+    reloadPageInServerSide()
+  }
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-8 opacity-0'>
