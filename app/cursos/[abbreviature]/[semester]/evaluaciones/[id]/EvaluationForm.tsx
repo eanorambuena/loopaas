@@ -21,9 +21,9 @@ function getNumberOfQuestions(evaluation: Evaluation) {
   return numberOfQuestions
 }
 
-const isDateOlderByAtLeastOneDay = (firstDate: Date, secondDate: Date) => {
+const isDateOlderByAtLeastHalfDay = (firstDate: Date, secondDate: Date) => {
   const differeceInTime = firstDate.getTime() - secondDate.getTime()
-  const differenceInDays = differeceInTime / (1000 * 3600 * 24)
+  const differenceInDays = differeceInTime / (1000 * 3600 * 12)
   return differenceInDays >= 1
 }
 
@@ -72,7 +72,7 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
     })
     const valuesList = Object.values(values)
 
-    if (isDateOlderByAtLeastOneDay(new Date(evaluation.deadLine), new Date())) return toast({
+    if (isDateOlderByAtLeastHalfDay(new Date(evaluation.deadLine), new Date())) return toast({
       title: 'Error',
       description: `Esta evaluación ya no está disponible. Fecha límite: ${deadLineDay} / ${deadLineMonth} / ${deadLineYear}`,
       variant: 'destructive'
@@ -93,7 +93,7 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
     })()
   }
 
-  if (isDateOlderByAtLeastOneDay(new Date(evaluation.deadLine), new Date())) return (
+  if (isDateOlderByAtLeastHalfDay(new Date(evaluation.deadLine), new Date())) return (
     <section className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'>
       Esta evaluación ya no está disponible
       <p className='dark:text-gray-100'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
