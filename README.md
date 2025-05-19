@@ -6,7 +6,15 @@ IDSApp es una aplicación web para gestionar los cursos del Instituto para el De
 
 **Sitio web:** [idsapp.vercel.app](https://idsapp.vercel.app)
 
-## Quick Start
+## 📜 Índice
+- [📦 Instalación](#instalación)
+- [⚙️ Configuración](#configuración)
+- [🚀 Uso](#uso)
+- [💡 Diseño](#diseño)
+- [🚀 Resultados](#resultados)
+- [📝 Licencia](#licencia)
+
+## Instalación
 
 Clonar el repositorio. Por ejemplo, con SSH:
 ```bash
@@ -52,6 +60,45 @@ Para correr el linter, ejecutar el siguiente comando:
 ```bash
 bun lint
 ```
+
+## Configuración
+
+### Base de datos (supabase)
+
+#### Diagrama de la base de datos
+![Diagrama de la base de datos](./docs/db_diagram.png)
+
+#### Setup
+
+##### 1) Crear tablas basadas en el Diagrama de la base de datos
+
+Es importante recordar:
+- Activar (si no lo está) **Row Level Security (RLS)** para todas las tablas
+- Usar `uuid` para todas las ids
+- Configurar correctamente las claves foráneas
+
+##### 2) Agregar Policies para cada tabla
+
+En `Authentication > Policies` se debe agregar las policies necesarias para cada tabla.
+
+Todas las tablas deben tener la siguiente policy: **`Enable select for authenticated users only`**
+
+##### 3) Agregar la *URL* del sitio web a la URL Configuration de Supabase
+
+En `Authentication > URL Configuration > Site URL` se debe agregar la URL del sitio web, sin `/` al final.
+
+##### 4) Agregar Primer usuario y Primer curso
+
+El primer usuario debe ser asignado **Profesor** para que pueda administrar el curso.
+También debe ser asignado **Estudiante**, a un grupo no usado por los estudiantes del curso.
+
+#### Integración con Resend
+
+Para enviar correos electrónicos, se utiliza Resend. Resend es un servicio de envío de correos electrónicos transaccionales que permite enviar correos electrónicos de forma segura y confiable. Desde Septiembre 2024, Supabase requiere que los correos electrónicos sean enviados a través de un servicio de envío de correos electrónicos SMTP de terceros, como Resend.
+
+Resend requiere un dominio verificado para enviar correos electrónicos que no sea un dominio gratuito público. Por lo tanto, 'idsapp.vercel.app' no es un dominio válido para enviar correos electrónicos. Para enviar correos electrónicos, se debe configurar un dominio personalizado y verificarlo en Resend.
+
+Esto es requerido para el SignUp de Supabase, incluso si no se envían correos electrónicos de verificación. Por este motivo, actualmente no se puede utilizar el SignUp de Supabase en IDSApp y el botón de SignUp está comentado en el código a la fecha (17 de Noviembre 2024).
 
 ## Diseño
 
@@ -135,45 +182,6 @@ La aplicación soporta múltiples usuarios simultáneos:
 La semana de Coevaluaciones 2024-1 (solo alumnos SUS1000) se mostró un uso de la base de datos y autenticación con picos de **7035 solicitudes a la base de datos** y **5196 solicitudes de autenticación**.
 
 ![Uso de la base de datos y autenticación 2024-1](./docs/db_usage.png)
-
-## Documentación
-
-### Base de datos (supabase)
-
-#### Diagrama de la base de datos
-![Diagrama de la base de datos](./docs/db_diagram.png)
-
-#### Setup
-
-##### 1) Crear tablas basadas en el Diagrama de la base de datos
-
-Es importante recordar:
-- Activar (si no lo está) **Row Level Security (RLS)** para todas las tablas
-- Usar `uuid` para todas las ids
-- Configurar correctamente las claves foráneas
-
-##### 2) Agregar Policies para cada tabla
-
-En `Authentication > Policies` se debe agregar las policies necesarias para cada tabla.
-
-Todas las tablas deben tener la siguiente policy: **`Enable select for authenticated users only`**
-
-##### 3) Agregar la *URL* del sitio web a la URL Configuration de Supabase
-
-En `Authentication > URL Configuration > Site URL` se debe agregar la URL del sitio web, sin `/` al final.
-
-##### 4) Agregar Primer usuario y Primer curso
-
-El primer usuario debe ser asignado **Profesor** para que pueda administrar el curso.
-También debe ser asignado **Estudiante**, a un grupo no usado por los estudiantes del curso.
-
-#### Integración con Resend
-
-Para enviar correos electrónicos, se utiliza Resend. Resend es un servicio de envío de correos electrónicos transaccionales que permite enviar correos electrónicos de forma segura y confiable. Desde Septiembre 2024, Supabase requiere que los correos electrónicos sean enviados a través de un servicio de envío de correos electrónicos SMTP de terceros, como Resend.
-
-Resend requiere un dominio verificado para enviar correos electrónicos que no sea un dominio gratuito público. Por lo tanto, 'idsapp.vercel.app' no es un dominio válido para enviar correos electrónicos. Para enviar correos electrónicos, se debe configurar un dominio personalizado y verificarlo en Resend.
-
-Esto es requerido para el SignUp de Supabase, incluso si no se envían correos electrónicos de verificación. Por este motivo, actualmente no se puede utilizar el SignUp de Supabase en IDSApp y el botón de SignUp está comentado en el código a la fecha (17 de Noviembre 2024).
 
 <br />
 <hr />
