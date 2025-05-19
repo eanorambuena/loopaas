@@ -21,6 +21,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
 
   try {
     const evaluation = await getEvaluationWithSections(params, user)
+  }
   catch (error) {
     return <Fallback>{`Error ${error}`}</Fallback>
   }
