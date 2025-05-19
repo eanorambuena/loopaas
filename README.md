@@ -92,6 +92,34 @@ En `Authentication > URL Configuration > Site URL` se debe agregar la URL del si
 El primer usuario debe ser asignado **Profesor** para que pueda administrar el curso.
 También debe ser asignado **Estudiante**, a un grupo no usado por los estudiantes del curso.
 
+#### Evaluaciones
+
+Dada la naturaleza flexible de las evaluaciones, sus preguntas se guardan en formato JSON binario en la base de datos. Esto permite agregar nuevas evaluaciones sin necesidad de modificar la base de datos.
+
+Un ejemplo de JSON válido es:
+```json
+{
+  "1":
+    {"type": "linear",
+    "criteria": [
+      {
+        "label": "Respeto y buen ambiente",
+        "weight": 1  
+      },
+      {
+        "label": "Contribución al trabajo",
+        "weight": 1
+      },
+      {
+        "label": "Comunicación y compromiso",
+        "weight": 1
+      }
+    ],
+    "required": true
+  }
+}
+```
+
 #### Integración con Resend
 
 Para enviar correos electrónicos, se utiliza Resend. Resend es un servicio de envío de correos electrónicos transaccionales que permite enviar correos electrónicos de forma segura y confiable. Desde Septiembre 2024, Supabase requiere que los correos electrónicos sean enviados a través de un servicio de envío de correos electrónicos SMTP de terceros, como Resend.
