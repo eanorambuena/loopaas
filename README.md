@@ -128,6 +128,16 @@ Resend requiere un dominio verificado para enviar correos electrónicos que no s
 
 Esto es requerido para el SignUp de Supabase, incluso si no se envían correos electrónicos de verificación. Por este motivo, actualmente no se puede utilizar el SignUp de Supabase en IDSApp y el botón de SignUp está comentado en el código a la fecha (17 de Noviembre 2024).
 
+### Vercel
+
+Después de configurar Supabase, se deben agregar las variables de entorno a Vercel. Para esto, se deben agregar las siguientes variables de entorno en la configuración del proyecto en Vercel:
+- `NEXT_PUBLIC_SUPABASE_URL`: URL de Supabase
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Clave Anónima de Supabase
+- `NEXT_PRIVATE_SUPABASE_SERVICE_ROLE_KEY`: Clave de Servicio de Supabase
+- `NEXT_RESEND_API_TOKEN`: Clave de API de Resend
+- `NEXT_CANVAS_API_TOKEN`: Clave de API de Canvas
+- `NEXT_ITEMS_PER_PAGE`: Número de items por página (opcional, por defecto 10)
+
 ## Diseño
 
 ### Usuarios / clientes
