@@ -27,6 +27,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
     }
   }
   catch (error) {
+    console.error('Error fetching evaluation:', error)
     return <Fallback>{`Error ${error}`}</Fallback>
   }
 
