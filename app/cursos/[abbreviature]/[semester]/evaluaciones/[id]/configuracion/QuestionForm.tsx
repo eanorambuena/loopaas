@@ -4,6 +4,7 @@ import SecondaryButton from '@/components/SecondaryButton'
 import { LinearQuestion, Question } from '@/utils/schema'
 import { useState } from 'react'
 import QuestionFieldset from './QuestionFieldset'
+import Fallback from '@/components/Fallback'
 
 interface Props {
   id: string
@@ -30,9 +31,17 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
     setQuestion({ ...question })
   }
 
+  const criteria = (questionState as LinearQuestion).criteria
+
+  if (!criteria) {
+    return (
+      <Fallback>Esta pregunta no tiene criterios</Fallback>
+    )
+  }
+
   return (
     <QuestionFieldset deleteQuestion={deleteQuestion} id={id} question={question}>
-      {(questionState as LinearQuestion).criteria.map((criterion, i) => (
+      {criteria.map((criterion, i) => (
         <div key={i} className='flex gap-4 flex-col sm:flex-row'>
           <Input
             className='flex-grow'
