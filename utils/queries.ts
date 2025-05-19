@@ -70,7 +70,7 @@ export async function getCourseStudents({course, rangeMin = 0, rangeMax} : Cours
 
     try {
       await Promise.all(
-        students.map(async (student) => {
+        students?.map(async (student) => {
         const { data: userInfo, error: userInfoError } = await supabase
           .from('userInfo')
           .select('*')
@@ -503,6 +503,8 @@ export async function createAutoConfirmUsers(csv: string) {
   const supabase = createClient()
 
   const rows = csv.split('\n')
+  if (rows.length === 0) throw new Error('No rows in csv')
+
   const students = rows.map((row) => {
     const [lastName, firstName, password, email, group] = row.split(';')
     return { lastName, firstName, password, email, group }

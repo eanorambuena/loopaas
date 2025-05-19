@@ -7,6 +7,7 @@ import { Evaluation, LinearQuestion } from '@/utils/schema'
 import { createClient } from '@/utils/supabase/client'
 import QuestionForm from './QuestionForm'
 import { useState } from 'react'
+import Fallback from '@/components/Fallback'
 
 interface Props {
   evaluation: Evaluation
@@ -83,9 +84,12 @@ export default function ConfigForm({ evaluation }: Props) {
       <Input label='Título' name='title' required defaultValue={evaluation.title} className='w-full' />
       <Input type='textarea' label='Instrucciones' name='instructions' required defaultValue={evaluation.instructions} className='w-full' />
       <Input type='date' label='Fecha de entrega' name='deadLine'required defaultValue={evaluation.deadLine} className='w-full' />
-      { Object.entries(questions).map(([id, question]) => (
-        <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
-      )) }
+      { questions
+        ? Object.entries(questions).map(([id, question]) => (
+          <QuestionForm id={id} question={question} key={id} deleteQuestion={deleteQuestion} />
+        ))
+        : <Fallback>No hay preguntas en esta evaluación</Fallback>
+      }
       <MainButton pendingText='Guardando evaluación...' className='w-full'>
         Guardar evaluación
       </MainButton>
