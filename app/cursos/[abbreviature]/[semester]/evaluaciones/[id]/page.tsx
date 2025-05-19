@@ -44,7 +44,12 @@ export default async function Page({ params }: { params: { abbreviature: string,
           </SecondaryLink>
         </div>
       )}
-      {evaluation && <EvaluationForm evaluation={evaluation} userInfo={userInfo} />}
+      {evaluation && (
+        <>
+          <p className='text-gray-500'>Vista previa de la evaluación:</p>
+          <EvaluationForm evaluation={evaluation} userInfo={userInfo} />
+        </>
+      )}
     </div>
   )
 }
