@@ -8,7 +8,8 @@ on:
 jobs:
   ping:
     runs-on: ubuntu-latest
-
+    environment: Production
+    
     steps:
       # Step 1: Checkout the repository
       - name: Checkout repository
