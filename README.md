@@ -143,6 +143,30 @@ La semana de Coevaluaciones 2024-1 (solo alumnos SUS1000) se mostró un uso de l
 #### Diagrama de la base de datos
 ![Diagrama de la base de datos](./docs/db_diagram.png)
 
+#### Setup
+
+##### 1) Crear tablas basadas en el Diagrama de la base de datos
+
+Es importante recordar:
+- Activar (si no lo está) **Row Level Security (RLS)** para todas las tablas
+- Usar `uuid` para todas las ids
+- Configurar correctamente las claves foráneas
+
+##### 2) Agregar Policies para cada tabla
+
+En `Authentication > Policies` se debe agregar las policies necesarias para cada tabla.
+
+Todas las tablas deben tener la siguiente policy: **`Enable select for authenticated users only`**
+
+##### 3) Agregar la *URL* del sitio web a la URL Configuration de Supabase
+
+En `Authentication > URL Configuration > Site URL` se debe agregar la URL del sitio web, sin `/` al final.
+
+##### 4) Agregar Primer usuario y Primer curso
+
+El primer usuario debe ser asignado **Profesor** para que pueda administrar el curso.
+También debe ser asignado **Estudiante**, a un grupo no usado por los estudiantes del curso.
+
 #### Integración con Resend
 
 Para enviar correos electrónicos, se utiliza Resend. Resend es un servicio de envío de correos electrónicos transaccionales que permite enviar correos electrónicos de forma segura y confiable. Desde Septiembre 2024, Supabase requiere que los correos electrónicos sean enviados a través de un servicio de envío de correos electrónicos SMTP de terceros, como Resend.
