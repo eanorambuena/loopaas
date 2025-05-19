@@ -116,7 +116,7 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
         <p className='text-gray-700 dark:text-gray-300 text-sm'>Respondiendo como: <strong>{ `${userInfo.firstName} ${userInfo.lastName} ` }<em>{userInfo.email}</em></strong></p>
       </legend>
       { !evaluation.sections.length && (
-        <p className='text-gray-700 dark:text-gray-300 text-sm'>
+        <p className='text-yellow-700 dark:text-yellow-300 text-sm'>
           No tienes compañeros asignados a esta evaluación. Por favor contacta al profesor para más información.
         </p>
       )}
