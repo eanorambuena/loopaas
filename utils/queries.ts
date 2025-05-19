@@ -217,7 +217,7 @@ export async function getGroupMates(params: PathParams, userInfoId: string, eval
       .single()
     if (studentError) throw studentError
     if (!student) return redirect(REDIRECT_PATH)
-    if (!student.group){
+    if (student.group == null) { // !student.group does not work when group is 0
       console.log('No group')
       return redirect(REDIRECT_PATH)
     }
