@@ -115,6 +115,11 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
         <p className='font-semibold text-red-500'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>
         <p className='text-gray-700 dark:text-gray-300 text-sm'>Respondiendo como: <strong>{ `${userInfo.firstName} ${userInfo.lastName} ` }<em>{userInfo.email}</em></strong></p>
       </legend>
+      { !evaluation.sections.length && (
+        <p className='text-gray-700 dark:text-gray-300 text-sm'>
+          No tienes compañeros asignados a esta evaluación. Por favor contacta al profesor para más información.
+        </p>
+      )}
       { [ ...evaluation.sections].map((section, index) => (
         <fieldset key={ section.mateId } className='w-full flex flex-col justify-center items-center'>
           <legend className='text-lg font-bold dark:text-gray-100'>{ section.title }</legend>
