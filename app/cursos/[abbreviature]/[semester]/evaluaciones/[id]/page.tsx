@@ -19,8 +19,12 @@ export default async function Page({ params }: { params: { abbreviature: string,
     return <Fallback>Debes estar inscrito en el curso para ver esta evaluación</Fallback>
   }
 
+  let evaluation
   try {
-    const evaluation = await getEvaluationWithSections(params, user)
+    evaluation = await getEvaluationWithSections(params, user)
+    if (!evaluation) {
+      return <Fallback>No se encontró la evaluación</Fallback>
+    }
   }
   catch (error) {
     return <Fallback>{`Error ${error}`}</Fallback>
