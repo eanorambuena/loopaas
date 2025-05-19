@@ -19,7 +19,11 @@ export default async function Page({ params }: { params: { abbreviature: string,
     return <Fallback>Debes estar inscrito en el curso para ver esta evaluación</Fallback>
   }
 
-  const evaluation = await getEvaluationWithSections(params, user)
+  try {
+    const evaluation = await getEvaluationWithSections(params, user)
+  catch (error) {
+    return <Fallback>{`Error ${error}`}</Fallback>
+  }
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3'>
