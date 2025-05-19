@@ -24,6 +24,15 @@ jobs:
       - name: Install Supabase Client
         run: npm install @supabase/supabase-js --force
 
+      # Step pre-4: Check if variables exist
+      - name: Check if variables exist
+        env:
+            SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} # Supabase project URL
+            SUPABASE_KEY: ${{ secrets.NEXT_SERVICE_ROLE_KEY }} # Supabase service role key
+        run: |
+          if [ -z "$SUPABASE_URL" ]; then echo "SUPABASE_URL is empty"; else echo "SUPABASE_URL exists"; fi
+          if [ -z "$SUPABASE_KEY" ]; then echo "SUPABASE_KEY is empty"; else echo "SUPABASE_KEY exists"; fi
+
       # Step 4: Ping Supabase
       - name: Ping Supabase
         env:
