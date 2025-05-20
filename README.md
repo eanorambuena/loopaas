@@ -1,5 +1,7 @@
 # IDSApp
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/eanorambuena/idsapp-v2)
+
 ## Introducción
 
 IDSApp es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable, principalmente sus coevaluaciones y autoevaluaciones.
