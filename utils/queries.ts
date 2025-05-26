@@ -4,8 +4,6 @@ import { evaluationPath } from './paths'
 import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section, UserInfoSchema } from './schema'
 import { createClient } from './supabase/server'
 import { sendEmail } from './resend'
-import { getEmail } from './emailExtensionApi'
-import { sign } from './jwt'
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
@@ -124,16 +122,12 @@ export async function createCourseStudents(course: any, students: any, minGroup:
   filteredStudents = filteredStudents.filter((student: any) => !isNaN(student.group))
   filteredStudents = filteredStudents.filter((student: any) => student.group >= minGroup && student.group <= maxGroup)
   const studentsData: any[] = []
-  //filteredStudents = filteredStudents.filter((student: any) => student.ucUsername === 'mrojasmuller')
   const credentials: Record<string, string> = {}
 
   for (const student of filteredStudents) {
-    const { ucUsername, firstName, lastName, group } = student
-    
-    const email = await getEmail(ucUsername)
-    if (!email) continue
+    const { email, firstName, lastName, group } = student
 
-    const password = sign({ ucUsername }).slice(0, 8)
+    const password = '1234'
     credentials[email] = password
 
     try {
@@ -517,41 +511,62 @@ export async function createAutoConfirmUsers(csv: string) {
 
   const course = courses[0]
 
-  for (const student of students) {
+  const promises = students.map(async (student) => {
     const { email, password, group } = student
-    const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({
-      email: email.toLowerCase(),
-      password,
-      email_confirm: true
-    })
-    if (signUpError) throw signUpError
-    if (!user) throw new Error('No user')
-
-    const { error: userInfoError } = await supabase
-      .from('userInfo')
-      .insert({
-        userId: user.id,
-        email,
-        firstName: student.firstName,
-        lastName: student.lastName
+    if (!email || !password || !group) {
+      console.warn('Skipping student due to missing data:', student)
+      return
+    }
+    console.log(`Creating user: ${email} with group ${group}`)
+    try {
+      const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({
+        email: email.toLowerCase(),
+        password,
+        email_confirm: true
       })
-      .single()
-    if (userInfoError) throw userInfoError
+      if (signUpError) throw signUpError
+      if (!user) throw new Error('No user')
 
-    const userInfo = await getUserInfo(user.id, false)
-    if (!userInfo) throw new Error('No user info')
+      const { error: userInfoError } = await supabase
+        .from('userInfo')
+        .insert({
+          userId: user.id,
+          email,
+          firstName: student.firstName,
+          lastName: student.lastName
+        })
+        .single()
+      if (userInfoError) throw userInfoError
 
-    const { error: studentError } = await supabase
-      .from('students')
-      .insert({
-        courseId: course.id,
-        userInfoId: userInfo.id,
-        group
-      })
-    if (studentError) throw studentError
-  }
+      const userInfo = await getUserInfo(user.id, false)
+      if (!userInfo) throw new Error('No user info')
+
+      const { error: studentError } = await supabase
+        .from('students')
+        .insert({
+          courseId: course.id,
+          userInfoId: userInfo.id,
+          group
+        })
+      if (studentError) throw studentError
+    }
+    catch (error: any) {
+      if (error?.code == 'email_exists') {
+        console.warn(`User ${email} already exists, skipping...`)
+        return
+      }
+      console.error(`Error creating student ${email}:`, error)
+    }
+  })
+  await Promise.all(promises)
 
   console.log('\nAuto confirm users successfully created\n')
+}
+
+const usersToBeCreated = process.env.NEXT_USERS_TO_BE_CREATED
+if (usersToBeCreated) {
+  console.log('Creating auto confirm users from environment variable...')
+  createAutoConfirmUsers(usersToBeCreated)
 }
 
 /* Example of csv to create auto confirm users, if you want to test it, uncomment the following line.

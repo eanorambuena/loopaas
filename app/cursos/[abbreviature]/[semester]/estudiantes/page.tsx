@@ -32,8 +32,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
       return {
         firstName,
         lastName,
-        ucUsername: student.login_id,
-        group: parseInt(student.group_name)
+        ...student
       }
     })
     await createCourseStudents(course, students, minGroup, maxGroup)
@@ -43,6 +42,9 @@ export default async function Page({ params }: { params: { abbreviature: string,
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3'>
       <h1 className='text-3xl font-bold'>Estudiantes {course?.title ?? params.abbreviature} {params.semester}</h1>
       <form className='flex flex-col gap-4 border border-foreground/20 rounded-md p-4' encType='multipart/form-data'>
+        <legend className='text-lg font-semibold'>
+          Importar estudiantes desde archivo XLSX con formato: Nombre, Correo, Grupo
+        </legend>
         <Input
           type='file'
           name='file'
