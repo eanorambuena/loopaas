@@ -7,6 +7,7 @@ import { Auth } from '@/utils/auth'
 import useCurrentUser from '@/utils/hooks/useCurrentUser'
 import { ErrorWithStatus, useToastError } from '@/utils/hooks/useToastError'
 import useUserInfo from '@/utils/hooks/useUserInfo'
+import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -16,6 +17,7 @@ export default function Login() {
   const { toast } = useToast()
   const { mutate, user } = useCurrentUser()
   const { refetch } = useUserInfo(user?.id)
+  const [showingPassword, setShowingPassword] = useState(false)
 
   const signIn = async (formData: FormData) => {
     const email = formData.get('email') as string
@@ -67,6 +69,7 @@ export default function Login() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    setShowingPassword(false)
     const form = event.currentTarget
     const formData = new FormData(form)
     if (action === 'signIn')
@@ -94,14 +97,24 @@ export default function Login() {
         <label className="text-md" htmlFor="password">
           Contraseña
         </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          type="password"
-          name="password"
-          autoComplete='current-password'
-          placeholder="••••••••"
-          required
-        />
+        <div className="w-full flex items-center justify-between gap-2 mb-6">
+          <input
+            className="rounded-md px-4 py-2 bg-inherit border flex-grow"
+            type={showingPassword ? 'text' : 'password'}
+            name="password"
+            autoComplete='current-password'
+            placeholder="••••••••"
+            required
+          />
+          {/* button to toggle password visibility */}
+          <button
+            type="button"
+            className="text-emerald-500 hover:underline"
+            onClick={() => setShowingPassword(!showingPassword)}
+          >
+            { !showingPassword ? <EyeIcon /> : <EyeOffIcon /> }
+          </button>
+        </div>
         <MainButton onClick={() => setAction('signIn')}>
           Iniciar Sesión
         </MainButton>
