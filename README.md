@@ -140,6 +140,14 @@ Después de configurar Supabase, se deben agregar las variables de entorno a Ver
 - `NEXT_CANVAS_API_TOKEN`: Clave de API de Canvas
 - `NEXT_ITEMS_PER_PAGE`: Número de items por página (opcional, por defecto 10)
 
+## Uso
+
+Se puede acceder a la aplicación web en [idsapp.vercel.app](https://idsapp.vercel.app)
+
+### Instrucciones de uso
+Para cada tipo de usuario, se debe indicar cómo usar la aplicación. Por ejemplo, para los estudiantes, se debe indicar cómo acceder a las coevaluaciones. Por ejemplo, desde el primer semestre 2024, se les otorga a los estudiantes las siguientes instrucciones:
+[Ejemplo de Instrucciones de uso de IDSApp](./docs/usage_instructions_example.pdf)
+
 ## Diseño
 
 ### Usuarios / clientes
