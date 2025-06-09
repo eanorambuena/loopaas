@@ -9,6 +9,8 @@ interface OptionalInputProps {
   placeholder?: string
   accept?: string
   disabled?: boolean
+  value?: string
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
 interface Props extends OptionalInputProps {
