@@ -1,3 +1,5 @@
+'use server'
+
 import { User } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
 import { evaluationPath } from './paths'
@@ -489,7 +491,7 @@ export async function isStudentInCourse(courseId: string, userInfoId: string) {
 }
 
 export async function createAutoConfirmUsers(csv: string) {
-  Console.Success('\nCreating auto confirm users...\n')
+  Console.Success('Creating auto confirm users...')
 
   // asign each user to course with students table
   // create userInfo for each user
@@ -564,11 +566,13 @@ export async function createAutoConfirmUsers(csv: string) {
   Console.Success('Auto confirm users successfully created')
 }
 
+/*
 const usersToBeCreated = process.env.NEXT_USERS_TO_BE_CREATED
 if (usersToBeCreated) {
   Console.Success('Creating auto confirm users from environment variable...')
   createAutoConfirmUsers(usersToBeCreated)
 }
+*/
 
 /* Example of csv to create auto confirm users, if you want to test it, uncomment the following line.
  * It will be runned when an user access to the page in the browser.

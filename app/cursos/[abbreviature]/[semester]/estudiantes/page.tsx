@@ -1,55 +1,44 @@
 'use server'
 
 import Fallback from '@/components/Fallback'
-import Input from '@/components/Input'
-import SecondaryButton from '@/components/SecondaryButton'
-import { createAutoConfirmUsers, createCourseStudents, getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
-import * as XLSX from 'xlsx'
+import { getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
+import UploadStudentsForm from './UploadStudentsForm'
+import { Console } from '@/utils/console'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
-  await getCurrentUser()
+  try {
+    await getCurrentUser()
+  }
+  catch (error) {
+    Console.Error(`Error al obtener el usuario actual: ${error}`)
+    return <Fallback>Error al cargar el usuario</Fallback>
+  }
 
-  const course = await getCourse(params.abbreviature, params.semester)
-  if (!course) return <Fallback>No se encontró el curso</Fallback>
+  let course
+  try {
+    course = await getCourse(params.abbreviature, params.semester)
+    if (!course) return <Fallback>No se encontró el curso</Fallback>
+  }
+  catch (error) {
+    Console.Error(`Error al obtener el curso: ${error}`)
+    return <Fallback>Error al cargar el curso</Fallback>
+  }
 
-  const students = await getCourseStudents({ course })
-  if (!students ||students?.length === 0)
-    return <Fallback>No hay estudiantes inscritos en el curso</Fallback>
-
-  async function saveStudents(formData: FormData) {
-    'use server'
-    const csv = formData.get('csv') as string
-    if (!csv) {
-      throw new Error('CSV no proporcionado')
-    }
-    await createAutoConfirmUsers(csv)
+  let students
+  try {
+    students = course && await getCourseStudents({ course })
+    if (!students ||students?.length === 0)
+      return <Fallback>No hay estudiantes inscritos en el curso</Fallback>
+  }
+  catch (error) {
+    Console.Error(`Error al obtener los estudiantes: ${error}`)
+    return <Fallback>Error al cargar los estudiantes</Fallback>
   }
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3'>
       <h1 className='text-3xl font-bold'>Estudiantes {course?.title ?? params.abbreviature} {params.semester}</h1>
-      <form className='flex flex-col gap-4 border border-foreground/20 rounded-md p-4' encType='multipart/form-data'>
-        <legend className='text-lg font-semibold'>
-          Importar estudiantes desde CSV con formato:<br />
-          <span className='text-sm font-normal'>APELLIDOS;NOMBRES;PASSWORD;CORREO;GRUPO</span>
-        </legend>
-        <Input
-          type='textarea'
-          name='csv'
-          label='CSV de estudiantes'
-          placeholder='APELLIDOS;NOMBRES;PASSWORD;CORREO;GRUPO'
-          defaultValue=''
-          required
-        />
-        <SecondaryButton
-          className='w-full'
-          type='submit'
-          formAction={saveStudents}
-          pendingText='Guardando estudiantes...'
-        >
-          Importar estudiantes desde CSV
-        </SecondaryButton>
-      </form>
+      <UploadStudentsForm />
       <table className='table-auto'>
         <thead>
           <tr className='text-left *:px-6 *:py-3'>
