@@ -3,7 +3,7 @@
 import Fallback from '@/components/Fallback'
 import Input from '@/components/Input'
 import SecondaryButton from '@/components/SecondaryButton'
-import { createCourseStudents, getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
+import { createAutoConfirmUsers, createCourseStudents, getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
 import * as XLSX from 'xlsx'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
@@ -18,24 +18,11 @@ export default async function Page({ params }: { params: { abbreviature: string,
 
   async function saveStudents(formData: FormData) {
     'use server'
-    const file = formData.get('file') as File
-    const minGroup = parseInt(formData.get('minGroup') as string) || 0
-    const maxGroup = parseInt(formData.get('maxGroup') as string) || 1000
-    const data = await file.arrayBuffer()
-    const workbook = XLSX.read(data, { type: 'array' })
-    const sheet = workbook.Sheets[workbook.SheetNames[0]]
-    const studentsData = XLSX.utils.sheet_to_json(sheet)
-    if (!studentsData) return
-    console.log(studentsData)
-    const students = studentsData.map((student: any) => {
-      const [lastName, firstName] = student.nombre.split(', ')
-      return {
-        firstName,
-        lastName,
-        ...student
-      }
-    })
-    await createCourseStudents(course, students, minGroup, maxGroup)
+    const csv = formData.get('csv') as string
+    if (!csv) {
+      throw new Error('CSV no proporcionado')
+    }
+    await createAutoConfirmUsers(csv)
   }
 
   return (
@@ -43,27 +30,15 @@ export default async function Page({ params }: { params: { abbreviature: string,
       <h1 className='text-3xl font-bold'>Estudiantes {course?.title ?? params.abbreviature} {params.semester}</h1>
       <form className='flex flex-col gap-4 border border-foreground/20 rounded-md p-4' encType='multipart/form-data'>
         <legend className='text-lg font-semibold'>
-          Importar estudiantes desde archivo XLSX con formato: Nombre, Correo, Grupo
+          Importar estudiantes desde CSV con formato:<br />
+          <span className='text-sm font-normal'>APELLIDOS;NOMBRES;PASSWORD;CORREO;GRUPO</span>
         </legend>
         <Input
-          type='file'
-          name='file'
-          label='Archivo de estudiantes'
-          accept='.xlsx'
-          required
-        />
-        <Input
-          type='number'
-          name='minGroup'
-          label='Grupo mínimo'
-          defaultValue='0'
-          required
-        />
-        <Input
-          type='number'
-          name='maxGroup'
-          label='Grupo máximo'
-          defaultValue='1000'
+          type='textarea'
+          name='csv'
+          label='CSV de estudiantes'
+          placeholder='APELLIDOS;NOMBRES;PASSWORD;CORREO;GRUPO'
+          defaultValue=''
           required
         />
         <SecondaryButton
@@ -72,7 +47,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
           formAction={saveStudents}
           pendingText='Guardando estudiantes...'
         >
-          Importar estudiantes desde archivo
+          Importar estudiantes desde CSV
         </SecondaryButton>
       </form>
       <table className='table-auto'>
