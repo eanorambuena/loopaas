@@ -213,7 +213,7 @@ export async function getGroupMates(params: PathParams, userInfoId: string, eval
     if (studentError) throw studentError
     if (!student) return redirect(REDIRECT_PATH)
     if (student.group == null) { // !student.group does not work when group is 0
-      Console.Yellow('No group')
+      Console.Warn('No group')
       return redirect(REDIRECT_PATH)
     }
 
@@ -433,7 +433,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     const evaluationScore = Object.entries(studentCriteriaScores).reduce((acc, [criterionLabel, scores]) => {
       const criterion = firstQuestion.criteria.find((criterion: QuestionCriterion) => slugifyCriterionLabel(criterion.label) === criterionLabel)
       const weight = criterion?.weight ?? 0
-      Console.Magenta(JSON.stringify({ grou: student.group, criterionLabel, scores, numberOfGroupMates }))
+      Console.Success(JSON.stringify({ grou: student.group, criterionLabel, scores, numberOfGroupMates }))
       if (scores.length < numberOfGroupMates) {
         const missingScores = Array(numberOfGroupMates - scores.length).fill(nullScore)
         scores.push(...missingScores)
@@ -561,7 +561,7 @@ export async function createAutoConfirmUsers(csv: string) {
   })
   await Promise.all(promises)
 
-  Console.Success('\nAuto confirm users successfully created\n')
+  Console.Success('Auto confirm users successfully created')
 }
 
 const usersToBeCreated = process.env.NEXT_USERS_TO_BE_CREATED
