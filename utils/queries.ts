@@ -174,7 +174,7 @@ export async function createCourseStudents(course: any, students: any, minGroup:
     console.error('Error inserting students:', error)
   }
 
-  Console.Green({ credentials })
+  Console.Success({ credentials })
 }
 
 interface PathParams {
@@ -489,7 +489,7 @@ export async function isStudentInCourse(courseId: string, userInfoId: string) {
 }
 
 export async function createAutoConfirmUsers(csv: string) {
-  Console.Green('\nCreating auto confirm users...\n')
+  Console.Success('\nCreating auto confirm users...\n')
 
   // asign each user to course with students table
   // create userInfo for each user
@@ -515,10 +515,10 @@ export async function createAutoConfirmUsers(csv: string) {
   const promises = students.map(async (student) => {
     const { email, password, group } = student
     if (!email || !password || !group) {
-      Console.Warn(`Skipping student due to missing data: ${student}`)
+      Console.Warn(`Skipping student due to missing data: ${JSON.stringify(student)}`)
       return
     }
-    Console.Green(`Creating user: ${email} with group ${group}`)
+    Console.Success(`Creating user: ${email} with group ${group}`)
     try {
       const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({
         email: email.toLowerCase(),
@@ -561,12 +561,12 @@ export async function createAutoConfirmUsers(csv: string) {
   })
   await Promise.all(promises)
 
-  Console.Green('\nAuto confirm users successfully created\n')
+  Console.Success('\nAuto confirm users successfully created\n')
 }
 
 const usersToBeCreated = process.env.NEXT_USERS_TO_BE_CREATED
 if (usersToBeCreated) {
-  Console.Green('Creating auto confirm users from environment variable...')
+  Console.Success('Creating auto confirm users from environment variable...')
   createAutoConfirmUsers(usersToBeCreated)
 }
 
