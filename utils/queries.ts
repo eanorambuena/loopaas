@@ -4,6 +4,7 @@ import { evaluationPath } from './paths'
 import { Course, Evaluation, Grade, LinearQuestion, QuestionCriterion, Response, Section, UserInfoSchema } from './schema'
 import { createClient } from './supabase/server'
 import { sendEmail } from './resend'
+import { Console } from './console'
 
 export async function getCourse(abbreviature: string, semester: string) {
   const supabase = createClient()
@@ -173,7 +174,7 @@ export async function createCourseStudents(course: any, students: any, minGroup:
     console.error('Error inserting students:', error)
   }
 
-  console.log({ credentials })
+  Console.Green({ credentials })
 }
 
 interface PathParams {
@@ -212,7 +213,7 @@ export async function getGroupMates(params: PathParams, userInfoId: string, eval
     if (studentError) throw studentError
     if (!student) return redirect(REDIRECT_PATH)
     if (student.group == null) { // !student.group does not work when group is 0
-      console.log('No group')
+      Console.Yellow('No group')
       return redirect(REDIRECT_PATH)
     }
 
@@ -432,7 +433,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     const evaluationScore = Object.entries(studentCriteriaScores).reduce((acc, [criterionLabel, scores]) => {
       const criterion = firstQuestion.criteria.find((criterion: QuestionCriterion) => slugifyCriterionLabel(criterion.label) === criterionLabel)
       const weight = criterion?.weight ?? 0
-      console.log(JSON.stringify({ grou: student.group, criterionLabel, scores, numberOfGroupMates }))
+      Console.Magenta(JSON.stringify({ grou: student.group, criterionLabel, scores, numberOfGroupMates }))
       if (scores.length < numberOfGroupMates) {
         const missingScores = Array(numberOfGroupMates - scores.length).fill(nullScore)
         scores.push(...missingScores)
@@ -488,7 +489,7 @@ export async function isStudentInCourse(courseId: string, userInfoId: string) {
 }
 
 export async function createAutoConfirmUsers(csv: string) {
-  console.log('\nCreating auto confirm users...\n')
+  Console.Green('\nCreating auto confirm users...\n')
 
   // asign each user to course with students table
   // create userInfo for each user
@@ -514,10 +515,10 @@ export async function createAutoConfirmUsers(csv: string) {
   const promises = students.map(async (student) => {
     const { email, password, group } = student
     if (!email || !password || !group) {
-      console.warn('Skipping student due to missing data:', student)
+      Console.Warn(`Skipping student due to missing data: ${student}`)
       return
     }
-    console.log(`Creating user: ${email} with group ${group}`)
+    Console.Green(`Creating user: ${email} with group ${group}`)
     try {
       const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({
         email: email.toLowerCase(),
@@ -552,20 +553,20 @@ export async function createAutoConfirmUsers(csv: string) {
     }
     catch (error: any) {
       if (error?.code == 'email_exists') {
-        console.warn(`User ${email} already exists, skipping...`)
+        Console.Warn(`User ${email} already exists, skipping...`)
         return
       }
-      console.error(`Error creating student ${email}:`, error)
+      Console.Error(`Error creating student ${email}: ${error}`)
     }
   })
   await Promise.all(promises)
 
-  console.log('\nAuto confirm users successfully created\n')
+  Console.Green('\nAuto confirm users successfully created\n')
 }
 
 const usersToBeCreated = process.env.NEXT_USERS_TO_BE_CREATED
 if (usersToBeCreated) {
-  console.log('Creating auto confirm users from environment variable...')
+  Console.Green('Creating auto confirm users from environment variable...')
   createAutoConfirmUsers(usersToBeCreated)
 }
 
