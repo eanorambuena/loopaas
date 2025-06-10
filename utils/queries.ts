@@ -582,6 +582,16 @@ ApellidoB;NombreB;01234567;correoB@estudiante.uc.cl;2`)
 
 */
 
+interface ProfessorWithUserInfo {
+  id: string
+  userInfo: {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+  }
+}
+
 export async function getProfessorsForCourse(courseId: string) {
   const supabase = createClient()
 
@@ -595,5 +605,5 @@ export async function getProfessorsForCourse(courseId: string) {
     return []
   }
 
-  return data
+  return data as unknown as ProfessorWithUserInfo[]
 }
