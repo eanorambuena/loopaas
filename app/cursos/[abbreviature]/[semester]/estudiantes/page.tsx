@@ -4,6 +4,7 @@ import Fallback from '@/components/Fallback'
 import { getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
 import UploadStudentsForm from './UploadStudentsForm'
 import { Console } from '@/utils/console'
+import StudentsTable from './StudentsTable'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
   try {
@@ -39,24 +40,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3'>
       <h1 className='text-3xl font-bold'>Estudiantes {course?.title ?? params.abbreviature} {params.semester}</h1>
       <UploadStudentsForm />
-      <table className='table-auto'>
-        <thead>
-          <tr className='text-left *:px-6 *:py-3'>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Grupo</th>
-          </tr>
-        </thead>
-        <tbody className='text-left'>
-          {students?.map((student) => (
-            <tr key={student.id} className='*:px-6 *:py-3'>
-              <td>{student.userInfo?.firstName} {student.userInfo?.lastName}</td>
-              <td>{student.userInfo?.email}</td>
-              <td>{student.group}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <StudentsTable students={students} />
     </div>
   )
 }

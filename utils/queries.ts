@@ -25,7 +25,7 @@ export async function getCourse(abbreviature: string, semester: string) {
   }
 }
 
-interface CourseStudentWithUserInfo {
+export interface CourseStudentWithUserInfo {
   id: string
   courseId: string
   userInfoId: string
