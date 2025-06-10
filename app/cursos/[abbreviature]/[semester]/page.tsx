@@ -27,7 +27,10 @@ export default async function Page({ params }: { params: { abbreviature: string,
       <main className='animate-in  grid gap-20 grid-cols-1 sm:grid-cols-2 md:grid-cols-3'>
         <Card icon={EvaluationIcon} title='Evaluaciones' path={evaluationPath(params)} />
         {isCourseProfessor && (
-          <Card icon={UsersIcon} title='Estudiantes' path={studentsPath(params)} />
+          <>
+            <Card icon={UsersIcon} title='Estudiantes' path={studentsPath(params)} />
+            <Card icon={UsersIcon} title='Profesores' path={`/cursos/${params.abbreviature}/${params.semester}/profesores`} />
+          </>
         )}
       </main>
     </div>

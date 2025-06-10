@@ -581,3 +581,19 @@ createAutoConfirmUsers(`ApellidoA;NombreA;12345678;correoA@uc.cl;2
 ApellidoB;NombreB;01234567;correoB@estudiante.uc.cl;2`)
 
 */
+
+export async function getProfessorsForCourse(courseId: string) {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from('professors')
+    .select('id, userInfo:teacherInfoId ( id, firstName, lastName, email )')
+    .eq('courseId', courseId)
+
+  if (error) {
+    console.error('Error al obtener profesores:', error)
+    return []
+  }
+
+  return data
+}
