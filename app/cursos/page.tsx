@@ -4,6 +4,7 @@ import Card from '@/components/Card'
 import PlusIcon from '@/components/icons/PlusIcon'
 import { getCurrentUser, getUserInfo } from '@/utils/queries'
 import Fallback from '@/components/Fallback'
+import { isProfessorServer } from '@/utils/isProfessorServer'
 
 export default async function CursosPage() {
   const user = await getCurrentUser()
@@ -16,12 +17,9 @@ export default async function CursosPage() {
     .select('*')
     .order('created_at', { ascending: false })
 
-  const { data: professor } = await supabase
-    .from('professors')
-    .select('*')
-    .eq('teacherInfoId', userInfo?.id)
-    .single()
-  const isProfessor = !!professor
+  const isProfessor = await isProfessorServer({
+    userInfoId: userInfo?.id!
+  })
 
   return (
     <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3">

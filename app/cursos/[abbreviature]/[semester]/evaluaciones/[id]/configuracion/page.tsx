@@ -1,15 +1,18 @@
-import HoverableLink from '@/components/HoverableLink'
-import { getCourse, getCurrentUser, getEvaluationWithSections, getIsCourseProfessor } from '@/utils/queries'
+import { getCourse, getCurrentUser, getEvaluationWithSections } from '@/utils/queries'
 import { redirect } from 'next/navigation'
 import ConfigForm from './ConfigForm'
 import Fallback from '@/components/Fallback'
+import { isProfessorServer } from '@/utils/isProfessorServer'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string, id: string } }) {
   const user = await getCurrentUser()
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
-  const isCourseProfessor = await getIsCourseProfessor(course, user)
+  const isCourseProfessor = await isProfessorServer({
+    userInfoId: user.id,
+    courseId: course.id
+  })
   if (!isCourseProfessor) redirect(`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}`)
 
   const evaluation = await getEvaluationWithSections(params, user)

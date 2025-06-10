@@ -1,8 +1,9 @@
 import SecondaryLink from '@/components/SecondaryLink'
-import { getCourse, getCourseStudents, getCurrentUser, getEvaluationWithSections, getIsCourseProfessor, getUserInfo, isStudentInCourse } from '@/utils/queries'
+import { getCourse, getCurrentUser, getEvaluationWithSections, getUserInfo, isStudentInCourse } from '@/utils/queries'
 import EvaluationForm from './EvaluationForm'
 import Fallback from '@/components/Fallback'
 import { UserInfoSchema } from '@/utils/schema'
+import { isProfessorServer } from '@/utils/isProfessorServer'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string, id: string } }) {
   const user = await getCurrentUser()
@@ -12,7 +13,10 @@ export default async function Page({ params }: { params: { abbreviature: string,
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
-  const isCourseProfessor = await getIsCourseProfessor(course, user)
+  const isCourseProfessor = await isProfessorServer({
+    userInfoId: userInfo.id,
+    courseId: course.id
+  })
   console.log(`Answering evaluation ${user.email}, isCourseProfessor: ${isCourseProfessor}`)
 
   if (!await isStudentInCourse(course.id, userInfo.id)) {

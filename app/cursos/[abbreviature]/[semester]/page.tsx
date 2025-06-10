@@ -2,6 +2,7 @@ import Card from '@/components/Card'
 import Fallback from '@/components/Fallback'
 import EvaluationIcon from '@/components/icons/EvaluationIcon'
 import UsersIcon from '@/components/icons/UsersIcon'
+import { isProfessorServer } from '@/utils/isProfessorServer'
 import { evaluationPath, studentsPath } from '@/utils/paths'
 import { getCourse, getCurrentUser, getUserInfo } from '@/utils/queries'
 
@@ -13,7 +14,12 @@ export default async function Page({ params }: { params: { abbreviature: string,
 
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
-  const isCourseProfessor = userInfo?.id === course.teacherInfoId
+  if (!userInfo || !userInfo.id) return <Fallback>Error al cargar la información del usuario</Fallback>
+
+  const isCourseProfessor = await isProfessorServer({
+    userInfoId: userInfo.id!,
+    courseId: course.id
+  })
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3'>
