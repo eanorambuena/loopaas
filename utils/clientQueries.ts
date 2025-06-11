@@ -1,5 +1,5 @@
 import { Evaluation } from './schema'
-import { createClient } from './supabase/client'
+import { createClient } from '@/utils/supabase/client'
 
 export async function createResponse(evaluation: Evaluation, userInfoId: string, data: string[]) {
   const supabase = createClient()

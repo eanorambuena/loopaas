@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { Console } from '@/utils/console'
 
 interface IsProfessorServerParams {
   userInfoId: string
@@ -26,5 +27,7 @@ export async function isProfessorServer({ userInfoId, courseId }: IsProfessorSer
     return false
   }
 
-  return !!data
+  const isProfessor = !!data
+  Console.Info(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId}, isProfessor=${isProfessor}`)
+  return isProfessor
 }

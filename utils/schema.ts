@@ -48,6 +48,11 @@ export interface Response {
   userInfoId: string
   data: string
   created_at: string
+  userInfo?: UserInfoSchema | {
+    firstName: string
+    lastName: string
+    email: string
+  }
 }
 
 export interface Grade {

@@ -607,3 +607,55 @@ export async function getProfessorsForCourse(courseId: string) {
 
   return data as unknown as ProfessorWithUserInfo[]
 }
+
+interface EvaluationResponseWithUserInfo {
+  id: string
+  submittedAt: string
+  data: string
+  created_at: string
+  userInfo: {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+  }
+}
+
+export async function getEvaluationResponses(evaluationId: string): Promise<Response[]> {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('responses')
+    .select(`
+      id,
+      data,
+      created_at,
+      userInfo:userInfoId (
+        id,
+        firstName,
+        lastName,
+        email
+      )
+    `)
+    .eq('evaluationId', evaluationId)
+
+  if (error) {
+    Console.Error(`Error fetching evaluation responses: ${error.message}`)
+    throw new Error(`Error fetching evaluation responses: ${error.message}`)
+  }
+
+  const evaluationResponseWithUserInfo = data as unknown as EvaluationResponseWithUserInfo[]
+  const responses = [...evaluationResponseWithUserInfo.map(response => ({
+    id: response.id,
+    evaluationId: evaluationId,
+    userInfoId: response.userInfo.id,
+    submittedAt: response.submittedAt,
+    userInfo: {
+      firstName: response.userInfo.firstName,
+      lastName: response.userInfo.lastName,
+      email: response.userInfo.email
+    },
+    data: response.data,
+    created_at: response.created_at
+  } as Response))]
+  return responses as Response[]
+}
