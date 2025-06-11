@@ -27,7 +27,7 @@ export const studentsColumns = ({
 }: Props): ColumnDef<CourseStudentWithUserInfo>[] => [
   {
     id: 'firstName',
-    header: 'Nombre(s)',
+    header: 'Nombres',
     cell: ({ row }) => {
       const student = row.original
       return editingId === student.id ? (
@@ -43,7 +43,7 @@ export const studentsColumns = ({
   },
   {
     id: 'lastName',
-    header: 'Apellido(s)',
+    header: 'Apellidos',
     cell: ({ row }) => {
       const student = row.original
       return editingId === student.id ? (
@@ -95,7 +95,7 @@ export const studentsColumns = ({
             <Button variant='link' className='text-green-600 p-0 h-auto' onClick={onSave}>
               Guardar
             </Button>
-            <Button variant='link' className='text-muted-foreground p-0 h-auto' onClick={onCancel}>
+            <Button variant='link' className='text-red-600 p-0 h-auto' onClick={onCancel}>
               Cancelar
             </Button>
           </div>
@@ -108,7 +108,7 @@ export const studentsColumns = ({
               <MoreHorizontal className='h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
+          <DropdownMenuContent align='end' className='bg-white border shadow-md rounded-md'>
             <DropdownMenuItem onClick={() => onEdit(student)}>
               Editar
             </DropdownMenuItem>

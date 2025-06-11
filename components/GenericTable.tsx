@@ -72,7 +72,11 @@ export function GenericTable<TData>({
       <div className='flex items-center py-4'>
         {filterColumnId && (
           <Input
-            placeholder={`Filtrar por ${filterColumnId}...`}
+            placeholder={`Filtrar por ${
+              typeof table.getColumn(filterColumnId)?.columnDef.header === 'string'
+                ? table.getColumn(filterColumnId)?.columnDef.header
+                : filterColumnId
+            }...`}
             value={(table.getColumn(filterColumnId)?.getFilterValue() as string) ?? ''}
             onChange={(event) =>
               table.getColumn(filterColumnId)?.setFilterValue(event.target.value)
@@ -86,7 +90,7 @@ export function GenericTable<TData>({
               Columnas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
+          <DropdownMenuContent align='end' className='bg-white border shadow-md rounded-md'>
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
@@ -97,7 +101,7 @@ export function GenericTable<TData>({
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
-                  {column.id}
+                  {String(column.columnDef.header) || column.id}
                 </DropdownMenuCheckboxItem>
               ))}
           </DropdownMenuContent>

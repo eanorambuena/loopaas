@@ -4,7 +4,7 @@ import Fallback from '@/components/Fallback'
 import { getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
 import UploadStudentsForm from './UploadStudentsForm'
 import { Console } from '@/utils/console'
-import StudentsTable from './StudentsTable'
+import StudentsTable from '../../../../../components/students/StudentsTable'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
   try {
