@@ -152,8 +152,8 @@ export function GenericTable<TData>({
 
       <div className='flex items-center justify-between py-4'>
         <p className='text-sm text-muted-foreground'>
-          Mostrando {table.getFilteredRowModel().rows.length}{' '}
-          de {table.getRowModel().rows.length} resultados
+          Mostrando {table.getRowModel().rows.length} de{' '}
+          {table.getFilteredRowModel().rows.length} resultados
         </p>
         <div className='flex items-center justify-end space-x-2 py-4'>
           <div className='flex items-center justify-end space-x-2 py-4'>
@@ -174,23 +174,9 @@ export function GenericTable<TData>({
               Siguiente
             </Button>
           </div>
-          <div className='text-sm text-muted-foreground/10'>
+          <div className='text-sm opacity-90'>
             Página{' '}
-            <Input
-              type='number'
-              min={1}
-              max={table.getPageCount()}
-              value={table.getState().pagination.pageIndex + 1}
-              onChange={(e) => {
-                const pageIndex = Number(e.target.value) - 1
-                if (!isNaN(pageIndex) && pageIndex >= 0 && pageIndex < table.getPageCount()) {
-                  table.setPageIndex(pageIndex)
-                }
-              }}
-              className='w-16 h-fit inline'
-              placeholder='Página'
-            />
-            {' '}de{' '}
+            {table.getState().pagination.pageIndex + 1} de{' '}
             {table.getPageCount()}
           </div>
         </div>
