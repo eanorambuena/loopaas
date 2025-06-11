@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { createResponse } from '@/utils/clientQueries'
 import { Evaluation, UserInfoSchema } from '@/utils/schema'
 import useChileTime from '@/utils/hooks/useChileTime'
+import { Console } from '@/utils/console'
 
 function getNumberOfQuestions(evaluation: Evaluation) {
   let numberOfQuestions = 0;
@@ -82,12 +83,17 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
     })
 
     ;(async () => {
-      const error = await createResponse(evaluation, userInfo.id as string, valuesList)
-      if (error) return toast({
-        title: 'Error',
-        description: 'Hubo un error al enviar la evaluación',
-        variant: 'destructive'
-      })
+      try {
+        const error = await createResponse(evaluation, userInfo.id as string, valuesList)
+        if (error) throw new Error(error)
+      } catch (error: any) {
+        Console.Error(`Error creating response: ${error.message}`)
+        if (error) return toast({
+          title: 'Error',
+          description: 'Hubo un error al enviar la evaluación',
+          variant: 'destructive'
+        })
+      }
       toast({
         title: 'Éxito',
         description: 'Evaluación enviada correctamente',
