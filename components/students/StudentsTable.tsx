@@ -90,7 +90,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
         onSave: saveEdit,
         onCancel: () => setEditingId(null)
       })}
-      filterColumnId='group'
+      filterColumnIds={['email', 'group']}
       emptyMessage='No hay estudiantes en este curso o filtro aplicado.'
     />
   )

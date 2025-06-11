@@ -33,14 +33,14 @@ import {
 type GenericTableProps<TData> = {
   data: TData[]
   columns: ColumnDef<TData, any>[]
-  filterColumnId?: string // optional: ID de columna para el input de filtro
+  filterColumnIds?: string[] // optional: IDs de columnas para el input de filtro
   emptyMessage?: string // mensaje personalizado
 }
 
 export function GenericTable<TData>({
   data,
   columns,
-  filterColumnId,
+  filterColumnIds,
   emptyMessage = 'No hay datos disponibles.',
 }: GenericTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -70,20 +70,25 @@ export function GenericTable<TData>({
   return (
     <div className='w-full'>
       <div className='flex items-center py-4'>
-        {filterColumnId && (
-          <Input
-            placeholder={`Filtrar por ${
-              typeof table.getColumn(filterColumnId)?.columnDef.header === 'string'
-                ? table.getColumn(filterColumnId)?.columnDef.header
-                : filterColumnId
-            }...`}
-            value={(table.getColumn(filterColumnId)?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn(filterColumnId)?.setFilterValue(event.target.value)
-            }
-            className='max-w-sm'
-          />
-        )}
+        {filterColumnIds?.map((columnId) => {
+          const column = table.getColumn(columnId)
+          if (!column) return null
+
+          const label =
+            typeof column.columnDef.header === 'string'
+              ? column.columnDef.header
+              : columnId
+
+          return (
+            <Input
+              key={columnId}
+              placeholder={`Filtrar por ${label}`}
+              value={(column.getFilterValue() as string) ?? ''}
+              onChange={(e) => column.setFilterValue(e.target.value)}
+              className='max-w-sm mr-4'
+            />
+          )
+        })}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='outline' className='ml-auto'>
@@ -145,23 +150,50 @@ export function GenericTable<TData>({
         </Table>
       </div>
 
-      <div className='flex items-center justify-end space-x-2 py-4'>
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previo
-        </Button>
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Siguiente
-        </Button>
+      <div className='flex items-center justify-between py-4'>
+        <p className='text-sm text-muted-foreground'>
+          Mostrando {table.getFilteredRowModel().rows.length}{' '}
+          de {table.getRowModel().rows.length} resultados
+        </p>
+        <div className='flex items-center justify-end space-x-2 py-4'>
+          <div className='flex items-center justify-end space-x-2 py-4'>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previo
+            </Button>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Siguiente
+            </Button>
+          </div>
+          <div className='text-sm text-muted-foreground/10'>
+            Página{' '}
+            <Input
+              type='number'
+              min={1}
+              max={table.getPageCount()}
+              value={table.getState().pagination.pageIndex + 1}
+              onChange={(e) => {
+                const pageIndex = Number(e.target.value) - 1
+                if (!isNaN(pageIndex) && pageIndex >= 0 && pageIndex < table.getPageCount()) {
+                  table.setPageIndex(pageIndex)
+                }
+              }}
+              className='w-16 h-fit inline'
+              placeholder='Página'
+            />
+            {' '}de{' '}
+            {table.getPageCount()}
+          </div>
+        </div>
       </div>
     </div>
   )

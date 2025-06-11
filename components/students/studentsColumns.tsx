@@ -58,9 +58,11 @@ export const studentsColumns = ({
     }
   },
   {
-    accessorKey: 'userInfo.email',
+    id: 'email',
     header: 'Correo',
-    cell: ({ row }) => row.original.userInfo.email
+    accessorFn: (row) => row.userInfo.email,
+    cell: ({ getValue }) => getValue<string>(),
+    filterFn: 'includesString'
   },
   {
     accessorKey: 'group',
