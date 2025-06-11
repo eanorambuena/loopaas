@@ -3,6 +3,7 @@
 import { getCourse, getProfessorsForCourse } from '@/utils/queries'
 import Fallback from '@/components/Fallback'
 import { AddProfessorForm } from './AddProfessorForm'
+import ProfessorsTable from '@/components/professors/ProfessorsTable'
 
 export default async function ProfesoresPage({ params }: {
   params: { abbreviature: string, semester: string }
@@ -20,22 +21,7 @@ export default async function ProfesoresPage({ params }: {
         Profesores del curso {course.title}
       </h1>
       <AddProfessorForm courseId={course.id} />
-      <table className='table-auto w-full border'>
-        <thead>
-          <tr className='*:px-4 *:py-2 bg-gray-100 text-left'>
-            <th>Nombre</th>
-            <th>Correo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {professors.map((prof) => (
-            <tr key={prof.id} className='border-t *:px-4 *:py-2'>
-              <td>{prof.userInfo.firstName} {prof.userInfo.lastName}</td>
-              <td>{prof.userInfo.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ProfessorsTable professors={professors} />
     </div>
   )
 }
