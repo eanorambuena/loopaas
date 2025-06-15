@@ -2,6 +2,7 @@
 
 import Input from '@/components/Input'
 import MainButton from '@/components/MainButton'
+import SecondaryButton from '@/components/SecondaryButton'
 import { useToast } from '@/components/ui/use-toast'
 import { Evaluation, LinearQuestion } from '@/utils/schema'
 import { createClient } from '@/utils/supabase/client'
@@ -76,7 +77,23 @@ export default function ConfigForm({ evaluation }: Props) {
 
   const deleteQuestion = (id: string) => {
     delete evaluation.questions[id]
-    setQuestions({ ...questions })
+    setQuestions(questions => {
+      const newQuestions = { ...questions }
+      delete newQuestions[id]
+      return newQuestions
+    })
+  }
+
+  const addQuestion = () => {
+    const newId = `${Object.keys(questions).length + 1}`
+    setQuestions({
+      ...questions,
+      [newId]: {
+        type: 'linear',
+        required: true,
+        criteria: []
+      }
+    })
   }
   
   return (
@@ -90,6 +107,13 @@ export default function ConfigForm({ evaluation }: Props) {
         ))
         : <Fallback>No hay preguntas en esta evaluación</Fallback>
       }
+      <SecondaryButton
+        type='button'
+        onClick={addQuestion}
+        className='w-full'
+      >
+        Agregar pregunta
+      </SecondaryButton>
       <MainButton pendingText='Guardando evaluación...' className='w-full'>
         Guardar evaluación
       </MainButton>
