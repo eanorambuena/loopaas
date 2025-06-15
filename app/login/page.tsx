@@ -1,4 +1,4 @@
-'use client'
+ 'use client'
 
 import MainButton from '@/components/MainButton'
 import SecondaryButton from '@/components/SecondaryButton'
@@ -11,6 +11,8 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+type AvailableActions = 'signIn' | 'signUp'
+
 export default function Login() {
   const router = useRouter()
   const toastError = useToastError()
@@ -18,6 +20,7 @@ export default function Login() {
   const { mutate, user } = useCurrentUser()
   const { refetch } = useUserInfo(user?.id)
   const [showingPassword, setShowingPassword] = useState(false)
+  const [action, setAction] = useState<AvailableActions>('signIn')
 
   const signIn = async (formData: FormData) => {
     const email = formData.get('email') as string
@@ -64,8 +67,6 @@ export default function Login() {
       toastError(error as ErrorWithStatus)
     }
   }
-
-  const [action, setAction] = useState<'signIn' | 'signUp'>('signIn')
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -118,6 +119,9 @@ export default function Login() {
         <MainButton onClick={() => setAction('signIn')}>
           Iniciar Sesión
         </MainButton>
+        <SecondaryButton onClick={() => router.push('/login/magic-link')}>
+          Iniciar Sesión con Enlace Mágico (Beta)
+        </SecondaryButton>
         {/*
         <SecondaryButton
           onClick={() => {setAction('signUp')}}

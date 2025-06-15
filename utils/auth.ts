@@ -13,6 +13,19 @@ export class Auth {
     if (error) throw error
     return user
   }
+  
+  static async SignInWithMagicLink(email: string) {
+    const origin = window.location.origin
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: `${origin}/auth/callback`,
+      }
+    })
+    console.log({ data, error })
+    if (error) throw error
+  }
 
   static async SignUp(email: string, password: string) {
     const origin = window.location.origin
