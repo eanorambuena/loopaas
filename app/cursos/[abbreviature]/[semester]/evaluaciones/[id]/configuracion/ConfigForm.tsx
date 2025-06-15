@@ -84,14 +84,18 @@ export default function ConfigForm({ evaluation }: Props) {
     })
   }
 
-  const addQuestion = () => {
+  interface AddQuestionProps {
+    type: string
+  }
+
+  const addQuestion = ({ type }: AddQuestionProps) => {
     const newId = `${Object.keys(questions).length + 1}`
     setQuestions({
       ...questions,
       [newId]: {
-        type: 'linear',
-        required: true,
-        criteria: []
+        type,
+        required: false,
+        ...(type === 'linear' ? { criteria: [] } : {})
       }
     })
   }
@@ -107,13 +111,20 @@ export default function ConfigForm({ evaluation }: Props) {
         ))
         : <Fallback>No hay preguntas en esta evaluación</Fallback>
       }
-      <SecondaryButton
-        type='button'
-        onClick={addQuestion}
-        className='w-full'
-      >
-        Agregar pregunta
-      </SecondaryButton>
+      <div className='flex gap-4 w-full'>
+        <Input type='select' label='Tipo de pregunta' name='question-type' defaultValue='linear' className='w-full'>
+          <option value='linear'>Likert</option>
+          <option value='text'>Texto (Beta)</option>
+          <option value='textarea'>Texto largo (Beta)</option>
+        </Input>
+        <SecondaryButton
+          type='button'
+          onClick={() => addQuestion({ type: document.querySelector('select[name="question-type"]')?.value ?? 'linear' })}
+          className='w-full'
+        >
+          Agregar pregunta
+        </SecondaryButton>
+      </div>
       <MainButton pendingText='Guardando evaluación...' className='w-full'>
         Guardar evaluación
       </MainButton>

@@ -22,10 +22,7 @@ export async function isProfessorServer({ userInfoId, courseId }: IsProfessorSer
     }
 
     const { data, error } = await query
-    console.log('isProfessorServer data:', data)
-    console.log('isProfessorServer error:', error)
-    console.log(JSON.stringify(await supabase.from('professors').select().eq('teacherInfoId', userInfoId).eq('courseId', courseId)))
-
+    
     if (error) {
       Console.Error(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId} - Error al consultar profesores:`, error)
       return false
