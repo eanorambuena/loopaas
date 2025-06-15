@@ -23,7 +23,6 @@ export class Auth {
         emailRedirectTo: `${origin}/auth/callback`,
       }
     })
-    console.log({ data, error })
     if (error) throw error
   }
 

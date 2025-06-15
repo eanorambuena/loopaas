@@ -7,6 +7,15 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 
+interface LayoutProps {
+  children: React.ReactNode
+  searchParams: {
+    error?: string
+    error_code?: string
+    error_description?: string
+  }
+}
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000'
@@ -20,7 +29,17 @@ export const metadata = {
   description: 'IDS App es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable'
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children, searchParams }: LayoutProps) {
+  try {
+    const { error, error_code, error_description } = searchParams
+    if (error) {
+      console.error('Error:', error)
+      console.error('Error Code:', error_code)
+      console.error('Error Description:', error_description)
+    }
+  } catch (e) {
+    console.error('Error parsing searchParams:', e)
+  }
   return (
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background text-foreground">
