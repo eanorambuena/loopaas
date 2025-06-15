@@ -637,6 +637,7 @@ export async function getEvaluationResponses(evaluationId: string): Promise<Resp
       )
     `)
     .eq('evaluationId', evaluationId)
+    .order('created_at', { ascending: false })
 
   if (error) {
     Console.Error(`Error fetching evaluation responses: ${error.message}`)

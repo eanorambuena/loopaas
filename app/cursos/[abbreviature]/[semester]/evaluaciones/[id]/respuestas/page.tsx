@@ -7,7 +7,15 @@ import Fallback from '@/components/Fallback'
 import ResponsesTable from '@/components/responses/ResponsesTable'
 import { Console } from '@/utils/console'
 
-export default async function Page({ params }: { params: { abbreviature: string, semester: string, id: string }}) {
+interface RespuestasPageProps {
+  params: {
+    abbreviature: string
+    semester: string
+    id: string
+  }
+}
+
+export default async function Page({ params }: RespuestasPageProps) {
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id, false)
 
