@@ -6,6 +6,7 @@ const useChileTime = (): Date => {
   const [chileTime, setChileTime] = useState<Date>(chileDefaultTime)
 
   useEffect(() => {
+    return
     try {
       const fetchChileTime = async () => {
         try {

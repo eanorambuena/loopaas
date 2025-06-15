@@ -11,23 +11,35 @@ interface IsProfessorServerParams {
 export async function isProfessorServer({ userInfoId, courseId }: IsProfessorServerParams): Promise<boolean> {
   const supabase = createClient()
 
-  let query = supabase
-    .from('professors')
-    .select('id')
-    .eq('teacherInfoId', userInfoId)
+  try {
+    let query = supabase
+      .from('professors')
+      .select()
+      .eq('teacherInfoId', userInfoId)
 
-  if (courseId) {
-    query = query.eq('courseId', courseId)
+    if (courseId) {
+      query = query.eq('courseId', courseId)
+    }
+
+    const { data, error } = await query
+    console.log('isProfessorServer data:', data)
+    console.log('isProfessorServer error:', error)
+    console.log(JSON.stringify(await supabase.from('professors').select().eq('teacherInfoId', userInfoId).eq('courseId', courseId)))
+
+    if (error) {
+      Console.Error(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId} - Error al consultar profesores:`, error)
+      return false
+    }
+    if (!data) {
+      Console.Info(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId} - No es profesor`)
+      return false
+    }
+    const isProfessor = data.length > 0
+    Console.Info(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId}, isProfessor=${isProfessor}`)
+    return isProfessor
   }
-
-  const { data, error } = await query.maybeSingle()
-
-  if (error) {
-    console.error('❌ Error al verificar profesor:', error)
+  catch (error) {
+    Console.Error(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId} - Error inesperado: ${error}`)
     return false
   }
-
-  const isProfessor = !!data
-  Console.Info(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId}, isProfessor=${isProfessor}`)
-  return isProfessor
 }

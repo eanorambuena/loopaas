@@ -18,6 +18,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
 
   return (
     <div>
+      <h1 className="text-3xl font-bold mb-6">Nueva Evaluación</h1>
       <Link
         className="w-full max-w-4xl rounded-md flex justify-center items-center bg-[#eeeeee] dark:bg-gray-900 hover:scale-105 transition-transform duration-300 hover:shadow-[0_20px_30px_rgba(_8,_184,_112,_0.7)]"
         href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${newEvaluation?.id}`}

@@ -34,9 +34,9 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
   if (!userInfo) return null
 
   const isDateEarlierThanNow = (date: Date) => {
-    const differeceInTime = chileTime.getTime() - date.getTime()
-    console.log({ chileTime, date, differeceInTime })
-    const differenceInSeconds = differeceInTime / 1000
+    const differenceInTime = chileTime.getTime() - date.getTime()
+    console.log({ chileTime, date, differenceInTime })
+    const differenceInSeconds = differenceInTime / 1000
     return differenceInSeconds >= 1
   }
 
