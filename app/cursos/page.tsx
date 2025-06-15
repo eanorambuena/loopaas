@@ -1,7 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import CourseCard from '@/components/CourseCard'
-import Card from '@/components/Card'
-import PlusIcon from '@/components/icons/PlusIcon'
+import { AddCard } from '@/components/AddCard'
 import { getCurrentUser, getUserInfo } from '@/utils/queries'
 import Fallback from '@/components/Fallback'
 import { isProfessorServer } from '@/utils/isProfessorServer'
@@ -26,7 +25,7 @@ export default async function CursosPage() {
       <h1 className='text-3xl font-bold'>Cursos</h1>
       <main className="grid gap-20 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 p-4">
         {isProfessor && (
-          <Card icon={PlusIcon} title="Nuevo Curso" path="/cursos/nuevo" />
+          <AddCard title="Nuevo Curso" path="/cursos/nuevo" />
         )}
         {!courses?.length && (
           <Fallback>No se encontraron cursos</Fallback>
