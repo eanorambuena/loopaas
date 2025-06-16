@@ -12,6 +12,10 @@ export async function GET(req: NextRequest) {
 
   const { email } = session.user
 
+  if (!email) {
+    return NextResponse.json({ error: 'No email found in user session' }, { status: 400 })
+  }
+
   // Iniciar sesión en Supabase con el mismo email
   const { data, error } = await supabase.auth.signInWithOtp({ email })
 
