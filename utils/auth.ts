@@ -8,7 +8,10 @@ export class Auth {
   static async SignIn(email: string, password: string) {
     const { error, data: { user } } = await supabase.auth.signInWithPassword({
       email,
-      password
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/supabase/auth/callback`,
+      }
     })
     if (error) throw error
     return user
@@ -20,7 +23,7 @@ export class Auth {
       email,
       options: {
         shouldCreateUser: false,
-        emailRedirectTo: `${origin}/auth/callback`,
+        emailRedirectTo: `${origin}/supabase/auth/callback`,
       }
     })
     if (error) throw error
@@ -32,7 +35,7 @@ export class Auth {
       email,
       password,
       options: {
-        emailRedirectTo: `${origin}/auth/callback`,
+        emailRedirectTo: `${origin}/supabase/auth/callback`,
       }
     })
     if (error) throw error
