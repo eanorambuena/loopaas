@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth0 } from '@/lib/auth0'
-import { supabase } from '@/utils/supabase/server'
+import { createClient } from '@/utils/supabase/server'
 
 export async function GET(req: NextRequest) {
+  const supabase = createClient()
   const session = await auth0.getSession()
 
   if (!session?.user) {
