@@ -17,7 +17,7 @@ interface Props {
 export default function ConfigForm({ evaluation }: Props) {
   const supabase = createClient()
   const { toast } = useToast()
-  const [questions, setQuestions] = useState<Record<string, LinearQuestion>>(evaluation.questions)
+  const [questions, setQuestions] = useState<Record<string, LinearQuestion | any>>(evaluation.questions)
   
   const handleSubmit = async (e: any) => {
     e.preventDefault()
