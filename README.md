@@ -172,7 +172,7 @@ exports.onExecutePostLogin = async (event, api) => {
 5. Instalar el SDK de Auth0 para Next.js
 Ejecuta el siguiente comando:
 ```bash
-bun add @auth0/nextjs-auth0
+bun add @auth0/nextjs-auth0 @supabase/auth-helpers-nextjs @supabase/supabase-js
 ```
 
 6. Configurar variables de entorno
