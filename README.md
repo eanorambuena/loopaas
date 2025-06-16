@@ -140,6 +140,52 @@ Después de configurar Supabase, se deben agregar las variables de entorno a Ver
 - `NEXT_CANVAS_API_TOKEN`: Clave de API de Canvas
 - `NEXT_ITEMS_PER_PAGE`: Número de items por página (opcional, por defecto 10)
 
+### Auth0
+
+Para la autenticación de usuarios, además de Supabase, se utiliza Auth0. Esto permite que los usuarios puedan iniciar sesión con su cuenta de Google UC o con su cuenta de Microsoft UC.
+
+Pasos:
+1. Crear una cuenta en Auth0.
+2. Crear una nueva aplicación en Auth0.
+
+Selecciona Regular Web Application.
+
+Configura los Callback URLs y Logout URLs:
+
+Callback URL: http://localhost:3000/api/auth/callback
+
+Logout URL: http://localhost:3000
+
+3. Añadir una integración con Auth0 en Supabase usando el dominio de Auth0.
+4. Seguir la guía [de integración de Auth0 con Supabase](https://supabase.com/docs/guides/auth/third-party/auth0).
+
+Se debe crear una *Custom Action* en Auth0 para agregar el rol de usuario autentificado al token de acceso. Esto se hace para que Supabase pueda identificar el rol del usuario y mostrar la información correspondiente.
+
+La *Custom Action* debe ser de tipo `Post Login` y debe tener el siguiente código:
+
+```javascript
+exports.onExecutePostLogin = async (event, api) => {
+    api.accessToken.setCustomClaim('role', 'authenticated');
+};
+```
+
+5. Instalar el SDK de Auth0 para Next.js
+Ejecuta el siguiente comando:
+```bash
+bun add @auth0/nextjs-auth0
+```
+
+6. Configurar variables de entorno
+En el archivo `.env.local`, agregar las siguientes variables de entorno:
+
+```bash
+NEXT_AUTH0_SECRET=<una cadena segura generada con openssl rand -hex 32>
+NEXT_AUTH0_BASE_URL=http://localhost:3000
+NEXT_AUTH0_ISSUER_BASE_URL=https://<tu-dominio-auth0>.auth0.com
+NEXT_AUTH0_CLIENT_ID=<tu-client-id>
+NEXT_AUTH0_CLIENT_SECRET=<tu-client-secret>
+```
+
 ## Uso
 
 Se puede acceder a la aplicación web en [idsapp.vercel.app](https://idsapp.vercel.app)
