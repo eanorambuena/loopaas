@@ -38,19 +38,21 @@ export default async function Page({ params }: { params: { abbreviature: string,
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3'>
       <h1 className='text-3xl font-bold'>{evaluation.title}</h1>
-      {isCourseProfessor && (
-        <div className='flex gap-4'>
-          <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`}>
-            Configurar Evaluación
-          </SecondaryLink>
-          <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/resultados`}>
-            Resultados
-          </SecondaryLink>
-        </div>
-      )}
-      <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/respuestas`}>
-        {isCourseProfessor ? 'Ver Respuestas' : 'Mis Respuestas'}
-      </SecondaryLink>
+      <div className='flex gap-4'>
+        {isCourseProfessor && (
+          <>
+            <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`}>
+              Configurar Evaluación
+            </SecondaryLink>
+            <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/resultados`}>
+              Resultados
+            </SecondaryLink>
+          </>
+        )}
+        <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/respuestas`}>
+          {isCourseProfessor ? 'Ver Respuestas' : 'Mis Respuestas'}
+        </SecondaryLink>
+      </div>
       {evaluation && (
         <>
           {isCourseProfessor && <p className='text-gray-500'>Vista previa de la evaluación:</p>}

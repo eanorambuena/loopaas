@@ -5,14 +5,14 @@ import Badge from '@/components/Badge'
 export default async function CourseCard({ course }: { course: any }) {
   const supabase = createClient()
 
-  const { data: teacher } = await supabase
+  const { data: professorToBeDisplayed } = await supabase
     .from('userInfo')
     .select('*')
     .eq('id', course.teacherInfoId)
 
-  if (!teacher) return null
+  if (!professorToBeDisplayed) return null
 
-  const teacherName = `${teacher[0].firstName} ${teacher[0].lastName}`
+  const teacherName = `${professorToBeDisplayed[0].firstName} ${professorToBeDisplayed[0].lastName}`
 
   return (
     <Link
