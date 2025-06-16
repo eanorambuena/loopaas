@@ -10,7 +10,7 @@ interface OptionalInputProps {
   accept?: string
   disabled?: boolean
   value?: string
-  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
 }
 
 interface Props extends OptionalInputProps {

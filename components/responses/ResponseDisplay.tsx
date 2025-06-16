@@ -10,7 +10,7 @@ export function ResponseDisplay({ data }: ResponseDisplayProps) {
   const [displayData, setDisplayData] = useState<{ evaluatedUserInfo: any, criteria: string, answer: string }[] | null>()
   const [shouldDisplayData, setShouldDisplayData] = useState(false)
   const [shouldPrefetchData, setShouldPrefetchData] = useState(false)
-  const { isVisible, ref } = useIsVisible()
+  const { isVisible, ref } = useIsVisible<HTMLButtonElement>()
   
   useEffect(() => {
     const shouldFetchData = shouldDisplayData || shouldPrefetchData || isVisible
@@ -45,7 +45,7 @@ export function ResponseDisplay({ data }: ResponseDisplayProps) {
     }
   }, [data, shouldDisplayData, shouldPrefetchData, isVisible, displayData])
 
-  function handleOnMouseEnter(event: React.MouseEvent<HTMLDivElement>) {
+  function handleOnMouseEnter(event: React.MouseEvent<HTMLButtonElement>) {
     if (!shouldDisplayData && !shouldPrefetchData) {
       setShouldPrefetchData(true)
     }

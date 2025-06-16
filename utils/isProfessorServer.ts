@@ -24,7 +24,7 @@ export async function isProfessorServer({ userInfoId, courseId }: IsProfessorSer
     const { data, error } = await query
     
     if (error) {
-      Console.Error(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId} - Error al consultar profesores:`, error)
+      Console.Error(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId} - Error al consultar profesores: ${error}`) 
       return false
     }
     if (!data) {

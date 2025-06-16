@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 
-export function useIsVisible() {
+export function useIsVisible<T extends Element>() {
   const [isVisible, setIsVisible] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<T>(null)
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -17,9 +17,14 @@ export function useIsVisible() {
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
+      try {
+        if (ref.current) {
+          observer.unobserve(ref.current)
+        }
+      } catch (error) {
+        console.error('Error unobserving element:', error)
       }
+      observer.disconnect()
     }
   }, [])
 
