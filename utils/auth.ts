@@ -8,10 +8,7 @@ export class Auth {
   static async SignIn(email: string, password: string) {
     const { error, data: { user } } = await supabase.auth.signInWithPassword({
       email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/supabase/auth/callback`,
-      }
+      password
     })
     if (error) throw error
     return user
