@@ -26,6 +26,10 @@ export class Auth {
     if (error) throw error
   }
 
+  static async SignInWithAuth0() {
+    
+  }
+
   static async SignUp(email: string, password: string) {
     const origin = window.location.origin
     const { error } = await supabase.auth.signUp({

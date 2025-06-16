@@ -2,6 +2,7 @@
 
 import MainButton from '@/components/MainButton'
 import SecondaryButton from '@/components/SecondaryButton'
+import LoginWithAuth0Button from '@/components/LoginWithAuth0Button'
 import SecondaryLink from '@/components/SecondaryLink'
 import { useToast } from '@/components/ui/use-toast'
 import { Auth } from '@/utils/auth'
@@ -126,6 +127,7 @@ export default function Login() {
         >
           Iniciar Sesión con Microsoft o Google (Beta)
         </a>
+        <LoginWithAuth0Button />
         <SecondaryButton onClick={() => router.push('/login/magic-link')}>
           Iniciar Sesión con Enlace Mágico (Beta)
         </SecondaryButton>
