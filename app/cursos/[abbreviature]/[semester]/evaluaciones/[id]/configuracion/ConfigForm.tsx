@@ -119,7 +119,7 @@ export default function ConfigForm({ evaluation }: Props) {
         </Input>
         <SecondaryButton
           type='button'
-          onClick={() => addQuestion({ type: document.querySelector('select[name="question-type"]')?.value ?? 'linear' })}
+          onClick={() => addQuestion({ type: (document.querySelector('select[name="question-type"]') as unknown) ?.value ?? 'linear' })}
           className='w-full'
         >
           Agregar pregunta
