@@ -100,6 +100,11 @@ export default function ConfigForm({ evaluation }: Props) {
     })
   }
   
+  function getQuestionType() {
+    const element = document.querySelector('select[name="question-type"]') as HTMLSelectElement
+    return element ? element?.value : 'linear'
+  }
+
   return (
     <form className='animate-in flex-1 flex flex-col w-full justify-center items-center gap-6 text-foreground' onSubmit={handleSubmit}>
       <Input label='Título' name='title' required defaultValue={evaluation.title} className='w-full' />
@@ -119,7 +124,7 @@ export default function ConfigForm({ evaluation }: Props) {
         </Input>
         <SecondaryButton
           type='button'
-          onClick={() => addQuestion({ type: (document.querySelector('select[name="question-type"]') as unknown) ?.value ?? 'linear' })}
+          onClick={() => addQuestion({ type: getQuestionType() })}
           className='w-full'
         >
           Agregar pregunta
