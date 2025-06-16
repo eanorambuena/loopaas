@@ -621,7 +621,12 @@ interface EvaluationResponseWithUserInfo {
   }
 }
 
-export async function getEvaluationResponses(evaluationId: string, userInfoId: string?): Promise<Response[]> {
+interface GetEvaluationResponsesParams {
+  evaluationId: string
+  userInfoId?: string
+}
+
+export async function getEvaluationResponses({ evaluationId, userInfoId }: GetEvaluationResponsesParams): Promise<Response[]> {
   const supabase = createClient()
   const query = supabase
     .from('responses')

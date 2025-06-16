@@ -34,9 +34,9 @@ export default async function Page({ params }: RespuestasPageProps) {
   let responses
   try {
     if (!isCourseProfessor){
-      responses = await getEvaluationResponses(params.id, userInfo.id)
+      responses = await getEvaluationResponses({ evaluationId: params.id, userInfoId: userInfo.id })
     } else {
-      responses = await getEvaluationResponses(params.id)
+      responses = await getEvaluationResponses({ evaluationId: params.id })
     }
     Console.Info(`Fetched ${responses.length} responses for evaluation ${params.id}`)
     if (!responses || responses.length === 0) {
