@@ -18,7 +18,7 @@ export default async function Page({ params }: EvaluationConfigPageProps) {
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
   const userInfo = await getUserInfo(user.id, false)
-  if (!userInfo) return <Fallback>No se encontró el usuario</Fallback>
+  if (!userInfo || !userInfo.id) return <Fallback>No se encontró el usuario</Fallback>
   
   const isCourseProfessor = await isProfessorServer({
     userInfoId: userInfo.id,
