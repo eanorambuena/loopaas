@@ -4,15 +4,17 @@ import Fallback from '@/components/Fallback'
 import { getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
 import UploadStudentsForm from './UploadStudentsForm'
 import { Console } from '@/utils/console'
-import StudentsTable from '../../../../../components/students/StudentsTable'
+import { isProfessorServer } from '@/utils/isProfessorServer'
+import { redirect } from 'next/navigation'
+import StudentsTable from '@/components/students/StudentsTable'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
-  try {
-    await getCurrentUser()
-  }
-  catch (error) {
-    Console.Error(`Error al obtener el usuario actual: ${error}`)
-    return <Fallback>Error al cargar el usuario</Fallback>
+  const user = await getCurrentUser()
+  const userInfo = await getUserInfo(user.id, false)
+
+  if (!userInfo || !userInfo.id) {
+    Console.Error(`UserInfo not found for user ${user.email}`)
+    return <Fallback>No se encontró tu información de usuario</Fallback>
   }
 
   let course
@@ -24,6 +26,13 @@ export default async function Page({ params }: { params: { abbreviature: string,
     Console.Error(`Error al obtener el curso: ${error}`)
     return <Fallback>Error al cargar el curso</Fallback>
   }
+
+  const isCourseProfessor = await isProfessorServer({
+    userInfoId: userInfo.id,
+    courseId: course.id
+  })
+  
+  if (!isCourseProfessor) redirect(`/cursos/${params.abbreviature}/${params.semester}`)
 
   let students
   try {

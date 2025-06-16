@@ -31,11 +31,13 @@ export default async function Page({ params }: RespuestasPageProps) {
     courseId: course.id
   })
   
-  if (!isCourseProfessor) redirect(`/cursos/${params.abbreviature}/${params.semester}`)
-
   let responses
   try {
-    responses = await getEvaluationResponses(params.id)
+    if (!isCourseProfessor){
+      responses = await getEvaluationResponses(params.id, userInfo.id)
+    } else {
+      responses = await getEvaluationResponses(params.id)
+    }
     Console.Info(`Fetched ${responses.length} responses for evaluation ${params.id}`)
     if (!responses || responses.length === 0) {
       return <Fallback>No se encontraron respuestas para esta evaluación</Fallback>

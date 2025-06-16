@@ -621,9 +621,9 @@ interface EvaluationResponseWithUserInfo {
   }
 }
 
-export async function getEvaluationResponses(evaluationId: string): Promise<Response[]> {
+export async function getEvaluationResponses(evaluationId: string, userInfoId: string?): Promise<Response[]> {
   const supabase = createClient()
-  const { data, error } = await supabase
+  const query = supabase
     .from('responses')
     .select(`
       id,
@@ -638,6 +638,12 @@ export async function getEvaluationResponses(evaluationId: string): Promise<Resp
     `)
     .eq('evaluationId', evaluationId)
     .order('created_at', { ascending: false })
+
+  if (userInfoId) {
+    query.eq('userInfoId', userInfoId)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     Console.Error(`Error fetching evaluation responses: ${error.message}`)
