@@ -43,14 +43,14 @@ export default async function Page({ params }: { params: { abbreviature: string,
           <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/configuracion`}>
             Configurar Evaluación
           </SecondaryLink>
-          <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/respuestas`}>
-            Ver Respuestas
-          </SecondaryLink>
           <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/resultados`}>
             Resultados
           </SecondaryLink>
         </div>
       )}
+      <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/respuestas`}>
+        {isCourseProfessor ? 'Ver Respuestas' : 'Mis Respuestas'}
+      </SecondaryLink>
       {evaluation && (
         <>
           {isCourseProfessor && <p className='text-gray-500'>Vista previa de la evaluación:</p>}

@@ -1,7 +1,7 @@
 'use server'
 
 import Fallback from '@/components/Fallback'
-import { getCourse, getCourseStudents, getCurrentUser } from '@/utils/queries'
+import { getCourse, getCourseStudents, getCurrentUser, getUserInfo } from '@/utils/queries'
 import UploadStudentsForm from './UploadStudentsForm'
 import { Console } from '@/utils/console'
 import { isProfessorServer } from '@/utils/isProfessorServer'
