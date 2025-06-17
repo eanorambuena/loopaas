@@ -31,8 +31,10 @@ export default function Header() {
     if (!auth0User || !auth0User.email) {
       return
     }
-    
     (async () => {
+      if (!auth0User || !auth0User.email) {
+        return
+      }
       await signInWithAuth0(auth0User.email)
     })()
   }, [auth0User, supabase.auth])
