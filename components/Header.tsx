@@ -33,8 +33,7 @@ export default function Header() {
     }
     
     (async () => {
-      const { error } = await signInWithAuth0(auth0User.email)
-      console.log({ error })
+      await signInWithAuth0(auth0User.email)
     })()
   }, [auth0User, supabase.auth])
 
