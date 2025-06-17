@@ -127,7 +127,6 @@ export default function Login() {
         >
           Iniciar Sesión con Microsoft o Google (Beta)
         </a>
-        <LoginWithAuth0Button />
         <SecondaryButton onClick={() => router.push('/login/magic-link')}>
           Iniciar Sesión con Enlace Mágico (Beta)
         </SecondaryButton>

@@ -3,6 +3,7 @@ import { auth0 } from '@/lib/auth0'
 import { createClient } from '@/utils/supabase/server'
 
 export async function GET(req: NextRequest) {
+  console.log('Auth0 callback')
   const supabase = createClient()
   const session = await auth0.getSession()
 
@@ -11,12 +12,12 @@ export async function GET(req: NextRequest) {
   }
 
   const { email } = session.user
+  console.log('User email from Auth0 session:', email)
 
   if (!email) {
     return NextResponse.json({ error: 'No email found in user session' }, { status: 400 })
   }
-
-  console.log(email)
+  
   // Iniciar sesión en Supabase con el mismo email
   const { data, error } = await supabase.auth.signInWithOtp({ email })
 

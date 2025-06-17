@@ -14,7 +14,11 @@ export default function AuthButton() {
 
   const signOut = async () => {
     await supabase.auth.signOut()
-    return router.push('/login')
+    try {
+      return router.push('/auth/logout')
+    } catch (error) {
+      return router.push('/')
+    }
   }
 
   return user ? (

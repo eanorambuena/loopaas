@@ -2,10 +2,41 @@
 
 import AuthButton from '@/components/AuthButton'
 import useCurrentUser from '@/utils/hooks/useCurrentUser'
-import HoverableLink from './HoverableLink'
+import HoverableLink from '@/components/HoverableLink'
+import { useUser } from '@auth0/nextjs-auth0'
+import { useEffect } from 'react'
+import { createClient } from '@/utils/supabase/client'
+
+async function signInWithAuth0(email: string) {
+  try {
+    await fetch('/api/auto-login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    })
+  } catch (e) {
+    console.error(e)
+  }
+}
 
 export default function Header() {
   const { user, isLoading, error } = useCurrentUser()
+  const { user: auth0User, isLoading: iL } = useUser()
+
+  const supabase = createClient()
+
+  useEffect(() => {
+    if (!auth0User || !auth0User.email) {
+      return
+    }
+    console.log('Auth0 user detected, signing in with Auth0 email...', auth0User.email)
+    (async () => {
+      const { data, error } = await signInWithAuth0(auth0User.email)
+      console.log({ data, error })
+    })()
+  }, [auth0User, supabase.auth])
 
   const noUserOrUserInfoFallback = (
     <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">

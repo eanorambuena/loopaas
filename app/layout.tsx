@@ -30,16 +30,13 @@ export const metadata = {
 }
 
 export default function RootLayout({ children, searchParams }: LayoutProps) {
-  try {
+  if (searchParams && searchParams.error) {
     const { error, error_code, error_description } = searchParams
-    if (error) {
-      console.error('Error:', error)
-      console.error('Error Code:', error_code)
-      console.error('Error Description:', error_description)
-    }
-  } catch (e) {
-    console.error('Error parsing searchParams:', e)
+    console.error('Error:', error)
+    console.error('Error Code:', error_code)
+    console.error('Error Description:', error_description)
   }
+  
   return (
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background text-foreground">

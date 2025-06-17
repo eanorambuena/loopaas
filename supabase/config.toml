@@ -1,0 +1,4 @@
+[auth.third_party.auth0]
+enabled = true
+tenant = "dev-zj3mbtfj3v7l6wlu"
+tenant_region = "us"

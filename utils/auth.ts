@@ -26,8 +26,18 @@ export class Auth {
     if (error) throw error
   }
 
-  static async SignInWithAuth0() {
-    
+  static async SignInWithAuth0(email: string) {
+    try {
+      await fetch('/api/auto-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   static async SignUp(email: string, password: string) {
