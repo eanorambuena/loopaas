@@ -31,10 +31,10 @@ export default function Header() {
     if (!auth0User || !auth0User.email) {
       return
     }
-    console.log('Auth0 user detected, signing in with Auth0 email...', auth0User.email)
+    
     (async () => {
-      const { data, error } = await signInWithAuth0(auth0User.email)
-      console.log({ data, error })
+      const { error } = await signInWithAuth0(auth0User.email)
+      console.log({ error })
     })()
   }, [auth0User, supabase.auth])
 
