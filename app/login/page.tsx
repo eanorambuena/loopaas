@@ -2,7 +2,6 @@
 
 import MainButton from '@/components/MainButton'
 import SecondaryButton from '@/components/SecondaryButton'
-import LoginWithAuth0Button from '@/components/LoginWithAuth0Button'
 import SecondaryLink from '@/components/SecondaryLink'
 import { useToast } from '@/components/ui/use-toast'
 import { Auth } from '@/utils/auth'
