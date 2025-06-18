@@ -193,6 +193,11 @@ Browserslist: caniuse-lite is outdated. Please run:
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
 ```
 
+### Otros Iconos
+
+[Google](https://www.svgrepo.com/svg/303108/google-icon-logo)
+[Microsoft](https://www.svgrepo.com/svg/448239/microsoft)
+
 ## Uso
 
 Se puede acceder a la aplicación web en [idsapp.vercel.app](https://idsapp.vercel.app)

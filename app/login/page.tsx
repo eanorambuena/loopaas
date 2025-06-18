@@ -11,6 +11,8 @@ import useUserInfo from '@/utils/hooks/useUserInfo'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { GoogleIcon } from '@/components/icons/brands/GoogleIcon'
+import { MicrosoftIcon } from '@/components/icons/brands/MicrosoftIcon'
 
 type AvailableActions = 'signIn' | 'signUp'
 
@@ -125,15 +127,18 @@ export default function Login() {
           <span className="mx-2 text-foreground/60">o</span>
           <hr className="flex-grow border-t border-foreground/20" />
         </div>
+        <SecondaryButton onClick={() => router.push('/login/magic-link')}>
+          Iniciar Sesión con Enlace Mágico (Beta)
+        </SecondaryButton>
         <a
           className='border border-foreground/20 rounded-md px-4 py-2 text-center text-foreground hover:scale-105 transition-transform duration-300'
           href="/auth/login"
         >
-          Iniciar Sesión con Microsoft o Google (Beta)
+          Iniciar Sesión con{' '}
+          <MicrosoftIcon className="inline size-5 ml-1 mb-1" />
+          <GoogleIcon className="inline size-5 ml-1 mb-1" />
+          {' '}(Beta)
         </a>
-        <SecondaryButton onClick={() => router.push('/login/magic-link')}>
-          Iniciar Sesión con Enlace Mágico (Beta)
-        </SecondaryButton>
         {/*
         <SecondaryButton
           onClick={() => {setAction('signUp')}}
