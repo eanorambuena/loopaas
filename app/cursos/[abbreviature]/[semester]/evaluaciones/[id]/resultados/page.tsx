@@ -56,7 +56,7 @@ export default async function Page({ params, searchParams }: Props) {
       {new Date(evaluation.deadLine) > new Date() && (
         <p className='text-red-500 w-full'>Advertencia: La evaluación aún no ha finalizado</p>
       )}
-      <UpdateGradesButton evaluationId={evaluation.id} students={studentsWithGrades} />
+      <UpdateGradesButton evaluation={evaluation} students={studentsWithGrades} />
       <ResultsTable students={studentsWithGrades} />
     </div>
   )

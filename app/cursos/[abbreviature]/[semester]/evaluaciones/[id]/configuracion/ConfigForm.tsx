@@ -18,7 +18,8 @@ export default function ConfigForm({ evaluation }: Props) {
   const supabase = createClient()
   const { toast } = useToast()
   const [questions, setQuestions] = useState<Record<string, LinearQuestion | any>>(evaluation.questions)
-  
+  const [deletedQuestions, setDeletedQuestions] = useState<string[]>([])
+
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     const formData = new FormData(e.target)
@@ -49,6 +50,10 @@ export default function ConfigForm({ evaluation }: Props) {
       }
     })
     setQuestions(_questions)
+    // ensure deleted questions are removed
+    deletedQuestions.forEach(id => {
+      delete _questions[id]
+    })
 
     const newEvaluation = {
       title: entries.title,
@@ -82,6 +87,7 @@ export default function ConfigForm({ evaluation }: Props) {
       delete newQuestions[id]
       return newQuestions
     })
+    setDeletedQuestions(deletedQuestions => [...deletedQuestions, id])
   }
 
   interface AddQuestionProps {

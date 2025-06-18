@@ -95,7 +95,7 @@ export function GenericTable<TData>({
               Columnas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end' className='bg-white border shadow-md rounded-md'>
+          <DropdownMenuContent align='end' className='bg-white dark:bg-black border shadow-md rounded-md'>
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())

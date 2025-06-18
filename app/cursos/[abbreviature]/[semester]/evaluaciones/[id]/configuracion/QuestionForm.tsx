@@ -60,7 +60,7 @@ export default function QuestionForm({ id, question, deleteQuestion }: Props) {
               defaultValue={criterion.weight.toString()}
             />
             <SecondaryButton
-              aria-label='Eliminar pregunta'
+              aria-label='Eliminar criterio'
               className='border-red-300 text-red-500 aspect-square'
               onClick={() => deleteCriterion(i)}
             >
