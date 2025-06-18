@@ -5,17 +5,22 @@ import useUserInfo from '@/utils/hooks/useUserInfo'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useUser } from '@auth0/nextjs-auth0'
 
 export default function AuthButton() {
   const supabase = createClient()
   const router = useRouter()
   const { user } = useCurrentUser()
   const { userInfo, error: userInfoError } = useUserInfo(user?.id)
+  const { user: auth0User, isLoading: iL } = useUser()
 
   const signOut = async () => {
     await supabase.auth.signOut()
     try {
-      return router.push('/auth/logout')
+      if (auth0User) {
+        return router.push('/auth/logout')
+      }
+      return router.push('/')
     } catch (error) {
       return router.push('/')
     }

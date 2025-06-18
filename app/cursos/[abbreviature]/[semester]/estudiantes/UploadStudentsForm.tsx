@@ -19,6 +19,7 @@ export default function UploadStudentsForm() {
       if (!res.ok) throw new Error('Fallo la carga')
 
       alert('Estudiantes cargados correctamente')
+      window.location.reload()
     } catch (error) {
       console.error(error)
       alert('Error al guardar estudiantes')

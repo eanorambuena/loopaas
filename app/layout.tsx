@@ -9,7 +9,7 @@ import './globals.css'
 
 interface LayoutProps {
   children: React.ReactNode
-  searchParams: {
+  searchParams?: {
     error?: string
     error_code?: string
     error_description?: string
