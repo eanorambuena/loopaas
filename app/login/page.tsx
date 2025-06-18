@@ -120,6 +120,11 @@ export default function Login() {
         <MainButton onClick={() => setAction('signIn')}>
           Iniciar Sesión
         </MainButton>
+        <div className="flex justify-between items-center mt-2 mb-4">
+          <hr className="flex-grow border-t border-foreground/20" />
+          <span className="mx-2 text-foreground/60">o</span>
+          <hr className="flex-grow border-t border-foreground/20" />
+        </div>
         <a
           className='border border-foreground/20 rounded-md px-4 py-2 text-center text-foreground hover:scale-105 transition-transform duration-300'
           href="/auth/login"
