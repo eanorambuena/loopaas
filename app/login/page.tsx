@@ -1,4 +1,4 @@
- 'use client'
+'use client'
 
 import MainButton from '@/components/MainButton'
 import SecondaryButton from '@/components/SecondaryButton'
