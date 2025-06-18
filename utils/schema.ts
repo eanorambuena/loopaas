@@ -71,3 +71,17 @@ export interface UserInfoSchema {
   email: string
   canvasToken?: string
 }
+
+export interface StudentWithGrades {
+  id: string
+  userInfo?: {
+    firstName: string
+    lastName: string
+    email: string
+  } | null
+  userInfoId: string
+  group?: string | null
+  groupGrade?: string | number | null
+  coGrade?: string | number | null
+  finalGrade?: string | number | null
+}

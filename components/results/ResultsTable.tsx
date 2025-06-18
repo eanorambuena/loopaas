@@ -2,27 +2,14 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { GenericTable } from '@/components/GenericTable'
-
-interface StudentsWithGrades {
-  id: string
-  userInfo?: {
-    firstName: string
-    lastName: string
-    email: string
-  } | null
-  userInfoId: string
-  group?: string | null
-  groupGrade?: string | number | null
-  coGrade?: string | number | null
-  finalGrade?: string | number | null
-}
+import { StudentWithGrades } from '@/utils/schema'
 
 interface ResultsTableProps {
-  students: StudentsWithGrades[]
+  students: StudentWithGrades[]
 }
 
 export function ResultsTable({ students }: ResultsTableProps) {
-  const columns: ColumnDef<StudentsWithGrades>[] = [
+  const columns: ColumnDef<StudentWithGrades>[] = [
     {
       accessorKey: 'userInfo',
       header: 'Estudiante',
