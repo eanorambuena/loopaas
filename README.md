@@ -138,7 +138,6 @@ Después de configurar Supabase, se deben agregar las variables de entorno a Ver
 - `NEXT_PRIVATE_SUPABASE_SERVICE_ROLE_KEY`: Clave de Servicio de Supabase
 - `NEXT_RESEND_API_TOKEN`: Clave de API de Resend
 - `NEXT_CANVAS_API_TOKEN`: Clave de API de Canvas
-- `NEXT_ITEMS_PER_PAGE`: Número de items por página (opcional, por defecto 10)
 
 ### Auth0
 
