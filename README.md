@@ -185,6 +185,14 @@ NEXT_AUTH0_CLIENT_ID=<tu-client-id>
 NEXT_AUTH0_CLIENT_SECRET=<tu-client-secret>
 ```
 
+### Caniuse-lite
+
+```bash
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+```
+
 ## Uso
 
 Se puede acceder a la aplicación web en [idsapp.vercel.app](https://idsapp.vercel.app)
