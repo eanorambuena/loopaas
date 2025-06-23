@@ -1,6 +1,6 @@
 # Docs: https://dev.to/jps27cse/how-to-prevent-your-supabase-project-database-from-being-paused-using-github-actions-3hel#:~:text=Supabase%2C%20like%20many%20other%20database,true%20for%20free%2Dtier%20projects
 # I had to add the line "environment: Production" because Github now only works with specific environments for Secrets
-name: Ping Supabase to Prevent Pausing
+name: Ping Supabase to Prevent Pausing of the Project
 
 on:
   schedule:
