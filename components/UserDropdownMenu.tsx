@@ -7,8 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Link } from "react-router-dom";
-import { LogoutButton } from "./LogoutButton";
+import { Link } from "react-router-dom"
+import AuthButton from '@/components/AuthButton'
 
 export function UserDropdownMenu() {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -28,10 +28,9 @@ export function UserDropdownMenu() {
         <DropdownMenuContent className="z-[9999] [&_*]:!text-md [&_*]:!text-gray-800 [&_*:hover]:!text-greenGandolini [&_*:hover]:!arno">
           <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem><Link to="/profile">Mi Perfil</Link></DropdownMenuItem>
-          <DropdownMenuItem><Link to="/eventos">Mis Eventos</Link></DropdownMenuItem>
+          <DropdownMenuItem><Link to="/perfil">Mi Perfil</Link></DropdownMenuItem>
           <DropdownMenuItem>
-            <LogoutButton />
+            <AuthButton />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
