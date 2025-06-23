@@ -25,7 +25,7 @@ export function UserDropdownMenu({ user }: UserDropdownMenuProps) {
     isUserDataAvailable && (
       <DropdownMenu>
         <DropdownMenuTrigger className="!border-none !active:!border-none focus:!border-none">
-          <img src={user.picture} alt={user.name} className="size-10 rounded-full border-[#265F1A]" />
+          <img src={user.picture} alt={user.name} className="size-10 rounded-full border-2 border-[#265F1A]" />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="z-[9999] [&_*]:!text-md [&_*]:!text-gray-800 [&_*:hover]:!text-emerald-500">
           <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
