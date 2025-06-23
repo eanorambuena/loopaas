@@ -25,7 +25,7 @@ export default async function CursosPage() {
       <h1 className='text-3xl font-bold'>Cursos</h1>
       <main className="grid gap-20 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 p-4">
         {isProfessor && (
-          <AddCard title="Nuevo Curso" path="/cursos/nuevo" />
+          <AddCard title="Nuevo Curso" path="/cursos/nuevo" className="text-center" />
         )}
         {!courses?.length && (
           <Fallback>No se encontraron cursos</Fallback>
