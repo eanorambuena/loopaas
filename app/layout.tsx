@@ -26,7 +26,10 @@ export const metadata = {
     template: '%s | IDS App',
     default: 'IDS App'
   },
-  description: 'IDS App es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable'
+  description: 'IDS App es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable',
+  verification: {
+    google: 'JCIS5M5U0bTQTJPJYlMkPEdZXjDRLR563a6Qi1bBV7I'
+  }
 }
 
 export default function RootLayout({ children, searchParams }: LayoutProps) {
