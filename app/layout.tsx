@@ -28,7 +28,7 @@ export const metadata = {
   },
   description: 'IDS App es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable',
   verification: {
-    google: 'JCIS5M5U0bTQTJPJYlMkPEdZXjDRLR563a6Qi1bBV7I'
+    google: '43TwFvQymK3-1sNg02-KVCL_ryqBTvr9zpJBQX1aVms'
   }
 }
 
