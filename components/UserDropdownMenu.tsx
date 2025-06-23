@@ -9,8 +9,13 @@ import {
 import { Link } from "react-router-dom"
 import AuthButton from '@/components/AuthButton'
 
+interface User {
+  picture: string
+  name: string
+}
+
 interface UserDropdownMenuProps {
-  user: any
+  user: User
 }
 
 export function UserDropdownMenu({ user }: UserDropdownMenuProps) {
