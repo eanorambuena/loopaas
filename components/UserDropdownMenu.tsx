@@ -1,4 +1,3 @@
-import { useAuth0 } from "@auth0/auth0-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,14 +9,12 @@ import {
 import { Link } from "react-router-dom"
 import AuthButton from '@/components/AuthButton'
 
-export function UserDropdownMenu() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+interface UserDropdownMenuProps {
+  user: any
+}
 
-  if (isLoading) {
-    return <article>Loading ...</article>;
-  }
-
-  const isUserDataAvailable = isAuthenticated && (user !== undefined)
+export function UserDropdownMenu({ user }: UserDropdownMenuProps) {
+  const isUserDataAvailable = user !== undefined
 
   return (
     isUserDataAvailable && (
@@ -25,7 +22,7 @@ export function UserDropdownMenu() {
         <DropdownMenuTrigger className="!border-none !active:!border-none focus:!border-none">
           <img src={user.picture} alt={user.name} className="size-10 rounded-full border-[#265F1A]" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="z-[9999] [&_*]:!text-md [&_*]:!text-gray-800 [&_*:hover]:!text-greenGandolini [&_*:hover]:!arno">
+        <DropdownMenuContent className="z-[9999] [&_*]:!text-md [&_*]:!text-gray-800 [&_*:hover]:!text-emerald-500">
           <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem><Link to="/perfil">Mi Perfil</Link></DropdownMenuItem>
