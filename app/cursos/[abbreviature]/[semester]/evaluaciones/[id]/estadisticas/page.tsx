@@ -40,7 +40,7 @@ export default async function Page({ params }: EstadisticasPageProps) {
 
   let evaluation: Evaluation
   try {
-    evaluation = await getEvaluationByParams(params)
+    evaluation = await getEvaluationByParams(params) as Evaluation
     if (!evaluation) return <Fallback>No se encontró la evaluación</Fallback>
   } catch (error) {
     Console.Error(`Error al obtener la evaluación: ${error}`)

@@ -20,9 +20,20 @@ export default function StatisticsDashboard({ evaluation, responses }: Statistic
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const chartRef = useRef<any>(null)
 
+  // Verificar que evaluation existe
+  if (!evaluation) {
+    return (
+      <div className='space-y-6'>
+        <Card className='p-6'>
+          <p className='text-center text-gray-500'>No se pudo cargar la información de la evaluación</p>
+        </Card>
+      </div>
+    )
+  }
+
   useEffect(() => {
     // Calcular estadísticas por sección
-    const stats: SectionStats[] = evaluation.sections.map(section => {
+    const stats: SectionStats[] = (evaluation.sections || []).map(section => {
       const sectionResponses = responses.filter(response => {
         try {
           const data = JSON.parse(response.data)
@@ -141,7 +152,7 @@ export default function StatisticsDashboard({ evaluation, responses }: Statistic
         </Card>
         <Card className='p-6'>
           <h3 className='text-lg font-semibold text-gray-700'>Secciones</h3>
-          <p className='text-3xl font-bold text-purple-600'>{evaluation.sections.length}</p>
+          <p className='text-3xl font-bold text-purple-600'>{evaluation.sections?.length || 0}</p>
         </Card>
       </div>
 
