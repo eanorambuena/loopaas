@@ -48,6 +48,7 @@ export interface Response {
   userInfoId: string
   data: string
   created_at: string
+  group?: string
   userInfo?: UserInfoSchema | {
     firstName: string
     lastName: string

@@ -543,6 +543,9 @@ export async function getEvaluationResponses({ evaluationId, userInfoId }: GetEv
         firstName,
         lastName,
         email
+      ),
+      students!inner (
+        group
       )
     `)
     .eq('evaluationId', evaluationId)
@@ -559,7 +562,7 @@ export async function getEvaluationResponses({ evaluationId, userInfoId }: GetEv
     throw new Error(`Error fetching evaluation responses: ${error.message}`)
   }
 
-  const evaluationResponseWithUserInfo = data as unknown as EvaluationResponseWithUserInfo[]
+  const evaluationResponseWithUserInfo = data as unknown as (EvaluationResponseWithUserInfo & { students: { group: string } })[]
   const responses = [...evaluationResponseWithUserInfo.map(response => ({
     id: response.id,
     evaluationId: evaluationId,
@@ -570,6 +573,7 @@ export async function getEvaluationResponses({ evaluationId, userInfoId }: GetEv
       lastName: response.userInfo.lastName,
       email: response.userInfo.email
     },
+    group: response.students?.group || 'N/A',
     data: response.data,
     created_at: response.created_at
   } as Response))]

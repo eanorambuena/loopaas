@@ -19,7 +19,18 @@ export default function ResponsesTable({ responses }: { responses: Response[] })
       id: 'email',
       accessorFn: (row) => row.userInfo?.email,
       header: 'Correo',
+      filterFn: 'includesString',
       cell: ({ row }) => row.original.userInfo?.email
+    },
+    {
+      accessorKey: 'group',
+      header: 'Grupo',
+      filterFn: (row, columnId, filterValue) => {
+        const rowValue = Number(row.getValue(columnId))
+        const inputValue = Number(filterValue)
+        return filterValue === '' || rowValue === inputValue
+      },
+      cell: ({ row }) => row.original.group ?? 'N/A'
     },
     {
       accessorKey: 'data',
@@ -46,7 +57,7 @@ export default function ResponsesTable({ responses }: { responses: Response[] })
     <GenericTable
       data={responses}
       columns={columns}
-      filterColumnIds={['email']}
+      filterColumnIds={['email', 'group']}
       emptyMessage='No hay respuestas registradas.'
     />
   )
