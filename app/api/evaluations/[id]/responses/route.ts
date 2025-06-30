@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/utils/supabase/server'
+import { createClient } from '@/utils/supabase/server'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerClient()
+    const supabase = createClient()
     
     // Obtener respuestas de la evaluación
     const { data: responses, error: responsesError } = await supabase

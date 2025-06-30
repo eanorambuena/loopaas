@@ -6,9 +6,16 @@ import { Evaluation, Grade, LinearQuestion, QuestionCriterion, Response } from '
 import { Console } from '@/utils/console'
 
 export async function saveGrades(evaluation: Evaluation, students: any) {
-  const responsesByUserInfoId = await getResponsesByUserInfoId(evaluation)
+  console.log('Starting saveGrades for evaluation:', evaluation.id)
+  console.log('Number of students to process:', students.length)
   
-  if (!responsesByUserInfoId) return
+  const responsesByUserInfoId = await getResponsesByUserInfoId(evaluation)
+  console.log('Responses by userInfoId:', responsesByUserInfoId ? Object.keys(responsesByUserInfoId).length : 0)
+  
+  if (!responsesByUserInfoId || Object.keys(responsesByUserInfoId).length === 0) {
+    console.log('No responses found for evaluation:', evaluation.id)
+    return
+  }
 
   const lastResponseByUserInfoId: Record<string, Response> = {}
   Object.entries(responsesByUserInfoId).forEach(async ([userInfoId, responses]) => {
@@ -16,27 +23,55 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     lastResponseByUserInfoId[userInfoId] = response
   })
 
+  console.log('Last responses by userInfoId:', Object.keys(lastResponseByUserInfoId).length)
+
   const course = await getCourseById(evaluation.courseId)
-  if (!course) return
+  if (!course) {
+    console.log('Course not found for evaluation:', evaluation.courseId)
+    return
+  }
 
   const firstQuestion = Object.values(evaluation.questions)[0] as LinearQuestion
+  if (!firstQuestion || firstQuestion.type !== 'linear') {
+    console.log('First question is not linear or not found')
+    return
+  }
+
+  console.log('First question criteria:', firstQuestion.criteria.length)
+
   const newGradesByUserInfoId: Record<string, number> = {}
   const pathParams = { abbreviature: course.abbreviature, semester: course.semester, id: evaluation.id }
 
   for (const student of students) {
+    console.log(`Processing student: ${student.userInfoId}`)
+    
     const groupMates = await getGroupMates(pathParams, student.userInfoId, evaluation)
-    if (!groupMates) continue
+    if (!groupMates || groupMates.length === 0) {
+      console.log(`No group mates found for student: ${student.userInfoId}`)
+      continue
+    }
+
+    console.log(`Found ${groupMates.length} group mates for student: ${student.userInfoId}`)
 
     const studentCriteriaScores: Record<string, number[]> = {}
     groupMates.forEach((mate: any) => {
       const mateResponse = lastResponseByUserInfoId[mate.userInfoId]
-      if (!mateResponse) return
+      if (!mateResponse) {
+        console.log(`No response found for mate: ${mate.userInfoId}`)
+        return
+      }
 
       const mateData = JSON.parse(mateResponse.data) as string[]
-      if (!mateData) return
+      if (!mateData) {
+        console.log(`No data in response for mate: ${mate.userInfoId}`)
+        return
+      }
+      
       const parsedMateData = mateData.map((value) => value.split('--'))
 
       const studentScores = parsedMateData.filter(value => value[0] === student.userInfoId)
+      console.log(`Found ${studentScores.length} scores for student ${student.userInfoId} from mate ${mate.userInfoId}`)
+      
       studentScores.forEach(([_, criterionLabel, score]) => {
         if (!studentCriteriaScores[criterionLabel]) studentCriteriaScores[criterionLabel] = []
         studentCriteriaScores[criterionLabel].push(parseInt(score))
@@ -63,7 +98,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     const evaluationScore = Object.entries(studentCriteriaScores).reduce((acc, [criterionLabel, scores]) => {
       const criterion = firstQuestion.criteria.find((criterion: QuestionCriterion) => slugifyCriterionLabel(criterion.label) === criterionLabel)
       const weight = criterion?.weight ?? 0
-      Console.Success(JSON.stringify({ grou: student.group, criterionLabel, scores, numberOfGroupMates }))
+      Console.Success(JSON.stringify({ group: student.group, criterionLabel, scores, numberOfGroupMates }))
       if (scores.length < numberOfGroupMates) {
         const missingScores = Array(numberOfGroupMates - scores.length).fill(nullScore)
         scores.push(...missingScores)
@@ -76,7 +111,11 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     const rawEvaluationGrade = (evaluationScore - nullScore) * (maxGrade / (nullScore - minScore))
     const evaluationGrade = Math.min(1, Math.max(-1, rawEvaluationGrade))
     newGradesByUserInfoId[student.userInfoId] = evaluationGrade
+    
+    console.log(`Calculated grade for student ${student.userInfoId}:`, evaluationGrade)
   }
+
+  console.log('Grades calculated for students:', Object.keys(newGradesByUserInfoId).length)
 
   const newGrades: Grade[] = []
   for (const [userInfoId, grade] of Object.entries(newGradesByUserInfoId)) {
@@ -90,6 +129,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
       finalGrade: (groupGrade + grade).toFixed(2),
     }
     newGrades.push(newGrade)
+    console.log(`Final grade for student ${userInfoId}:`, newGrade)
   }
 
   const supabase = createClient()
@@ -97,6 +137,11 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     const { data: error } = await supabase
       .from('grades')
       .upsert(grade)
-    if (error) redirect(`${evaluationPath(pathParams)}/resultados?message=No se pudieron guardar las notas`)
+    if (error) {
+      console.error('Error upserting grade:', error)
+      redirect(`${evaluationPath(pathParams)}/resultados?message=No se pudieron guardar las notas`)
+    }
   }
+  
+  console.log('All grades saved successfully')
 }

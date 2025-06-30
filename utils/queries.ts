@@ -70,25 +70,32 @@ export async function getCourseStudents({course, rangeMin = 0, rangeMax} : Cours
     if (!students) return [] as CourseStudentWithUserInfo[]
 
     try {
-      await Promise.all(
-        students?.map(async (student) => {
-        const { data: userInfo, error: userInfoError } = await supabase
-          .from('userInfo')
-          .select('*')
-          .eq('id', student.userInfoId)
-          .single()
-        if (userInfoError) throw userInfoError
-        if (!userInfo) return
-        student.userInfo = userInfo as UserInfoSchema
-      }))
-      return students as CourseStudentWithUserInfo[]
+      const studentsWithUserInfo = await Promise.all(
+        students.map(async (student) => {
+          const { data: userInfo, error: userInfoError } = await supabase
+            .from('userInfo')
+            .select('*')
+            .eq('id', student.userInfoId)
+            .single()
+          if (userInfoError) throw userInfoError
+          if (!userInfo) return null
+          return {
+            ...student,
+            userInfo: userInfo as UserInfoSchema
+          }
+        })
+      )
+      
+      return studentsWithUserInfo.filter(Boolean) as CourseStudentWithUserInfo[]
     }
     catch (error) {
       console.error('Error fetching students userInfo:', error)
+      return []
     }
   }
   catch (error) {
     console.error('Error fetching students:', error)
+    return []
   }
 }
 
@@ -306,16 +313,39 @@ export async function getIsCourseProfessor(course: Course, user: User) {
 export async function getGrades(evaluation: Evaluation, userInfoId: string) {
   const supabase = createClient()
   try {
+    console.log(`Fetching grades for evaluation ${evaluation.id} and user ${userInfoId}`)
+    
+    // First, let's check if there are any grades at all for this evaluation
+    const { data: allGrades, error: allGradesError } = await supabase
+      .from('grades')
+      .select('*')
+      .eq('evaluationId', evaluation.id)
+    
+    if (allGradesError) {
+      console.error('Error fetching all grades:', allGradesError)
+      throw allGradesError
+    }
+    
+    console.log(`Total grades for evaluation ${evaluation.id}:`, allGrades?.length || 0)
+    
+    // Now get the specific grade for this user
     const { data: grades, error } = await supabase
       .from('grades')
       .select('*')
       .eq('evaluationId', evaluation.id)
       .eq('userInfoId', userInfoId)
-    if (error) throw error
+    
+    if (error) {
+      console.error('Error fetching specific grade:', error)
+      throw error
+    }
+    
+    console.log(`Found grades for user ${userInfoId}:`, grades)
     return grades?.[0] as Grade | undefined
   }
   catch (error) {
     console.error('Error fetching grades:', error)
+    return undefined
   }
 }
 

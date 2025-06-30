@@ -73,6 +73,9 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
       accessorKey: 'group',
       header: 'Grupo',
       enableSorting: true,
+      filterFn: (row, id, value) => {
+        return Number(row.original.group) === Number(value)
+      },
       cell: ({ row }) => {
         const group = row.getValue('group') as string
         return group || 'Sin grupo'
