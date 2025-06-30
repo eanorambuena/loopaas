@@ -1,20 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Evaluation, Response } from '@/utils/schema'
-import { Card } from '@/components/ui/card'
-import { Bar, BarChart, XAxis, YAxis } from 'recharts'
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart'
-
-interface StatisticsDashboardProps {
-  evaluation: Evaluation
-  responses: Response[]
-}
+import { ColumnDef } from '@tanstack/react-table'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { GenericTable } from '@/components/GenericTable'
 
 interface GroupStats {
   group: string
@@ -22,181 +11,135 @@ interface GroupStats {
   totalResponses: number
 }
 
-export default function StatisticsDashboard({ evaluation, responses }: StatisticsDashboardProps) {
-  const [groupStats, setGroupStats] = useState<GroupStats[]>([])
+interface StatisticsDashboardProps {
+  evaluationId: string
+}
+
+export default function StatisticsDashboard({ evaluationId }: StatisticsDashboardProps) {
+  const [stats, setStats] = useState<GroupStats[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Calcular estadísticas por grupo
-    const groupMap = new Map<string, { userInfoIds: Set<string>, responses: Response[] }>()
-    
-    responses.forEach(response => {
-      const group = response.group || 'Sin Grupo'
-      if (!groupMap.has(group)) {
-        groupMap.set(group, { userInfoIds: new Set(), responses: [] })
+    const fetchStats = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch(`/api/evaluations/${evaluationId}/responses`)
+        if (!response.ok) {
+          throw new Error('Error al cargar las estadísticas')
+        }
+        const data = await response.json()
+        
+        // Procesar datos para agrupar por grupo
+        const groupStats = new Map<string, { uniqueUsers: Set<string>, totalResponses: number }>()
+        
+        data.responses.forEach((response: any) => {
+          const group = response.group || 'Sin grupo'
+          const userId = response.userInfoId
+          
+          if (!groupStats.has(group)) {
+            groupStats.set(group, { uniqueUsers: new Set(), totalResponses: 0 })
+          }
+          
+          const stats = groupStats.get(group)!
+          stats.uniqueUsers.add(userId)
+          stats.totalResponses++
+        })
+        
+        // Convertir a array y ordenar por número de usuarios únicos
+        const statsArray: GroupStats[] = Array.from(groupStats.entries()).map(([group, stats]) => ({
+          group,
+          uniqueUsers: stats.uniqueUsers.size,
+          totalResponses: stats.totalResponses
+        }))
+        
+        // Ordenar por usuarios únicos descendente
+        statsArray.sort((a, b) => b.uniqueUsers - a.uniqueUsers)
+        
+        setStats(statsArray)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido')
+      } finally {
+        setLoading(false)
       }
-      const groupData = groupMap.get(group)!
-      groupData.userInfoIds.add(response.userInfoId)
-      groupData.responses.push(response)
-    })
+    }
 
-    const stats: GroupStats[] = Array.from(groupMap.entries()).map(([group, data]) => ({
-      group: `Grupo ${group}`,
-      uniqueUsers: data.userInfoIds.size,
-      totalResponses: data.responses.length
-    })).sort((a, b) => {
-      // Ordenar por número de grupo (extraer el número del string "Grupo X")
-      const groupA = parseInt(a.group.replace('Grupo ', '')) || 0
-      const groupB = parseInt(b.group.replace('Grupo ', '')) || 0
-      return groupA - groupB
-    })
+    fetchStats()
+  }, [evaluationId])
 
-    setGroupStats(stats)
-  }, [responses])
+  // Definir las columnas para la tabla de estadísticas por grupo
+  const groupStatsColumns: ColumnDef<GroupStats>[] = [
+    {
+      accessorKey: 'group',
+      header: 'Grupo',
+      enableSorting: true,
+      cell: ({ row }) => {
+        const group = row.getValue('group') as string
+        return group || 'Sin grupo'
+      },
+    },
+    {
+      accessorKey: 'uniqueUsers',
+      header: 'Usuarios Únicos',
+      enableSorting: true,
+      cell: ({ row }) => {
+        const count = row.getValue('uniqueUsers') as number
+        return (
+          <div className='font-medium text-emerald-600 dark:text-emerald-400'>
+            {count}
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: 'totalResponses',
+      header: 'Total Respuestas',
+      enableSorting: true,
+      cell: ({ row }) => {
+        const count = row.getValue('totalResponses') as number
+        return (
+          <div className='font-medium text-blue-600 dark:text-blue-400'>
+            {count}
+          </div>
+        )
+      },
+    },
+  ]
 
-  // Verificar que evaluation existe
-  if (!evaluation) {
+  if (loading) {
     return (
-      <div className='space-y-6'>
-        <Card className='p-6'>
-          <p className='text-center text-gray-500'>No se pudo cargar la información de la evaluación</p>
-        </Card>
+      <div className='flex items-center justify-center h-64'>
+        <div className='text-lg'>Cargando estadísticas...</div>
       </div>
     )
   }
 
-  const chartData = groupStats.map(stat => ({
-    group: stat.group,
-    uniqueUsers: stat.uniqueUsers,
-    totalResponses: stat.totalResponses,
-    fill: '#10b981'
-  }))
-
-  const chartConfig = {
-    visitors: {
-      label: 'Usuarios Únicos',
-      color: '#10b981',
-    },
-    chrome: {
-      label: 'Total Respuestas',
-      color: '#3b82f6',
-    },
-  } satisfies ChartConfig
-
-  const totalUniqueUsers = new Set(responses.map(r => r.userInfoId)).size
-  const totalResponses = responses.length
-  const uniqueGroups = new Set(responses.map(r => r.group).filter(Boolean)).size
+  if (error) {
+    return (
+      <div className='flex items-center justify-center h-64'>
+        <div className='text-lg text-red-600 dark:text-red-400'>Error: {error}</div>
+      </div>
+    )
+  }
 
   return (
     <div className='space-y-6'>
-      {/* Resumen general */}
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-        <Card className='p-6'>
-          <h3 className='text-lg font-semibold text-muted-foreground'>Total de Respuestas</h3>
-          <p className='text-3xl font-bold text-blue-600 dark:text-blue-400'>{totalResponses}</p>
-        </Card>
-        <Card className='p-6'>
-          <h3 className='text-lg font-semibold text-muted-foreground'>Usuarios Únicos</h3>
-          <p className='text-3xl font-bold text-green-600 dark:text-green-400'>{totalUniqueUsers}</p>
-        </Card>
-        <Card className='p-6'>
-          <h3 className='text-lg font-semibold text-muted-foreground'>Grupos Participantes</h3>
-          <p className='text-3xl font-bold text-purple-600 dark:text-purple-400'>{uniqueGroups}</p>
-        </Card>
-      </div>
-
-      {/* Gráfico */}
-      <Card className='p-6'>
-        <h3 className='text-lg font-semibold mb-4 text-foreground'>Respuestas por Grupo</h3>
-        <div className='space-y-6'>
-          {/* Gráfico de usuarios únicos */}
-          <div>
-            <h4 className='text-md font-medium mb-2 text-emerald-600 dark:text-emerald-400'>Usuarios Únicos por Grupo</h4>
-            <ChartContainer config={chartConfig}>
-              <BarChart
-                accessibilityLayer
-                data={chartData}
-                layout='vertical'
-                margin={{
-                  left: 0,
-                }}
-              >
-                <YAxis
-                  dataKey='group'
-                  type='category'
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
-                />
-                <XAxis dataKey='uniqueUsers' type='number' hide />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-                <Bar dataKey='uniqueUsers' radius={5} fill='#10b981' />
-              </BarChart>
-            </ChartContainer>
-          </div>
-
-          {/* Gráfico de total de respuestas */}
-          <div>
-            <h4 className='text-md font-medium mb-2 text-blue-600 dark:text-blue-400'>Total de Respuestas por Grupo</h4>
-            <ChartContainer config={chartConfig}>
-              <BarChart
-                accessibilityLayer
-                data={chartData}
-                layout='vertical'
-                margin={{
-                  left: 0,
-                }}
-              >
-                <YAxis
-                  dataKey='group'
-                  type='category'
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
-                />
-                <XAxis dataKey='totalResponses' type='number' hide />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-                <Bar dataKey='totalResponses' radius={5} fill='#3b82f6' />
-              </BarChart>
-            </ChartContainer>
-          </div>
-        </div>
-      </Card>
-
-      {/* Tabla de estadísticas detalladas */}
-      <Card className='p-6'>
-        <h3 className='text-lg font-semibold mb-4 text-foreground'>Estadísticas por Grupo</h3>
-        <div className='overflow-x-auto'>
-          <table className='w-full border-collapse border border-border'>
-            <thead>
-              <tr className='bg-muted/50'>
-                <th className='border border-border px-4 py-2 text-left text-foreground'>Grupo</th>
-                <th className='border border-border px-4 py-2 text-center text-foreground'>Usuarios Únicos</th>
-                <th className='border border-border px-4 py-2 text-center text-foreground'>Total Respuestas</th>
-                <th className='border border-border px-4 py-2 text-center text-foreground'>Promedio por Usuario</th>
-              </tr>
-            </thead>
-            <tbody>
-              {groupStats.map((stat, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
-                  <td className='border border-border px-4 py-2 text-foreground'>{stat.group}</td>
-                  <td className='border border-border px-4 py-2 text-center text-foreground'>{stat.uniqueUsers}</td>
-                  <td className='border border-border px-4 py-2 text-center text-foreground'>{stat.totalResponses}</td>
-                  <td className='border border-border px-4 py-2 text-center text-foreground'>
-                    {stat.uniqueUsers > 0 ? (stat.totalResponses / stat.uniqueUsers).toFixed(2) : '0'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* Tabla de estadísticas por grupo */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Estadísticas por Grupo</CardTitle>
+          <CardDescription>
+            Detalle de usuarios únicos y total de respuestas por grupo
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <GenericTable
+            data={stats}
+            columns={groupStatsColumns}
+            filterColumnIds={['group']}
+            emptyMessage='No hay datos de estadísticas por grupo disponibles.'
+          />
+        </CardContent>
       </Card>
     </div>
   )

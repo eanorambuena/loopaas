@@ -1,8 +1,7 @@
 'use server'
 
-import { getCurrentUser, getCourse, getEvaluationResponses, getUserInfoById, getUserInfo } from '@/utils/queries'
+import { getCurrentUser, getCourse, getEvaluationResponses, getUserInfo } from '@/utils/queries'
 import { isProfessorServer } from '@/utils/isProfessorServer'
-import { redirect } from 'next/navigation'
 import Fallback from '@/components/Fallback'
 import ResponsesTable from '@/components/responses/ResponsesTable'
 import { Console } from '@/utils/console'
