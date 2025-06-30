@@ -15,6 +15,7 @@ type Props = {
   onChange: (field: string, value: string) => void
   onSave: () => void
   onCancel: () => void
+  onDelete: (student: CourseStudentWithUserInfo) => void
 }
 
 export const studentsColumns = ({
@@ -23,7 +24,8 @@ export const studentsColumns = ({
   onEdit,
   onChange,
   onSave,
-  onCancel
+  onCancel,
+  onDelete
 }: Props): ColumnDef<CourseStudentWithUserInfo>[] => [
   {
     id: 'firstName',
@@ -113,6 +115,9 @@ export const studentsColumns = ({
           <DropdownMenuContent align='end' className='bg-white border shadow-md rounded-md'>
             <DropdownMenuItem onClick={() => onEdit(student)}>
               Editar
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(student)} className='text-red-600'>
+              Eliminar
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

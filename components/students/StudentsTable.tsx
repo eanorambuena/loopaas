@@ -79,6 +79,31 @@ export default function StudentsTable({ students }: StudentsTableProps) {
     }
   }
 
+  const handleDelete = async (student: CourseStudentWithUserInfo) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar este estudiante?')) return;
+    try {
+      const res = await fetch('/api/delete-student', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId: student.id, userInfoId: student.userInfo.id })
+      })
+      if (!res.ok) throw new Error('No se pudo eliminar el estudiante')
+      setStudentList((prev) => prev.filter((s) => s.id !== student.id))
+      toast({
+        title: 'Estudiante eliminado',
+        description: 'El estudiante fue eliminado correctamente',
+        variant: 'success'
+      })
+    } catch (error) {
+      console.error(error)
+      toast({
+        title: 'Error',
+        description: 'Ocurrió un error al eliminar el estudiante',
+        variant: 'destructive'
+      })
+    }
+  }
+
   return (
     <GenericTable
       data={studentList}
@@ -88,7 +113,8 @@ export default function StudentsTable({ students }: StudentsTableProps) {
         onEdit: startEdit,
         onChange: handleChange,
         onSave: saveEdit,
-        onCancel: () => setEditingId(null)
+        onCancel: () => setEditingId(null),
+        onDelete: handleDelete
       })}
       filterColumnIds={['email', 'group']}
       emptyMessage='No hay estudiantes en este curso o filtro aplicado.'
