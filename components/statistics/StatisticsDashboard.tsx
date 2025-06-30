@@ -68,17 +68,17 @@ export default function StatisticsDashboard({ evaluation, responses }: Statistic
     group: stat.group,
     uniqueUsers: stat.uniqueUsers,
     totalResponses: stat.totalResponses,
-    fill: 'var(--chart-1)'
+    fill: '#10b981'
   }))
 
   const chartConfig = {
     visitors: {
       label: 'Usuarios Únicos',
-      color: 'hsl(var(--chart-1))',
+      color: '#10b981',
     },
     chrome: {
       label: 'Total Respuestas',
-      color: 'hsl(var(--chart-2))',
+      color: '#3b82f6',
     },
   } satisfies ChartConfig
 
@@ -107,30 +107,65 @@ export default function StatisticsDashboard({ evaluation, responses }: Statistic
       {/* Gráfico */}
       <Card className='p-6'>
         <h3 className='text-lg font-semibold mb-4'>Respuestas por Grupo</h3>
-        <ChartContainer config={chartConfig}>
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            layout='vertical'
-            margin={{
-              left: 0,
-            }}
-          >
-            <YAxis
-              dataKey='group'
-              type='category'
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-            />
-            <XAxis dataKey='uniqueUsers' type='number' hide />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent />}
-            />
-            <Bar dataKey='uniqueUsers' radius={5} fill='hsl(var(--chart-1))' />
-          </BarChart>
-        </ChartContainer>
+        <div className='space-y-6'>
+          {/* Gráfico de usuarios únicos */}
+          <div>
+            <h4 className='text-md font-medium mb-2 text-emerald-600'>Usuarios Únicos por Grupo</h4>
+            <ChartContainer config={chartConfig}>
+              <BarChart
+                accessibilityLayer
+                data={chartData}
+                layout='vertical'
+                margin={{
+                  left: 0,
+                }}
+              >
+                <YAxis
+                  dataKey='group'
+                  type='category'
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                />
+                <XAxis dataKey='uniqueUsers' type='number' hide />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent />}
+                />
+                <Bar dataKey='uniqueUsers' radius={5} fill='#10b981' />
+              </BarChart>
+            </ChartContainer>
+          </div>
+
+          {/* Gráfico de total de respuestas */}
+          <div>
+            <h4 className='text-md font-medium mb-2 text-blue-600'>Total de Respuestas por Grupo</h4>
+            <ChartContainer config={chartConfig}>
+              <BarChart
+                accessibilityLayer
+                data={chartData}
+                layout='vertical'
+                margin={{
+                  left: 0,
+                }}
+              >
+                <YAxis
+                  dataKey='group'
+                  type='category'
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                />
+                <XAxis dataKey='totalResponses' type='number' hide />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent />}
+                />
+                <Bar dataKey='totalResponses' radius={5} fill='#3b82f6' />
+              </BarChart>
+            </ChartContainer>
+          </div>
+        </div>
       </Card>
 
       {/* Tabla de estadísticas detalladas */}
