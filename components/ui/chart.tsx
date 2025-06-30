@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Bar, BarChart as RechartsBarChart, Line, LineChart as RechartsLineChart, type BarProps, type LineProps } from "recharts"
+import { Bar, BarChart as RechartsBarChart, Line, LineChart as RechartsLineChart } from "recharts"
 
 import { cn } from "@/lib/utils"
 
@@ -83,29 +83,7 @@ const LineChart = React.forwardRef<
 ))
 LineChart.displayName = "LineChart"
 
-const Bar = React.forwardRef<
-  React.ElementRef<typeof RechartsBarChart>,
-  BarProps
->(({ className, ...props }, ref) => (
-  <RechartsBarChart
-    ref={ref}
-    className={cn("fill-primary", className)}
-    {...props}
-  />
-))
-Bar.displayName = "Bar"
 
-const Line = React.forwardRef<
-  React.ElementRef<typeof RechartsLineChart>,
-  LineProps
->(({ className, ...props }, ref) => (
-  <RechartsLineChart
-    ref={ref}
-    className={cn("stroke-primary", className)}
-    {...props}
-  />
-))
-Line.displayName = "Line"
 
 export {
   Bar,
