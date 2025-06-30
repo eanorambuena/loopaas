@@ -15,6 +15,7 @@ type Props = {
   onChange: (field: string, value: string) => void
   onSave: () => void
   onCancel: () => void
+  onDelete: (student: CourseStudentWithUserInfo) => void
 }
 
 export const studentsColumns = ({
@@ -23,7 +24,8 @@ export const studentsColumns = ({
   onEdit,
   onChange,
   onSave,
-  onCancel
+  onCancel,
+  onDelete
 }: Props): ColumnDef<CourseStudentWithUserInfo>[] => [
   {
     id: 'firstName',
@@ -110,9 +112,12 @@ export const studentsColumns = ({
               <MoreHorizontal className='h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end' className='bg-white border shadow-md rounded-md'>
+          <DropdownMenuContent align='end' className='border bg-neutral-50 dark:bg-neutral-900 text-md shadow-md rounded-md text-neutral-900 dark:text-neutral-50'>
             <DropdownMenuItem onClick={() => onEdit(student)}>
               Editar
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(student)} className='text-red-600 dark:text-red-400'>
+              Eliminar
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
