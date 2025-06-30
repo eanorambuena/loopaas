@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import Fallback from '@/components/Fallback'
 import ResponsesTable from '@/components/responses/ResponsesTable'
 import { Console } from '@/utils/console'
+import SecondaryLink from '@/components/SecondaryLink'
 
 interface RespuestasPageProps {
   params: {
@@ -49,7 +50,14 @@ export default async function Page({ params }: RespuestasPageProps) {
 
   return (
     <div className='p-6 max-w-5xl mx-auto'>
-      <h1 className='text-2xl font-bold mb-4'>Respuestas de la evaluación</h1>
+      <div className='flex justify-between items-center mb-4'>
+        <h1 className='text-2xl font-bold'>Respuestas de la evaluación</h1>
+        {isCourseProfessor && (
+          <SecondaryLink href={`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`}>
+            Ver Estadísticas
+          </SecondaryLink>
+        )}
+      </div>
       <ResponsesTable responses={responses} />
     </div>
   )
