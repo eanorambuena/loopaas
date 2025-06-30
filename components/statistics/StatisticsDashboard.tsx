@@ -91,26 +91,26 @@ export default function StatisticsDashboard({ evaluation, responses }: Statistic
       {/* Resumen general */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
         <Card className='p-6'>
-          <h3 className='text-lg font-semibold text-gray-700'>Total de Respuestas</h3>
-          <p className='text-3xl font-bold text-blue-600'>{totalResponses}</p>
+          <h3 className='text-lg font-semibold text-muted-foreground'>Total de Respuestas</h3>
+          <p className='text-3xl font-bold text-blue-600 dark:text-blue-400'>{totalResponses}</p>
         </Card>
         <Card className='p-6'>
-          <h3 className='text-lg font-semibold text-gray-700'>Usuarios Únicos</h3>
-          <p className='text-3xl font-bold text-green-600'>{totalUniqueUsers}</p>
+          <h3 className='text-lg font-semibold text-muted-foreground'>Usuarios Únicos</h3>
+          <p className='text-3xl font-bold text-green-600 dark:text-green-400'>{totalUniqueUsers}</p>
         </Card>
         <Card className='p-6'>
-          <h3 className='text-lg font-semibold text-gray-700'>Grupos Participantes</h3>
-          <p className='text-3xl font-bold text-purple-600'>{uniqueGroups}</p>
+          <h3 className='text-lg font-semibold text-muted-foreground'>Grupos Participantes</h3>
+          <p className='text-3xl font-bold text-purple-600 dark:text-purple-400'>{uniqueGroups}</p>
         </Card>
       </div>
 
       {/* Gráfico */}
       <Card className='p-6'>
-        <h3 className='text-lg font-semibold mb-4'>Respuestas por Grupo</h3>
+        <h3 className='text-lg font-semibold mb-4 text-foreground'>Respuestas por Grupo</h3>
         <div className='space-y-6'>
           {/* Gráfico de usuarios únicos */}
           <div>
-            <h4 className='text-md font-medium mb-2 text-emerald-600'>Usuarios Únicos por Grupo</h4>
+            <h4 className='text-md font-medium mb-2 text-emerald-600 dark:text-emerald-400'>Usuarios Únicos por Grupo</h4>
             <ChartContainer config={chartConfig}>
               <BarChart
                 accessibilityLayer
@@ -126,6 +126,7 @@ export default function StatisticsDashboard({ evaluation, responses }: Statistic
                   tickLine={false}
                   tickMargin={10}
                   axisLine={false}
+                  tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
                 />
                 <XAxis dataKey='uniqueUsers' type='number' hide />
                 <ChartTooltip
@@ -139,7 +140,7 @@ export default function StatisticsDashboard({ evaluation, responses }: Statistic
 
           {/* Gráfico de total de respuestas */}
           <div>
-            <h4 className='text-md font-medium mb-2 text-blue-600'>Total de Respuestas por Grupo</h4>
+            <h4 className='text-md font-medium mb-2 text-blue-600 dark:text-blue-400'>Total de Respuestas por Grupo</h4>
             <ChartContainer config={chartConfig}>
               <BarChart
                 accessibilityLayer
@@ -155,6 +156,7 @@ export default function StatisticsDashboard({ evaluation, responses }: Statistic
                   tickLine={false}
                   tickMargin={10}
                   axisLine={false}
+                  tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
                 />
                 <XAxis dataKey='totalResponses' type='number' hide />
                 <ChartTooltip
@@ -170,24 +172,24 @@ export default function StatisticsDashboard({ evaluation, responses }: Statistic
 
       {/* Tabla de estadísticas detalladas */}
       <Card className='p-6'>
-        <h3 className='text-lg font-semibold mb-4'>Estadísticas por Grupo</h3>
+        <h3 className='text-lg font-semibold mb-4 text-foreground'>Estadísticas por Grupo</h3>
         <div className='overflow-x-auto'>
-          <table className='w-full border-collapse border border-gray-300'>
+          <table className='w-full border-collapse border border-border'>
             <thead>
-              <tr className='bg-gray-50'>
-                <th className='border border-gray-300 px-4 py-2 text-left'>Grupo</th>
-                <th className='border border-gray-300 px-4 py-2 text-center'>Usuarios Únicos</th>
-                <th className='border border-gray-300 px-4 py-2 text-center'>Total Respuestas</th>
-                <th className='border border-gray-300 px-4 py-2 text-center'>Promedio por Usuario</th>
+              <tr className='bg-muted/50'>
+                <th className='border border-border px-4 py-2 text-left text-foreground'>Grupo</th>
+                <th className='border border-border px-4 py-2 text-center text-foreground'>Usuarios Únicos</th>
+                <th className='border border-border px-4 py-2 text-center text-foreground'>Total Respuestas</th>
+                <th className='border border-border px-4 py-2 text-center text-foreground'>Promedio por Usuario</th>
               </tr>
             </thead>
             <tbody>
               {groupStats.map((stat, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className='border border-gray-300 px-4 py-2'>{stat.group}</td>
-                  <td className='border border-gray-300 px-4 py-2 text-center'>{stat.uniqueUsers}</td>
-                  <td className='border border-gray-300 px-4 py-2 text-center'>{stat.totalResponses}</td>
-                  <td className='border border-gray-300 px-4 py-2 text-center'>
+                <tr key={index} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
+                  <td className='border border-border px-4 py-2 text-foreground'>{stat.group}</td>
+                  <td className='border border-border px-4 py-2 text-center text-foreground'>{stat.uniqueUsers}</td>
+                  <td className='border border-border px-4 py-2 text-center text-foreground'>{stat.totalResponses}</td>
+                  <td className='border border-border px-4 py-2 text-center text-foreground'>
                     {stat.uniqueUsers > 0 ? (stat.totalResponses / stat.uniqueUsers).toFixed(2) : '0'}
                   </td>
                 </tr>
