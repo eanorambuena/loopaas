@@ -543,9 +543,6 @@ export async function getEvaluationResponses({ evaluationId, userInfoId }: GetEv
         firstName,
         lastName,
         email
-      ),
-      students!inner (
-        group
       )
     `)
     .eq('evaluationId', evaluationId)
@@ -562,7 +559,25 @@ export async function getEvaluationResponses({ evaluationId, userInfoId }: GetEv
     throw new Error(`Error fetching evaluation responses: ${error.message}`)
   }
 
-  const evaluationResponseWithUserInfo = data as unknown as (EvaluationResponseWithUserInfo & { students: { group: string } })[]
+  const evaluationResponseWithUserInfo = data as unknown as EvaluationResponseWithUserInfo[]
+  
+  // Obtener información de grupos para todos los userInfoIds
+  const userInfoIds = evaluationResponseWithUserInfo.map(response => response.userInfo.id)
+  const { data: studentsData, error: studentsError } = await supabase
+    .from('students')
+    .select('userInfoId, group')
+    .in('userInfoId', userInfoIds)
+
+  if (studentsError) {
+    Console.Error(`Error fetching students data: ${studentsError.message}`)
+  }
+
+  // Crear un mapa de userInfoId a group
+  const groupMap = new Map<string, string>()
+  studentsData?.forEach(student => {
+    groupMap.set(student.userInfoId, student.group)
+  })
+
   const responses = [...evaluationResponseWithUserInfo.map(response => ({
     id: response.id,
     evaluationId: evaluationId,
@@ -573,7 +588,7 @@ export async function getEvaluationResponses({ evaluationId, userInfoId }: GetEv
       lastName: response.userInfo.lastName,
       email: response.userInfo.email
     },
-    group: response.students?.group || 'N/A',
+    group: groupMap.get(response.userInfo.id) || 'N/A',
     data: response.data,
     created_at: response.created_at
   } as Response))]
