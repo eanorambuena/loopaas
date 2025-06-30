@@ -48,8 +48,8 @@ export default async function Page({ params }: { params: { abbreviature: string,
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3'>
       <h1 className='text-3xl font-bold'>Estudiantes {course?.title ?? params.abbreviature} {params.semester}</h1>
-      <UploadStudentsForm />
       <StudentsTable students={students} />
+      <UploadStudentsForm />
     </div>
   )
 }

@@ -3,6 +3,7 @@
 import Input from '@/components/Input'
 import SecondaryButton from '@/components/SecondaryButton'
 import { useState } from 'react'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function UploadStudentsForm() {
   const [csv, setCsv] = useState('')
@@ -14,6 +15,7 @@ export default function UploadStudentsForm() {
     password: ''
   })
   const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -26,11 +28,20 @@ export default function UploadStudentsForm() {
 
       if (!res.ok) throw new Error('Fallo la carga')
 
-      alert('Estudiantes cargados correctamente')
-      window.location.reload()
+      toast({
+        title: 'Éxito',
+        description: 'Estudiantes cargados correctamente',
+        variant: 'success'
+      })
+      setCsv('')
+      setTimeout(() => window.location.reload(), 1200)
     } catch (error) {
       console.error(error)
-      alert('Error al guardar estudiantes')
+      toast({
+        title: 'Error',
+        description: 'Error al guardar estudiantes',
+        variant: 'destructive'
+      })
     }
   }
 
@@ -46,12 +57,20 @@ export default function UploadStudentsForm() {
         body: JSON.stringify({ csv: singleCsv })
       })
       if (!res.ok) throw new Error('Fallo al agregar estudiante')
-      alert('Estudiante agregado correctamente')
+      toast({
+        title: 'Éxito',
+        description: 'Estudiante agregado correctamente',
+        variant: 'success'
+      })
       setForm({ lastName: '', firstName: '', email: '', group: '', password: '' })
-      window.location.reload()
+      setTimeout(() => window.location.reload(), 1200)
     } catch (error) {
       console.error(error)
-      alert('Error al agregar estudiante')
+      toast({
+        title: 'Error',
+        description: 'Error al agregar estudiante',
+        variant: 'destructive'
+      })
     } finally {
       setLoading(false)
     }
