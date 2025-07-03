@@ -2,7 +2,7 @@ import Fallback from '@/components/Fallback'
 import { evaluationPath } from '@/utils/paths'
 import { getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams, getGrades } from '@/utils/queries'
 import { redirect } from 'next/navigation'
-import { ResultsDisplay } from './ResultsDisplay'
+import { ResultsDisplay } from '@/components/results/ResultsDisplay'
 import { isDeadlinePassed } from '@/utils/dateUtils'
 
 interface Props {
