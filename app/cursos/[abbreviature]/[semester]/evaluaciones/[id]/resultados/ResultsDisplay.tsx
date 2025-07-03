@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { UpdateGradesButton } from '@/components/results/UpdateGradesButton'
 import { ResultsTable } from '@/components/results/ResultsTable'
 import { StudentWithGrades } from '@/utils/schema'
 
@@ -23,7 +22,7 @@ export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
         console.log('Fetching students with grades for evaluation:', evaluation.id)
         console.log('Students to process:', students.length)
         
-        const response = await fetch('/api/get-students-with-grades', {
+        const response = await fetch('/api/get-peer-evaluation-scores', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -71,11 +70,10 @@ export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
         <h3 className="font-semibold text-blue-800">Información de Debug:</h3>
         <p>Evaluación ID: {evaluation.id}</p>
         <p>Estudiantes totales: {students.length}</p>
-        <p>Estudiantes con notas: {studentsWithGrades.length}</p>
-        <p>Estudiantes con notas válidas: {studentsWithGrades.filter(s => s.finalGrade && s.finalGrade !== 'N/A').length}</p>
+        <p>Estudiantes con puntajes: {studentsWithGrades.length}</p>
+        <p>Estudiantes con puntajes válidos: {studentsWithGrades.filter(s => s.peerEvaluationScore && s.peerEvaluationScore !== 'N/A').length}</p>
       </div>
       
-      <UpdateGradesButton evaluation={evaluation} students={studentsWithGrades} />
       <ResultsTable students={studentsWithGrades} />
     </>
   )

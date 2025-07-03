@@ -36,19 +36,16 @@ export function ResultsTable({ students }: ResultsTableProps) {
       cell: ({ row }) => row.original.group ?? 'N/A'
     },
     {
-      accessorKey: 'groupGrade',
-      header: 'Nota Grupal',
-      cell: ({ row }) => row.original.groupGrade ?? 'N/A'
-    },
-    {
-      accessorKey: 'coGrade',
-      header: 'Coevaluación',
-      cell: ({ row }) => row.original.coGrade ?? 'N/A'
-    },
-    {
-      accessorKey: 'finalGrade',
-      header: 'Nota Final',
-      cell: ({ row }) => row.original.finalGrade ?? 'N/A'
+      accessorKey: 'peerEvaluationScore',
+      header: 'Puntaje de Coevaluación',
+      cell: ({ row }) => {
+        const score = row.original.peerEvaluationScore
+        if (score === null || score === undefined || score === 'N/A') {
+          return 'N/A'
+        }
+        const numScore = typeof score === 'string' ? parseFloat(score) : score
+        return numScore.toFixed(2)
+      }
     },
   ]
 

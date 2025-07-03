@@ -85,4 +85,5 @@ export interface StudentWithGrades {
   groupGrade?: string | number | null
   coGrade?: string | number | null
   finalGrade?: string | number | null
+  peerEvaluationScore?: string | number | null
 }
