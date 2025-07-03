@@ -22,7 +22,7 @@ export default function DailyResponsesChart({ dailyData }: DailyResponsesChartPr
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={300}>
           <BarChart data={dailyData}>
             <CartesianGrid strokeDasharray="3 3" className='stroke-muted' />
             <XAxis 
@@ -38,7 +38,8 @@ export default function DailyResponsesChart({ dailyData }: DailyResponsesChartPr
               contentStyle={{
                 backgroundColor: 'hsl(var(--background))',
                 border: '1px solid hsl(var(--border))',
-                borderRadius: '6px'
+                borderRadius: '6px',
+                color: 'hsl(var(--foreground))'
               }}
               labelFormatter={(value) => new Date(value).toLocaleDateString('es-ES', { 
                 weekday: 'long',

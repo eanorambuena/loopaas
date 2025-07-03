@@ -14,7 +14,7 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
   return (
     <>
       {/* Análisis Temporal */}
-      <div className='grid gap-6 md:grid-cols-2'>
+      <div className='grid gap-6 grid-cols-1 lg:grid-cols-2'>
         {/* Hora del día */}
         <Card>
           <CardHeader>
@@ -24,7 +24,7 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
               <BarChart data={temporalStats.hourOfDay}>
                 <CartesianGrid strokeDasharray="3 3" className='stroke-muted' />
                 <XAxis 
@@ -62,7 +62,7 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
               <BarChart data={temporalStats.dayOfWeek}>
                 <CartesianGrid strokeDasharray="3 3" className='stroke-muted' />
                 <XAxis 
@@ -74,7 +74,8 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
                   contentStyle={{
                     backgroundColor: 'hsl(var(--background))',
                     border: '1px solid hsl(var(--border))',
-                    borderRadius: '6px'
+                    borderRadius: '6px',
+                    color: 'hsl(var(--foreground))'
                   }}
                   formatter={(value, name) => [value, 'Respuestas']}
                 />
@@ -90,7 +91,7 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
       </div>
 
       {/* Distribución por períodos y picos de actividad */}
-      <div className='grid gap-6 md:grid-cols-2'>
+      <div className='grid gap-6 grid-cols-1 lg:grid-cols-2'>
         {/* Distribución por períodos */}
         <Card>
           <CardHeader>
@@ -100,7 +101,7 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
                   data={temporalStats.timeDistribution}

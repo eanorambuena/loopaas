@@ -18,7 +18,7 @@ export default function LoadingSpinner({
   }
 
   return (
-    <div className='flex items-center justify-center h-64'>
+    <div className='flex items-center justify-center min-h-[200px] sm:min-h-[256px] p-4'>
       <svg 
         className={`animate-spin text-emerald-600 dark:text-emerald-400 ${sizeClasses[size]} ${className}`} 
         xmlns='http://www.w3.org/2000/svg' 
