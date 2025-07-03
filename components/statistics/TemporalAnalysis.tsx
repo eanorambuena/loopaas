@@ -37,7 +37,8 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
                   contentStyle={{
                     backgroundColor: 'hsl(var(--background))',
                     border: '1px solid hsl(var(--border))',
-                    borderRadius: '6px'
+                    borderRadius: '6px',
+                    color: 'hsl(var(--foreground))'
                   }}
                   labelFormatter={(value) => `${value}:00`}
                   formatter={(value, name) => [value, 'Respuestas']}
@@ -119,7 +120,8 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
                   contentStyle={{
                     backgroundColor: 'hsl(var(--background))',
                     border: '1px solid hsl(var(--border))',
-                    borderRadius: '6px'
+                    borderRadius: '6px',
+                    color: 'hsl(var(--foreground))'
                   }}
                   formatter={(value, name) => [value, 'Respuestas']}
                 />
@@ -131,7 +133,7 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
         {/* Picos de actividad */}
         <Card>
           <CardHeader>
-            <CardTitle>Picos de Actividad</CardTitle>
+            <CardTitle>Peaks de Actividad</CardTitle>
             <CardDescription>
               Horas y días con mayor actividad
             </CardDescription>
@@ -139,7 +141,7 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
           <CardContent>
             <div className='space-y-4'>
               <div>
-                <h4 className='font-medium mb-2'>Horas Pico</h4>
+                <h4 className='font-medium mb-2'>Horas Peak</h4>
                 <div className='space-y-2'>
                   {temporalStats.peakHours.map((peak, index) => (
                     <div key={peak.hour} className='flex justify-between items-center'>
@@ -150,7 +152,7 @@ export default function TemporalAnalysis({ temporalStats }: TemporalAnalysisProp
                 </div>
               </div>
               <div>
-                <h4 className='font-medium mb-2'>Días Pico</h4>
+                <h4 className='font-medium mb-2'>Días Peak</h4>
                 <div className='space-y-2'>
                   {temporalStats.peakDays.map((peak, index) => (
                     <div key={peak.day} className='flex justify-between items-center'>

@@ -31,8 +31,8 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-
+  const [sections, setSections] = useState<string[]>([])
+  const [selectedSection, setSelectedSection] = useState<string>('Todas')
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -59,10 +59,33 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
           throw new Error('Error al obtener estudiantes del curso')
         }
         const studentsData = await studentsResponse.json()
-        
+
+        // Calcular sección a partir del grupo (todos menos el último caracter)
+        const getSection = (group: string | undefined | null) => {
+          if (!group || group === 'Sin grupo') return 'Sin sección'
+          return group.slice(0, -1)
+        }
+        // Agregar propiedad section calculada a cada estudiante
+        const studentsWithSection = studentsData.students?.map((s: any) => ({
+          ...s,
+          section: getSection(s.group)
+        })) || []
+        // Extraer secciones únicas
+        const uniqueSections = Array.from(new Set(studentsWithSection.map((s: any) => s.section).filter(Boolean))) as string[]
+        setSections(uniqueSections)
+
+        // Filtrar estudiantes y respuestas por sección
+        const filteredStudents = selectedSection === 'Todas'
+          ? studentsWithSection
+          : studentsWithSection.filter((s: any) => s.section === selectedSection)
+        const filteredUserIds = new Set(filteredStudents.map((s: any) => s.userInfoId))
+        const filteredResponses = selectedSection === 'Todas'
+          ? data.responses
+          : data.responses.filter((r: any) => filteredUserIds.has(r.userInfoId))
+
         // Crear mapa de estudiantes por grupo
         const studentsByGroup = new Map<string, Set<string>>()
-        studentsData.students?.forEach((student: any) => {
+        filteredStudents?.forEach((student: any) => {
           const group = student.group || 'Sin grupo'
           if (!studentsByGroup.has(group)) {
             studentsByGroup.set(group, new Set())
@@ -85,7 +108,7 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
         const dayResponses = new Map<string, number>()
         const timePeriodResponses = new Map<string, number>()
         
-        data.responses.forEach((response: any) => {
+        filteredResponses.forEach((response: any) => {
           const group = response.group || 'Sin grupo'
           const userId = response.userInfoId
           const date = new Date(response.created_at).toISOString().split('T')[0]
@@ -130,7 +153,7 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
         })
         
         // Procesar estadísticas temporales
-        const totalResponses = data.responses.length
+        const totalResponses = filteredResponses.length
         
         // Hora del día
         const hourOfDay = Array.from({ length: 24 }, (_, hour) => ({
@@ -152,7 +175,7 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
           percentage: Math.round((responses / totalResponses) * 100)
         }))
         
-        // Picos de actividad
+        // Peaks de actividad
         const peakHours = hourOfDay
           .filter(h => h.responses > 0)
           .sort((a, b) => b.responses - a.responses)
@@ -179,7 +202,7 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
         setDailyData(dailyDataArray)
         
         // Calcular estadísticas generales
-        const totalStudents = studentsData.students?.length || 0
+        const totalStudents = filteredStudents?.length || 0
         const activeDays = dailyResponses.size
         const averageResponsesPerDay = activeDays > 0 ? totalResponses / activeDays : 0
         const responseRate = totalStudents > 0 ? (uniqueStudents.size / totalStudents) * 100 : 0
@@ -224,7 +247,7 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
     }
 
     fetchStats()
-  }, [evaluationId])
+  }, [evaluationId, selectedSection])
 
   if (loading) {
     return (
@@ -244,6 +267,20 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
 
   return (
     <div className='space-y-6'>
+      <div className='flex items-center gap-2'>
+        <label htmlFor='section-select' className='font-medium'>Sección:</label>
+        <select
+          id='section-select'
+          className='border rounded px-2 py-1 dark:bg-neutral-900 dark:text-white'
+          value={selectedSection}
+          onChange={e => setSelectedSection(e.target.value)}
+        >
+          <option value='Todas'>Todas</option>
+          {sections.map(section => (
+            <option key={section} value={section}>{section}</option>
+          ))}
+        </select>
+      </div>
       <GeneralStatsCards stats={generalStats} />
       <TemporalAnalysis temporalStats={temporalStats} />
       <DailyResponsesChart dailyData={dailyData} />
