@@ -26,4 +26,15 @@ export interface TemporalStats {
   timeDistribution: { period: string; responses: number; percentage: number }[]
   peakHours: { hour: number; responses: number }[]
   peakDays: { day: string; responses: number }[]
-} 
+}
+
+export interface InjusticeCase {
+  group: string
+  averageScore: number
+  studentCount: number
+  students: {
+    userInfoId: string
+    name: string
+    score: number
+  }[]
+} // Interface for detecting injustice cases in peer evaluations 

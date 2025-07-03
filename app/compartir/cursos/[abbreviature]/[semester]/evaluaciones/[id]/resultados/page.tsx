@@ -33,7 +33,14 @@ export default async function Page({ params }: Props) {
       {!isDeadlinePassed(evaluation.deadLine) && (
         <p className='text-red-500 w-full'>Advertencia: La evaluación aún no ha finalizado</p>
       )}
-      <ResultsDisplay evaluation={evaluation} students={students} studentsWithGrades={studentsWithGrades} abbreviature={params.abbreviature} semester={params.semester} />
+      <ResultsDisplay
+          evaluation={evaluation}
+        students={students}
+        studentsWithGrades={studentsWithGrades}
+        abbreviature={params.abbreviature}
+        semester={params.semester}
+        publicView={true}
+      />
     </div>
   )
 }

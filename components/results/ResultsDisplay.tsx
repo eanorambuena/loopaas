@@ -135,7 +135,7 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
     }
     return (
       <button
-        className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition text-sm"
+        className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition text-xs sm:text-sm"
         onClick={handleCopy}
       >
         {copied ? '¡Link copiado!' : 'Compartir link público'}
@@ -148,7 +148,7 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
   return (
     <>
       {!publicView && <DebugInfo evaluation={evaluation} students={students} studentsWithGrades={studentsWithGrades} />}
-      <div className="mb-4 flex gap-4 items-center">
+      <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
         <CopyTableButton studentsWithGrades={studentsWithGrades} onCopy={handleCopyTable} copied={copied} />
         {!initialStudentsWithGrades && <LoadingWarning allScoresReady={allScoresReady} />}
         {!initialStudentsWithGrades && <ShareLinkButton abbreviature={abbreviature || ''} semester={semester || ''} evaluation={evaluation} />}

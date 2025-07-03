@@ -35,6 +35,8 @@ type GenericTableProps<TData> = {
   columns: ColumnDef<TData, any>[]
   filterColumnIds?: string[] // optional: IDs de columnas para el input de filtro
   emptyMessage?: string // mensaje personalizado
+  columnVisibility?: VisibilityState
+  setColumnVisibility?: (v: VisibilityState) => void
 }
 
 export function GenericTable<TData>({
@@ -42,12 +44,18 @@ export function GenericTable<TData>({
   columns,
   filterColumnIds,
   emptyMessage = 'No hay datos disponibles.',
+  columnVisibility: controlledColumnVisibility,
+  setColumnVisibility: controlledSetColumnVisibility,
 }: GenericTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [uncontrolledColumnVisibility, uncontrolledSetColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [pageSize, setPageSize] = React.useState(10)
+
+  // Use controlled or uncontrolled state
+  const columnVisibility = controlledColumnVisibility ?? uncontrolledColumnVisibility
+  const setColumnVisibility = controlledSetColumnVisibility ?? uncontrolledSetColumnVisibility
 
   const table = useReactTable({
     data,
@@ -74,29 +82,31 @@ export function GenericTable<TData>({
 
   return (
     <div className='w-full'>
-      <div className='flex items-center py-4'>
-        {filterColumnIds?.map((columnId) => {
-          const column = table.getColumn(columnId)
-          if (!column) return null
+      <div className='flex flex-col sm:flex-row items-start sm:items-center py-4 gap-2 sm:gap-0'>
+        <div className='flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto'>
+          {filterColumnIds?.map((columnId) => {
+            const column = table.getColumn(columnId)
+            if (!column) return null
 
-          const label =
-            typeof column.columnDef.header === 'string'
-              ? column.columnDef.header
-              : columnId
+            const label =
+              typeof column.columnDef.header === 'string'
+                ? column.columnDef.header
+                : columnId
 
-          return (
-            <Input
-              key={columnId}
-              placeholder={`Filtrar por ${label}`}
-              value={(column.getFilterValue() as string) ?? ''}
-              onChange={(e) => column.setFilterValue(e.target.value)}
-              className='max-w-sm mr-4'
-            />
-          )
-        })}
+            return (
+              <Input
+                key={columnId}
+                placeholder={`Filtrar por ${label}`}
+                value={(column.getFilterValue() as string) ?? ''}
+                onChange={(e) => column.setFilterValue(e.target.value)}
+                className='w-full sm:max-w-sm'
+              />
+            )
+          })}
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='ml-auto'>
+            <Button variant='outline' className='w-full sm:w-auto sm:ml-auto'>
               Columnas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -111,14 +121,15 @@ export function GenericTable<TData>({
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
-                  {String(column.columnDef.header) || column.id}
+                  {column.columnDef.meta?.displayName || 
+                   (typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id)}
                 </DropdownMenuCheckboxItem>
               ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      <div className='rounded-md border'>
+      <div className='rounded-md border overflow-x-auto'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -155,13 +166,13 @@ export function GenericTable<TData>({
         </Table>
       </div>
 
-      <div className='flex items-center justify-between py-4'>
+      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between py-4 gap-4'>
         <p className='text-sm text-muted-foreground'>
           Mostrando {table.getRowModel().rows.length} de{' '}
           {table.getFilteredRowModel().rows.length} resultados
         </p>
-        <div className='flex items-center justify-end space-x-2 py-4'>
-          <div className='flex items-center justify-end space-x-2 py-4'>
+        <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto'>
+          <div className='flex items-center gap-2'>
             <Button
               variant='outline'
               size='sm'
@@ -184,7 +195,7 @@ export function GenericTable<TData>({
             {table.getState().pagination.pageIndex + 1} de{' '}
             {table.getPageCount()}
           </div>
-          <div className='ml-4 flex items-center gap-2'>
+          <div className='flex items-center gap-2'>
             <label htmlFor='page-size' className='text-xs text-muted-foreground'>Filas por página:</label>
             <select
               id='page-size'
