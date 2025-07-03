@@ -1,32 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { GenericTable } from '@/components/GenericTable'
-import { groupStatsColumns } from './groupStatsColumns'
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts'
-
-interface GroupStats {
-  group: string
-  uniqueUsers: number
-  totalResponses: number
-  totalStudents: number
-  responsePercentage: number
-}
-
-interface DailyResponse {
-  date: string
-  responses: number
-}
-
-interface GeneralStats {
-  totalResponses: number
-  uniqueStudents: number
-  activeDays: number
-  averageResponsesPerDay: number
-  totalStudents: number
-  responseRate: number
-}
+import GeneralStatsCards from './GeneralStatsCards'
+import TemporalAnalysis from './TemporalAnalysis'
+import DailyResponsesChart from './DailyResponsesChart'
+import GroupStatsTable from './GroupStatsTable'
+import { GeneralStats, TemporalStats, DailyResponse, GroupStats } from './types'
 
 interface StatisticsDashboardProps {
   evaluationId: string
@@ -35,6 +14,13 @@ interface StatisticsDashboardProps {
 export default function StatisticsDashboard({ evaluationId }: StatisticsDashboardProps) {
   const [stats, setStats] = useState<GroupStats[]>([])
   const [dailyData, setDailyData] = useState<DailyResponse[]>([])
+  const [temporalStats, setTemporalStats] = useState<TemporalStats>({
+    hourOfDay: [],
+    dayOfWeek: [],
+    timeDistribution: [],
+    peakHours: [],
+    peakDays: []
+  })
   const [generalStats, setGeneralStats] = useState<GeneralStats>({
     totalResponses: 0,
     uniqueStudents: 0,
@@ -45,6 +31,8 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -92,10 +80,16 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
         const dailyResponses = new Map<string, number>()
         const uniqueStudents = new Set<string>()
         
+        // Procesar datos temporales
+        const hourResponses = new Map<number, number>()
+        const dayResponses = new Map<string, number>()
+        const timePeriodResponses = new Map<string, number>()
+        
         data.responses.forEach((response: any) => {
           const group = response.group || 'Sin grupo'
           const userId = response.userInfoId
           const date = new Date(response.created_at).toISOString().split('T')[0]
+          const responseDate = new Date(response.created_at)
           
           // Agregar a estadísticas por grupo
           if (!groupStats.has(group)) {
@@ -114,6 +108,67 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
           
           // Agregar a estudiantes únicos
           uniqueStudents.add(userId)
+          
+          // Procesar datos temporales
+          const hour = responseDate.getHours()
+          const dayOfWeek = responseDate.toLocaleDateString('es-ES', { weekday: 'long' })
+          
+          // Hora del día
+          hourResponses.set(hour, (hourResponses.get(hour) || 0) + 1)
+          
+          // Día de la semana
+          dayResponses.set(dayOfWeek, (dayResponses.get(dayOfWeek) || 0) + 1)
+          
+          // Distribución por períodos
+          let period = ''
+          if (hour >= 6 && hour < 12) period = 'Mañana'
+          else if (hour >= 12 && hour < 18) period = 'Tarde'
+          else if (hour >= 18 && hour < 24) period = 'Noche'
+          else period = 'Madrugada'
+          
+          timePeriodResponses.set(period, (timePeriodResponses.get(period) || 0) + 1)
+        })
+        
+        // Procesar estadísticas temporales
+        const totalResponses = data.responses.length
+        
+        // Hora del día
+        const hourOfDay = Array.from({ length: 24 }, (_, hour) => ({
+          hour,
+          responses: hourResponses.get(hour) || 0
+        }))
+        
+        // Día de la semana
+        const dayNames = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
+        const dayOfWeek = dayNames.map(day => ({
+          day: day.charAt(0).toUpperCase() + day.slice(1),
+          responses: dayResponses.get(day) || 0
+        }))
+        
+        // Distribución por períodos
+        const timeDistribution = Array.from(timePeriodResponses.entries()).map(([period, responses]) => ({
+          period,
+          responses,
+          percentage: Math.round((responses / totalResponses) * 100)
+        }))
+        
+        // Picos de actividad
+        const peakHours = hourOfDay
+          .filter(h => h.responses > 0)
+          .sort((a, b) => b.responses - a.responses)
+          .slice(0, 5)
+        
+        const peakDays = dayOfWeek
+          .filter(d => d.responses > 0)
+          .sort((a, b) => b.responses - a.responses)
+          .slice(0, 3)
+        
+        setTemporalStats({
+          hourOfDay,
+          dayOfWeek,
+          timeDistribution,
+          peakHours,
+          peakDays
         })
         
         // Convertir datos diarios a array y ordenar por fecha
@@ -125,7 +180,6 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
         
         // Calcular estadísticas generales
         const totalStudents = studentsData.students?.length || 0
-        const totalResponses = data.responses.length
         const activeDays = dailyResponses.size
         const averageResponsesPerDay = activeDays > 0 ? totalResponses / activeDays : 0
         const responseRate = totalStudents > 0 ? (uniqueStudents.size / totalStudents) * 100 : 0
@@ -190,119 +244,10 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
 
   return (
     <div className='space-y-6'>
-      {/* Estadísticas Generales */}
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-        <Card>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Total Respuestas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{generalStats.totalResponses}</div>
-            <p className='text-xs text-muted-foreground'>
-              {generalStats.activeDays} días activos
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Estudiantes que Respondieron</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{generalStats.uniqueStudents}</div>
-            <p className='text-xs text-muted-foreground'>
-              de {generalStats.totalStudents} total
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Tasa de Respuesta</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{generalStats.responseRate}%</div>
-            <p className='text-xs text-muted-foreground'>
-              participación general
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Promedio por Día</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{generalStats.averageResponsesPerDay}</div>
-            <p className='text-xs text-muted-foreground'>
-              respuestas diarias
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Gráfico de Respuestas por Día */}
-      {dailyData.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Respuestas por Día</CardTitle>
-            <CardDescription>
-              Distribución de respuestas a lo largo del tiempo
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={dailyData}>
-                <CartesianGrid strokeDasharray="3 3" className='stroke-muted' />
-                <XAxis 
-                  dataKey="date" 
-                  className='text-xs text-muted-foreground'
-                  tickFormatter={(value) => new Date(value).toLocaleDateString('es-ES', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
-                />
-                <YAxis className='text-xs text-muted-foreground' />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--background))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '6px'
-                  }}
-                  labelFormatter={(value) => new Date(value).toLocaleDateString('es-ES', { 
-                    weekday: 'long',
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                  formatter={(value, name) => [value, 'Respuestas']}
-                />
-                <Bar 
-                  dataKey="responses" 
-                  fill="hsl(var(--chart-1))"
-                  className='fill-emerald-400 dark:fill-emerald-600'
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Tabla de Estadísticas por Grupo */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Estadísticas por Grupo</CardTitle>
-          <CardDescription>
-            Detalle de usuarios únicos y total de respuestas por grupo y sección. Ordenado por número de grupo.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className='pb-0'>
-          <GenericTable
-            data={stats}
-            columns={groupStatsColumns}
-            filterColumnIds={['section']}
-            emptyMessage='No hay datos de estadísticas por grupo disponibles.'
-          />
-        </CardContent>
-      </Card>
+      <GeneralStatsCards stats={generalStats} />
+      <TemporalAnalysis temporalStats={temporalStats} />
+      <DailyResponsesChart dailyData={dailyData} />
+      <GroupStatsTable stats={stats} />
     </div>
   )
 }
