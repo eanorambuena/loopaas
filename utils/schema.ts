@@ -57,11 +57,11 @@ export interface Response {
 }
 
 export interface Grade {
+  id: string
+  created_at: string
   userInfoId: string
   evaluationId: string
-  groupGrade: string
-  evaluationGrade: string
-  finalGrade: string
+  score: number | null
 }
 
 export interface UserInfoSchema {
