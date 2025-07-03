@@ -2,7 +2,11 @@ import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
 
-export default function OG({ params }) {
+interface OGParams {
+  params: { abbreviature: string; semester: string; id: string }
+}
+
+export default function OG({ params }: OGParams) {
   const { abbreviature, semester, id } = params
 
   return new ImageResponse(
