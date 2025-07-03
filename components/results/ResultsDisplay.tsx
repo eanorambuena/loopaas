@@ -24,19 +24,21 @@ interface ResultsDisplayProps {
   abbreviature?: string
   semester?: string
   publicView?: boolean
+  studentsWithGrades?: StudentWithGrades[]
 }
 
-export function ResultsDisplay({ evaluation, students, abbreviature, semester, publicView }: ResultsDisplayProps) {
-  const [studentsWithGrades, setStudentsWithGrades] = useState<StudentWithGrades[]>([])
-  const [loading, setLoading] = useState(true)
+export function ResultsDisplay({ evaluation, students, abbreviature, semester, publicView, studentsWithGrades: initialStudentsWithGrades }: ResultsDisplayProps) {
+  const [studentsWithGrades, setStudentsWithGrades] = useState<StudentWithGrades[]>(initialStudentsWithGrades || [])
+  const [loading, setLoading] = useState(!initialStudentsWithGrades)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
-  const [allScoresReady, setAllScoresReady] = useState(false)
+  const [allScoresReady, setAllScoresReady] = useState(!!initialStudentsWithGrades)
   const [isUpdating, setIsUpdating] = useState(false)
   const pendingPromises = useRef<Promise<any>[]>([])
   const studentsRef = useRef<StudentWithGrades[]>([])
 
   useEffect(() => {
+    if (initialStudentsWithGrades) return // SSR: skip client fetching
     let isCancelled = false
     async function fetchGradesRowByRow() {
       setLoading(true)
@@ -106,7 +108,7 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
       }
     }
     return () => { isCancelled = true }
-  }, [evaluation, students, publicView])
+  }, [evaluation, students, publicView, initialStudentsWithGrades])
 
   function handleCopyTable() {
     if (!studentsWithGrades.length) return
@@ -148,10 +150,10 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
       {!publicView && <DebugInfo evaluation={evaluation} students={students} studentsWithGrades={studentsWithGrades} />}
       <div className="mb-4 flex gap-4 items-center">
         <CopyTableButton studentsWithGrades={studentsWithGrades} onCopy={handleCopyTable} copied={copied} />
-        <LoadingWarning allScoresReady={allScoresReady} />
-        <ShareLinkButton abbreviature={abbreviature || ''} semester={semester || ''} evaluation={evaluation} />
+        {!initialStudentsWithGrades && <LoadingWarning allScoresReady={allScoresReady} />}
+        {!initialStudentsWithGrades && <ShareLinkButton abbreviature={abbreviature || ''} semester={semester || ''} evaluation={evaluation} />}
       </div>
-      <LoadingScores allScoresReady={allScoresReady || isUpdating} />
+      {!initialStudentsWithGrades && <LoadingScores allScoresReady={allScoresReady || isUpdating} />}
       <ResultsTable students={studentsWithGrades} />
     </>
   )
