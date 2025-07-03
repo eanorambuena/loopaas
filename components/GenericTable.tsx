@@ -47,6 +47,7 @@ export function GenericTable<TData>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [pageSize, setPageSize] = React.useState(10)
 
   const table = useReactTable({
     data,
@@ -66,6 +67,10 @@ export function GenericTable<TData>({
       rowSelection,
     },
   })
+
+  React.useEffect(() => {
+    table.setPageSize(pageSize)
+  }, [pageSize])
 
   return (
     <div className='w-full'>
@@ -178,6 +183,19 @@ export function GenericTable<TData>({
             Página{' '}
             {table.getState().pagination.pageIndex + 1} de{' '}
             {table.getPageCount()}
+          </div>
+          <div className='ml-4 flex items-center gap-2'>
+            <label htmlFor='page-size' className='text-xs text-muted-foreground'>Filas por página:</label>
+            <select
+              id='page-size'
+              className='border rounded px-2 py-1 text-sm bg-background'
+              value={pageSize}
+              onChange={e => setPageSize(Number(e.target.value))}
+            >
+              {[5, 10, 20, 50, 100].map(size => (
+                <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
