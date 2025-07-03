@@ -8,6 +8,7 @@ import { createResponse } from '@/utils/clientQueries'
 import { Evaluation, UserInfoSchema } from '@/utils/schema'
 import useChileTime from '@/utils/hooks/useChileTime'
 import { Console } from '@/utils/console'
+import { isDeadlinePassed } from '@/utils/dateUtils'
 
 function getNumberOfQuestions(evaluation: Evaluation) {
   let numberOfQuestions = 0;
@@ -32,13 +33,6 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
   const { toast } = useToast()
   const chileTime = useChileTime()
   if (!userInfo) return null
-
-  const isDateEarlierThanNow = (date: Date) => {
-    const differenceInTime = chileTime.getTime() - date.getTime()
-    console.log({ chileTime, date, differenceInTime })
-    const differenceInSeconds = differenceInTime / 1000
-    return differenceInSeconds >= 1
-  }
 
   const deadLineDay = evaluation.deadLine?.split('-')[2]
   const deadLineMonth = evaluation.deadLine?.split('-')[1]
@@ -76,7 +70,7 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
     })
     const valuesList = Object.values(values)
 
-    if (isDateEarlierThanNow(new Date(evaluation.deadLine))) return toast({
+    if (isDeadlinePassed(evaluation.deadLine, chileTime)) return toast({
       title: 'Error',
       description: `Esta evaluación ya no está disponible. Fecha límite: ${deadLineDay} / ${deadLineMonth} / ${deadLineYear}`,
       variant: 'destructive'
@@ -102,7 +96,7 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
     })()
   }
 
-  if (isDateEarlierThanNow(new Date(evaluation.deadLine))) return (
+  if (isDeadlinePassed(evaluation.deadLine, chileTime)) return (
     <section className='w-full sm:max-w-4xl mx-auto flex flex-col gap-6 bg-gray-100 dark:bg-gray-900 p-6 rounded-md'>
       Esta evaluación ya no está disponible
       <p className='dark:text-gray-100'>Fecha límite: { evaluation.deadLine ? `${deadLineDay} / ${deadLineMonth} / ${deadLineYear}` : 'Cargando' } </p>

@@ -6,7 +6,6 @@ const useChileTime = (): Date => {
   const [chileTime, setChileTime] = useState<Date>(chileDefaultTime)
 
   useEffect(() => {
-    return
     try {
       const fetchChileTime = async () => {
         try {
@@ -18,6 +17,9 @@ const useChileTime = (): Date => {
           setChileTime(new Date(data.datetime)) // Set the Chile time in state
         } catch (error) {
           console.error('Error fetching Chile time:', error)
+          // Fallback to local time if API fails
+          const fallbackTime = new Date().toLocaleString('en-US', { timeZone: 'America/Santiago' })
+          setChileTime(new Date(fallbackTime))
         }
       }
 

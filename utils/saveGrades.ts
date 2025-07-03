@@ -1,7 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
 import { getCourseById, getGroupMates, getResponsesByUserInfoId, getGrades } from '@/utils/queries'
-import { evaluationPath } from './paths'
 import { Evaluation, Grade, LinearQuestion, QuestionCriterion, Response } from '@/utils/schema'
 import { Console } from '@/utils/console'
 
@@ -14,7 +12,7 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
   
   if (!responsesByUserInfoId || Object.keys(responsesByUserInfoId).length === 0) {
     console.log('No responses found for evaluation:', evaluation.id)
-    return
+    throw new Error('No responses found for this evaluation')
   }
 
   const lastResponseByUserInfoId: Record<string, Response> = {}
@@ -28,13 +26,13 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
   const course = await getCourseById(evaluation.courseId)
   if (!course) {
     console.log('Course not found for evaluation:', evaluation.courseId)
-    return
+    throw new Error('Course not found')
   }
 
   const firstQuestion = Object.values(evaluation.questions)[0] as LinearQuestion
   if (!firstQuestion || firstQuestion.type !== 'linear') {
     console.log('First question is not linear or not found')
-    return
+    throw new Error('First question is not linear or not found')
   }
 
   console.log('First question criteria:', firstQuestion.criteria.length)
@@ -134,12 +132,12 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
 
   const supabase = createClient()
   for (const grade of newGrades) {
-    const { data: error } = await supabase
+    const { error } = await supabase
       .from('grades')
       .upsert(grade)
     if (error) {
       console.error('Error upserting grade:', error)
-      redirect(`${evaluationPath(pathParams)}/resultados?message=No se pudieron guardar las notas`)
+      throw new Error(`Error saving grade for student ${grade.userInfoId}: ${error.message}`)
     }
   }
   

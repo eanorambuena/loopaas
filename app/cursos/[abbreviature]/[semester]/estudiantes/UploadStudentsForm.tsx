@@ -128,8 +128,10 @@ export default function UploadStudentsForm() {
       </form>
       <form onSubmit={handleSubmit}  className='flex flex-col gap-4 border border-foreground/20 rounded-md p-4'>
         <legend className='text-lg font-semibold'>
-          Importar estudiantes desde CSV con formato:<br />
+          <p>Importar estudiantes desde CSV</p>
+          <p>Si no desea ingresar los estudiantes uno por uno, puede importarlos desde un CSV con el siguiente formato:</p>
           <span className='text-sm font-normal'>APELLIDOS;NOMBRES;PASSWORD;CORREO;GRUPO</span>
+          <p>El archivo debe estar en formato CSV y tener las columnas en el orden especificado.</p>
         </legend>
         <Input
           type='textarea'

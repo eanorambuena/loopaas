@@ -11,19 +11,26 @@ export async function POST(req: Request) {
     }
 
     console.log('Processing students with grades for evaluation:', evaluation.id)
-    console.log('Number of students:', students.length)
+    console.log('Number of students in request:', students.length)
     console.log('Sample student structure:', students[0])
 
     const promises = students.map(async (student: StudentWithGrades) => {
       try {
+        console.log(`Processing student: ${student.userInfo?.firstName} ${student.userInfo?.lastName} (${student.userInfoId})`)
+        
         const grades = await getGrades(evaluation, student.userInfoId)
         console.log(`Grades for student ${student.userInfoId}:`, grades)
-        return {
+        
+        const result = {
           ...student,
           groupGrade: grades?.groupGrade ?? 'N/A',
           coGrade: grades?.evaluationGrade ?? 'N/A',
           finalGrade: grades?.finalGrade ?? 'N/A'
         }
+        
+        console.log(`Result for student ${student.userInfoId}:`, result)
+        return result
+        
       } catch (error) {
         console.error(`Error processing student ${student.userInfoId}:`, error)
         return {
@@ -36,8 +43,8 @@ export async function POST(req: Request) {
     })
     
     const studentsWithGrades = await Promise.all(promises)
-    console.log('Final result:', studentsWithGrades.length, 'students processed')
-    console.log('Sample result:', studentsWithGrades[0])
+    console.log('Final result count:', studentsWithGrades.length)
+    console.log('Sample final result:', studentsWithGrades[0])
     
     return NextResponse.json(studentsWithGrades)
   } catch (error) {
