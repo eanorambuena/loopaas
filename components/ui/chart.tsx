@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { Bar, BarChart as RechartsBarChart, Line, LineChart as RechartsLineChart } from "recharts"
+import * as React from 'react'
+import { Bar, BarChart as RechartsBarChart, Line, LineChart as RechartsLineChart } from 'recharts'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 const ChartContainer = React.forwardRef<
   HTMLDivElement,
@@ -13,14 +13,14 @@ const ChartContainer = React.forwardRef<
 >(({ className, children, config, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("h-[350px] w-full", className)}
+    className={cn('h-[350px] w-full', className)}
     style={
       {
-        "--chart-1": config?.visitors?.color || "hsl(var(--chart-1))",
-        "--chart-2": config?.chrome?.color || "hsl(var(--chart-2))",
-        "--chart-3": config?.firefox?.color || "hsl(var(--chart-3))",
-        "--chart-4": config?.edge?.color || "hsl(var(--chart-4))",
-        "--chart-5": config?.other?.color || "hsl(var(--chart-5))",
+        '--chart-1': config?.visitors?.color || 'hsl(var(--chart-1))',
+        '--chart-2': config?.chrome?.color || 'hsl(var(--chart-2))',
+        '--chart-3': config?.firefox?.color || 'hsl(var(--chart-3))',
+        '--chart-4': config?.edge?.color || 'hsl(var(--chart-4))',
+        '--chart-5': config?.other?.color || 'hsl(var(--chart-5))',
       } as React.CSSProperties
     }
     {...props}
@@ -28,7 +28,7 @@ const ChartContainer = React.forwardRef<
     {children}
   </div>
 ))
-ChartContainer.displayName = "ChartContainer"
+ChartContainer.displayName = 'ChartContainer'
 
 const ChartTooltip = React.forwardRef<
   HTMLDivElement,
@@ -37,13 +37,13 @@ const ChartTooltip = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border bg-background p-2 shadow-sm",
+      'rounded-lg border bg-background p-2 shadow-sm',
       className
     )}
     {...props}
   />
 ))
-ChartTooltip.displayName = "ChartTooltip"
+ChartTooltip.displayName = 'ChartTooltip'
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
@@ -53,11 +53,11 @@ const ChartTooltipContent = React.forwardRef<
 >(({ className, hideLabel, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("grid gap-2", className)}
+    className={cn('grid gap-2', className)}
     {...props}
   />
 ))
-ChartTooltipContent.displayName = "ChartTooltipContent"
+ChartTooltipContent.displayName = 'ChartTooltipContent'
 
 const BarChart = React.forwardRef<
   React.ElementRef<typeof RechartsBarChart>,
@@ -65,11 +65,11 @@ const BarChart = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <RechartsBarChart
     ref={ref}
-    className={cn("", className)}
+    className={cn('', className)}
     {...props}
   />
 ))
-BarChart.displayName = "BarChart"
+BarChart.displayName = 'BarChart'
 
 const LineChart = React.forwardRef<
   React.ElementRef<typeof RechartsLineChart>,
@@ -77,11 +77,11 @@ const LineChart = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <RechartsLineChart
     ref={ref}
-    className={cn("", className)}
+    className={cn('', className)}
     {...props}
   />
 ))
-LineChart.displayName = "LineChart"
+LineChart.displayName = 'LineChart'
 
 
 

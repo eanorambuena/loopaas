@@ -1,13 +1,13 @@
 'use server'
 
-import { getCurrentUser, getCourse, getEvaluationResponses, getUserInfo } from '@/utils/queries'
-import { isProfessorServer } from '@/utils/isProfessorServer'
-import { redirect } from 'next/navigation'
 import Fallback from '@/components/Fallback'
-import { Console } from '@/utils/console'
-import { Evaluation } from '@/utils/schema'
-import { getEvaluationByParams } from '@/utils/queries'
+import { ShareStatsLinkButton } from '@/components/ShareStatsLinkButton'
 import StatisticsDashboard from '@/components/statistics/StatisticsDashboard'
+import { Console } from '@/utils/console'
+import { isProfessorServer } from '@/utils/isProfessorServer'
+import { getCourse, getCurrentUser, getEvaluationByParams, getEvaluationResponses, getUserInfo } from '@/utils/queries'
+import { Evaluation } from '@/utils/schema'
+import { redirect } from 'next/navigation'
 
 interface EstadisticasPageProps {
   params: {
@@ -20,6 +20,7 @@ interface EstadisticasPageProps {
 export default async function Page({ params }: EstadisticasPageProps) {
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id, false)
+  const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL}/compartir/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`
 
   if (!userInfo || !userInfo.id) {
     Console.Error(`UserInfo not found for user ${user.email}`)
@@ -61,8 +62,11 @@ export default async function Page({ params }: EstadisticasPageProps) {
 
   return (
     <div className='p-6 max-w-6xl mx-auto'>
-      <h1 className='text-3xl font-bold mb-6'>Estadísticas de {evaluation.title}</h1>
+      <div className='flex gap-4 items-center justify-between mb-6'>
+        <h1 className='text-3xl font-bold'>Estadísticas de {evaluation.title}</h1>
+        <ShareStatsLinkButton publicUrl={publicUrl} />
+      </div>
       <StatisticsDashboard evaluationId={params.id} />
     </div>
   )
-} 
+}

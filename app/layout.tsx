@@ -7,15 +7,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 
-interface LayoutProps {
-  children: React.ReactNode
-  searchParams?: {
-    error?: string
-    error_code?: string
-    error_description?: string
-  }
-}
-
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000'
@@ -32,14 +23,7 @@ export const metadata = {
   }
 }
 
-export default function RootLayout({ children, searchParams }: LayoutProps) {
-  if (searchParams && searchParams.error) {
-    const { error, error_code, error_description } = searchParams
-    console.error('Error:', error)
-    console.error('Error Code:', error_code)
-    console.error('Error Description:', error_description)
-  }
-  
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background text-foreground">

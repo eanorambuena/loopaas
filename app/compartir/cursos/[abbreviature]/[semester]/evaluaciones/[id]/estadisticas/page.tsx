@@ -10,10 +10,10 @@ interface EstadisticasPageProps {
 }
 
 export default function Page({ params }: EstadisticasPageProps) {
-  const publicUrl = `${window.location.origin}/compartir/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`
+  const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL}/compartir/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`
   return (
     <div className='p-6 max-w-6xl mx-auto'>
-      <div className='flex items-center justify-between mb-6'>
+      <div className='flex gap-4 items-center justify-between mb-6'>
         <h1 className='text-3xl font-bold'>Estadísticas públicas de la evaluación</h1>
         <ShareStatsLinkButton publicUrl={publicUrl} />
       </div>

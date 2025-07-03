@@ -9,31 +9,24 @@ import { LoadingWarning } from '@/components/results/LoadingWarning'
 import { LoadingScores } from '@/components/results/LoadingScores'
 import { ErrorMessage } from '@/components/results/ErrorMessage'
 import {
-  fetchStudentsWithGrades,
   fetchStudentPeerScore,
   persistStudentGrade,
   getFullStudentName,
-  getTableRows
+  getTableRows,
+  fetchStudentsWithGrades
 } from '@/components/results/resultsDisplayLogic'
 import { UpdateScoresButton } from '@/components/results/UpdateScoresButton'
+import { useRouter } from 'next/navigation'
 
 interface ResultsDisplayProps {
   evaluation: any
   students: any[]
+  abbreviature?: string
+  semester?: string
+  publicView?: boolean
 }
 
-function mapStudentsToInitialGrades(students: any[]): StudentWithGrades[] {
-  return students.map(student => ({ ...student, peerEvaluationScore: null }))
-}
-
-function getSectionFromGroup(group: string | number | null | undefined): string {
-  if (!group) return 'N/A'
-  const groupStr = String(group)
-  if (groupStr.length <= 1) return groupStr
-  return groupStr.slice(0, -1)
-}
-
-export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
+export function ResultsDisplay({ evaluation, students, abbreviature, semester, publicView }: ResultsDisplayProps) {
   const [studentsWithGrades, setStudentsWithGrades] = useState<StudentWithGrades[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -41,19 +34,62 @@ export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
   const [allScoresReady, setAllScoresReady] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const pendingPromises = useRef<Promise<any>[]>([])
+  const studentsRef = useRef<StudentWithGrades[]>([])
 
   useEffect(() => {
-    async function fetchGrades() {
+    let isCancelled = false
+    async function fetchGradesRowByRow() {
+      setLoading(true)
+      setError(null)
+      studentsRef.current = students.map(s => ({ ...s, peerEvaluationScore: null }))
+      setStudentsWithGrades([...studentsRef.current])
+      setAllScoresReady(false)
+      try {
+        for (const student of students) {
+          if (isCancelled) break
+          try {
+            const response = await fetch('/api/get-students-with-grades', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ evaluation, students: [student] })
+            })
+            if (!response.ok) throw new Error('Error al obtener nota desde la base de datos')
+            const [data] = await response.json()
+            const idx = studentsRef.current.findIndex(s => s.userInfoId === student.userInfoId)
+            if (idx !== -1) {
+              studentsRef.current[idx].peerEvaluationScore = data.peerEvaluationScore
+              setStudentsWithGrades([...studentsRef.current])
+              if (
+                !publicView &&
+                data.peerEvaluationScore !== undefined &&
+                data.peerEvaluationScore !== null &&
+                data.peerEvaluationScore !== 'N/A' &&
+                evaluation.id &&
+                student.userInfoId
+              ) {
+                persistStudentGrade(student.userInfoId, evaluation.id, parseFloat(data.peerEvaluationScore), getFullStudentName(student.userInfo))
+              }
+            }
+          } catch (err) {
+            const idx = studentsRef.current.findIndex(s => s.userInfoId === student.userInfoId)
+            if (idx !== -1) {
+              studentsRef.current[idx].peerEvaluationScore = 'N/A'
+              setStudentsWithGrades([...studentsRef.current])
+            }
+          }
+        }
+        setAllScoresReady(true)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido')
+      } finally {
+        setLoading(false)
+      }
+    }
+    async function fetchAllGradesFromDB() {
       setLoading(true)
       setError(null)
       try {
-        const response = await fetch('/api/get-students-with-grades', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ evaluation, students })
-        })
-        if (!response.ok) throw new Error('Error al obtener notas desde la base de datos')
-        const data = await response.json()
+        const data = await fetchStudentsWithGrades(evaluation, students)
         setStudentsWithGrades(data)
         setAllScoresReady(true)
       } catch (err) {
@@ -63,52 +99,14 @@ export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
       }
     }
     if (evaluation && students.length > 0) {
-      fetchGrades()
+      if (publicView) {
+        fetchAllGradesFromDB()
+      } else {
+        fetchGradesRowByRow()
+      }
     }
-  }, [evaluation, students])
-
-  async function handleUpdateScores() {
-    setIsUpdating(true)
-    setError(null)
-    setAllScoresReady(false)
-    try {
-      let isCancelled = false
-      const promises: Promise<void>[] = students.map(async (student) => {
-        try {
-          const result = await fetchStudentPeerScore(evaluation, student)
-          if (!isCancelled) {
-            setStudentsWithGrades(prev => prev.map(s => {
-              if (s.userInfoId === result.userInfoId) {
-                const nombre = getFullStudentName(s.userInfo)
-                console.log(`Puntaje actualizado en UI para estudiante: ${nombre} (${s.userInfoId}) = ${result.peerEvaluationScore}`)
-                return { ...s, peerEvaluationScore: result.peerEvaluationScore }
-              }
-              return s
-            }))
-          }
-          if (result && result.userInfoId && evaluation.id && result.peerEvaluationScore !== undefined && result.peerEvaluationScore !== null && result.peerEvaluationScore !== 'N/A') {
-            const nombre = getFullStudentName(student.userInfo)
-            persistStudentGrade(result.userInfoId, evaluation.id, parseFloat(result.peerEvaluationScore), nombre)
-          }
-        } catch {
-          if (!isCancelled) {
-            setStudentsWithGrades(prev => prev.map(s =>
-              s.userInfoId === student.userInfoId
-                ? { ...s, peerEvaluationScore: 'N/A' }
-                : s
-            ))
-          }
-        }
-      })
-      pendingPromises.current = promises
-      await Promise.all(promises)
-      setAllScoresReady(true)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido')
-    } finally {
-      setIsUpdating(false)
-    }
-  }
+    return () => { isCancelled = true }
+  }, [evaluation, students, publicView])
 
   function handleCopyTable() {
     if (!studentsWithGrades.length) return
@@ -122,15 +120,36 @@ export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
       })
   }
 
+  function ShareLinkButton({ abbreviature, semester, evaluation }: { abbreviature: string, semester: string, evaluation: any }) {
+    const [copied, setCopied] = useState(false)
+    const id = evaluation?.id || ''
+    const publicUrl = `${window.location.origin}/compartir/cursos/${abbreviature}/${semester}/evaluaciones/${id}/resultados`
+    const handleCopy = () => {
+      navigator.clipboard.writeText(publicUrl)
+        .then(() => {
+          setCopied(true)
+          setTimeout(() => setCopied(false), 2000)
+        })
+    }
+    return (
+      <button
+        className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition text-sm"
+        onClick={handleCopy}
+      >
+        {copied ? '¡Link copiado!' : 'Compartir link público'}
+      </button>
+    )
+  }
+
   if (error) return <ErrorMessage error={error} />
 
   return (
     <>
-      <DebugInfo evaluation={evaluation} students={students} studentsWithGrades={studentsWithGrades} />
+      {!publicView && <DebugInfo evaluation={evaluation} students={students} studentsWithGrades={studentsWithGrades} />}
       <div className="mb-4 flex gap-4 items-center">
         <CopyTableButton studentsWithGrades={studentsWithGrades} onCopy={handleCopyTable} copied={copied} />
         <LoadingWarning allScoresReady={allScoresReady} />
-        <UpdateScoresButton onClick={handleUpdateScores} isUpdating={isUpdating} loading={loading} />
+        <ShareLinkButton abbreviature={abbreviature || ''} semester={semester || ''} evaluation={evaluation} />
       </div>
       <LoadingScores allScoresReady={allScoresReady || isUpdating} />
       <ResultsTable students={studentsWithGrades} />

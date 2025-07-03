@@ -150,4 +150,4 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
       </Card>
     </div>
   )
-} 
+}

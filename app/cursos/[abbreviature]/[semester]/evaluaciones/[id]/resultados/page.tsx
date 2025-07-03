@@ -1,7 +1,5 @@
 import Fallback from '@/components/Fallback'
-import { evaluationPath } from '@/utils/paths'
-import { getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams, getGrades } from '@/utils/queries'
-import { redirect } from 'next/navigation'
+import { getCourse, getCourseStudents, getCurrentUser, getEvaluationByParams } from '@/utils/queries'
 import { ResultsDisplay } from '@/components/results/ResultsDisplay'
 import { isDeadlinePassed } from '@/utils/dateUtils'
 
@@ -11,13 +9,9 @@ interface Props {
     semester: string
     id: string
   }
-  searchParams: {
-    sendReport: boolean
-    page: string
-  }
 }
 
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page({ params }: Props) {
   await getCurrentUser()
 
   const course = await getCourse(params.abbreviature, params.semester)
@@ -36,7 +30,7 @@ export default async function Page({ params, searchParams }: Props) {
       {!isDeadlinePassed(evaluation.deadLine) && (
         <p className='text-red-500 w-full'>Advertencia: La evaluación aún no ha finalizado</p>
       )}
-      <ResultsDisplay evaluation={evaluation} students={students} />
+      <ResultsDisplay evaluation={evaluation} students={students} abbreviature={params.abbreviature} semester={params.semester} />
     </div>
   )
 }
