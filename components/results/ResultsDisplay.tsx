@@ -3,10 +3,62 @@
 import { useEffect, useState, useRef } from 'react'
 import { ResultsTable } from '@/components/results/ResultsTable'
 import { StudentWithGrades } from '@/utils/schema'
+import { DebugInfo } from './DebugInfo'
+import { CopyTableButton } from './CopyTableButton'
+import { LoadingWarning } from './LoadingWarning'
+import { LoadingScores } from './LoadingScores'
+import { ErrorMessage } from './ErrorMessage'
 
 interface ResultsDisplayProps {
   evaluation: any
   students: any[]
+}
+
+function mapStudentsToInitialGrades(students: any[]): StudentWithGrades[] {
+  return students.map(student => ({ ...student, peerEvaluationScore: null }))
+}
+
+async function fetchStudentPeerScore(evaluation: any, student: any) {
+  const response = await fetch('/api/get-peer-evaluation-scores', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ evaluation, students: [student] })
+  })
+  if (!response.ok) throw new Error('Error al calcular puntaje')
+  const [result] = await response.json()
+  return result
+}
+
+async function persistStudentGrade(userInfoId: string, evaluationId: string, score: number, studentName: string) {
+  const response = await fetch('/api/save-grade', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userInfoId, evaluationId, score })
+  })
+  if (response.ok) {
+    console.log(`Puntaje guardado en Supabase para estudiante: ${studentName} (${userInfoId}) = ${score}`)
+  }
+}
+
+function getFullStudentName(userInfo: any) {
+  return `${userInfo?.firstName ?? ''} ${userInfo?.lastName ?? ''}`.trim()
+}
+
+function getSectionFromGroup(group: string | number | null | undefined): string {
+  if (!group) return 'N/A'
+  const groupStr = String(group)
+  if (groupStr.length <= 1) return groupStr
+  return groupStr.slice(0, -1)
+}
+
+function getTableRows(studentsWithGrades: StudentWithGrades[]) {
+  return studentsWithGrades.map(student => [
+    getFullStudentName(student.userInfo),
+    student.userInfo?.email ?? '',
+    student.group ?? '',
+    getSectionFromGroup(student.group),
+    student.peerEvaluationScore ?? ''
+  ])
 }
 
 export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
@@ -17,68 +69,43 @@ export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
   const [allScoresReady, setAllScoresReady] = useState(false)
   const pendingPromises = useRef<Promise<any>[]>([])
 
-  // Inicializar la tabla con todos los estudiantes (sin puntaje)
   useEffect(() => {
     if (!students || students.length === 0) return
-    setStudentsWithGrades(
-      students.map(s => ({ ...s, peerEvaluationScore: null }))
-    )
+    setStudentsWithGrades(mapStudentsToInitialGrades(students))
     setAllScoresReady(false)
     setLoading(true)
   }, [students])
 
-  // Calcular puntajes asíncronos fila a fila, actualizando por userInfoId
   useEffect(() => {
     if (!evaluation || students.length === 0) return
     console.log('Iniciando cálculo de puntajes para todos los estudiantes:', students.map(s => s.userInfoId))
     let isCancelled = false
-    const promises: Promise<void>[] = students.map((student) => {
-      return fetch('/api/get-peer-evaluation-scores', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ evaluation, students: [student] })
-      })
-        .then(async res => {
-          if (!res.ok) throw new Error('Error al calcular puntaje')
-          const [result] = await res.json()
-          if (!isCancelled) {
-            setStudentsWithGrades(prev => prev.map(s => {
-              if (s.userInfoId === result.userInfoId) {
-                const nombre = `${s.userInfo?.firstName ?? ''} ${s.userInfo?.lastName ?? ''}`.trim()
-                console.log(`Puntaje actualizado en UI para estudiante: ${nombre} (${s.userInfoId}) = ${result.peerEvaluationScore}`)
-                return { ...s, peerEvaluationScore: result.peerEvaluationScore }
-              }
-              return s
-            }))
-          }
-          // Guardar en la base de datos (asincrónico, no bloquea la UI)
-          if (result && result.userInfoId && evaluation.id && result.peerEvaluationScore !== undefined && result.peerEvaluationScore !== null && result.peerEvaluationScore !== 'N/A') {
-            const nombre = `${student.userInfo?.firstName ?? ''} ${student.userInfo?.lastName ?? ''}`.trim()
-            fetch('/api/save-grade', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                userInfoId: result.userInfoId,
-                evaluationId: evaluation.id,
-                score: parseFloat(result.peerEvaluationScore)
-              })
-            })
-              .then(r => {
-                if (r.ok) {
-                  console.log(`Puntaje guardado en Supabase para estudiante: ${nombre} (${result.userInfoId}) = ${result.peerEvaluationScore}`)
-                }
-              })
-          }
-        })
-        .catch(() => {
-          if (!isCancelled) {
-            setStudentsWithGrades(prev => prev.map(s =>
-              s.userInfoId === student.userInfoId
-                ? { ...s, peerEvaluationScore: 'N/A' }
-                : s
-            ))
-          }
-        })
+    const promises: Promise<void>[] = students.map(async (student) => {
+      try {
+        const result = await fetchStudentPeerScore(evaluation, student)
+        if (!isCancelled) {
+          setStudentsWithGrades(prev => prev.map(s => {
+            if (s.userInfoId === result.userInfoId) {
+              const nombre = getFullStudentName(s.userInfo)
+              console.log(`Puntaje actualizado en UI para estudiante: ${nombre} (${s.userInfoId}) = ${result.peerEvaluationScore}`)
+              return { ...s, peerEvaluationScore: result.peerEvaluationScore }
+            }
+            return s
+          }))
+        }
+        if (result && result.userInfoId && evaluation.id && result.peerEvaluationScore !== undefined && result.peerEvaluationScore !== null && result.peerEvaluationScore !== 'N/A') {
+          const nombre = getFullStudentName(student.userInfo)
+          persistStudentGrade(result.userInfoId, evaluation.id, parseFloat(result.peerEvaluationScore), nombre)
+        }
+      } catch {
+        if (!isCancelled) {
+          setStudentsWithGrades(prev => prev.map(s =>
+            s.userInfoId === student.userInfoId
+              ? { ...s, peerEvaluationScore: 'N/A' }
+              : s
+          ))
+        }
+      }
     })
     pendingPromises.current = promises
     Promise.all(promises).then(() => {
@@ -93,13 +120,7 @@ export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
   function handleCopyTable() {
     if (!studentsWithGrades.length) return
     const headers = ['Estudiante', 'Correo', 'Grupo', 'Sección', 'Puntaje de Coevaluación']
-    const rows = studentsWithGrades.map(s => [
-      `${s.userInfo?.firstName ?? ''} ${s.userInfo?.lastName ?? ''}`.trim(),
-      s.userInfo?.email ?? '',
-      s.group ?? '',
-      (s.group ? (String(s.group).length <= 1 ? String(s.group) : String(s.group).slice(0, -1)) : 'N/A'),
-      s.peerEvaluationScore ?? ''
-    ])
+    const rows = getTableRows(studentsWithGrades)
     const tsv = [headers, ...rows].map(row => row.join('\t')).join('\n')
     navigator.clipboard.writeText(tsv)
       .then(() => {
@@ -108,42 +129,16 @@ export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
       })
   }
 
-  if (error) {
-    return (
-      <div className="p-8">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <strong>Error:</strong> {error}
-        </div>
-      </div>
-    )
-  }
+  if (error) return <ErrorMessage error={error} />
 
   return (
     <>
-      <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded">
-        <h3 className="font-semibold text-blue-800">Información de Debug:</h3>
-        <p>Evaluación ID: {evaluation.id}</p>
-        <p>Estudiantes totales: {students.length}</p>
-        <p>Estudiantes con puntajes: {studentsWithGrades.filter(s => s.peerEvaluationScore !== null && s.peerEvaluationScore !== undefined).length}</p>
-        <p>Estudiantes con puntajes válidos: {studentsWithGrades.filter(s => s.peerEvaluationScore && s.peerEvaluationScore !== 'N/A').length}</p>
-      </div>
+      <DebugInfo evaluation={evaluation} students={students} studentsWithGrades={studentsWithGrades} />
       <div className="mb-4 flex gap-4 items-center">
-        <button
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-          onClick={handleCopyTable}
-        >
-          Copiar tabla
-        </button>
-        {copied && <span className="text-green-700 font-semibold">¡Tabla copiada!</span>}
-        {!allScoresReady && (
-          <span className="text-yellow-700 bg-yellow-100 px-2 py-1 rounded text-sm font-medium">
-            Advertencia: la tabla podría no estar completa todavía.
-          </span>
-        )}
+        <CopyTableButton studentsWithGrades={studentsWithGrades} onCopy={handleCopyTable} copied={copied} />
+        <LoadingWarning allScoresReady={allScoresReady} />
       </div>
-      {!allScoresReady && (
-        <div className="flex justify-center items-center p-2 text-gray-500 text-sm">Cargando puntajes...</div>
-      )}
+      <LoadingScores allScoresReady={allScoresReady} />
       <ResultsTable students={studentsWithGrades} />
     </>
   )
