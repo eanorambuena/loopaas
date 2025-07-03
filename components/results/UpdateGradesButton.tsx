@@ -21,6 +21,7 @@ export function UpdateGradesButton({ evaluation, students }: UpdateGradesButtonP
       console.log('Number of students:', students.length)
       
       const promises = students.map(async (student) => {
+        console.log('Solicitando actualización de nota para estudiante:', student.userInfoId)
         const response = await fetch('/api/save-grades', {
           method: 'POST',
           headers: {

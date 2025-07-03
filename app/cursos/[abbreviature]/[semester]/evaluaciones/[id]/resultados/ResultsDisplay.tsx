@@ -30,6 +30,7 @@ export function ResultsDisplay({ evaluation, students }: ResultsDisplayProps) {
   // Calcular puntajes asíncronos fila a fila, actualizando por userInfoId
   useEffect(() => {
     if (!evaluation || students.length === 0) return
+    console.log('Iniciando cálculo de puntajes para todos los estudiantes:', students.map(s => s.userInfoId))
     let isCancelled = false
     const promises: Promise<void>[] = students.map((student) => {
       return fetch('/api/get-peer-evaluation-scores', {
