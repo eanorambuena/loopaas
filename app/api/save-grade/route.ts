@@ -11,14 +11,14 @@ export async function POST(req: NextRequest) {
     try {
       const { error } = await supabase
         .from('grades')
-        .upsert({ userInfoId, evaluationId, score }, { onConflict: ['userInfoId', 'evaluationId'] })
+        .insert({ userInfoId, evaluationId, score })
       if (error) {
-        console.error('Supabase upsert error:', error)
+        console.error('Supabase insert error:', error)
         return NextResponse.json({ error: error.message }, { status: 500 })
       }
       return NextResponse.json({ ok: true })
     } catch (err) {
-      console.error('Unexpected error in upsert:', err)
+      console.error('Unexpected error in insert:', err)
       return NextResponse.json({ error: String(err) }, { status: 500 })
     }
   } catch (error) {
