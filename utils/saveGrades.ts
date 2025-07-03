@@ -23,16 +23,14 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
 
   console.log('Peer evaluation scores calculated for students:', peerEvaluationResults.length)
 
-  const newGrades: Grade[] = []
+  const newGrades = []
   for (const peerResult of peerEvaluationResults) {
     const grades = await getGrades(evaluation, peerResult.userInfoId)
-    const groupGrade = parseFloat(grades?.groupGrade ?? '4.0')
+    const groupGrade = 4.0 // Default value, adjust if you have another source
     const newGrade = {
       evaluationId: evaluation.id,
       userInfoId: peerResult.userInfoId,
-      groupGrade: groupGrade.toFixed(2),
-      evaluationGrade: peerResult.peerEvaluationScore.toFixed(2),
-      finalGrade: (groupGrade + peerResult.peerEvaluationScore).toFixed(2),
+      score: Number((groupGrade + peerResult.peerEvaluationScore).toFixed(2)),
     }
     newGrades.push(newGrade)
     console.log(`Final grade for student ${peerResult.userInfoId}:`, newGrade)
