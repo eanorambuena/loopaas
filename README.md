@@ -68,7 +68,94 @@ bun lint
 ### Base de datos (supabase)
 
 #### Diagrama de la base de datos
-![Diagrama de la base de datos](./docs/db_diagram.png)
+![Diagrama de la base de datos](./docs/supabase-schema-jvswworxieqsoglcvkcu.png)
+
+Representado como SQL, el diagrama de la base de datos es el siguiente:
+
+```sql
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.courses (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  abbreviature text,
+  semester text,
+  title text,
+  color text,
+  img text,
+  teacherInfoId uuid,
+  canvasId bigint,
+  CONSTRAINT courses_pkey PRIMARY KEY (id),
+  CONSTRAINT courses_teacherInfoId_fkey FOREIGN KEY (teacherInfoId) REFERENCES public.userInfo(id)
+);
+CREATE TABLE public.evaluations (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  title text,
+  courseId uuid,
+  instructions text,
+  img text,
+  deadLine date,
+  questions jsonb,
+  CONSTRAINT evaluations_pkey PRIMARY KEY (id),
+  CONSTRAINT evaluations_courseId_fkey FOREIGN KEY (courseId) REFERENCES public.courses(id)
+);
+CREATE TABLE public.grades (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  score real,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  userInfoId uuid,
+  evaluationId uuid,
+  CONSTRAINT grades_pkey PRIMARY KEY (id),
+  CONSTRAINT grades_userInfoId_fkey FOREIGN KEY (userInfoId) REFERENCES public.userInfo(id),
+  CONSTRAINT grades_evaluationId_fkey FOREIGN KEY (evaluationId) REFERENCES public.evaluations(id)
+);
+CREATE TABLE public.professors (
+  courseId uuid,
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  teacherInfoId uuid,
+  CONSTRAINT professors_pkey PRIMARY KEY (id),
+  CONSTRAINT professors_teacherInfoId_fkey FOREIGN KEY (teacherInfoId) REFERENCES public.userInfo(id),
+  CONSTRAINT professors_courseId_fkey FOREIGN KEY (courseId) REFERENCES public.courses(id)
+);
+CREATE TABLE public.responses (
+  data jsonb,
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  userInfoId uuid,
+  evaluationId uuid,
+  CONSTRAINT responses_pkey PRIMARY KEY (id),
+  CONSTRAINT responses_userInfoId_fkey FOREIGN KEY (userInfoId) REFERENCES public.userInfo(id),
+  CONSTRAINT responses_evaluationId_fkey FOREIGN KEY (evaluationId) REFERENCES public.evaluations(id)
+);
+CREATE TABLE public.students (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  userInfoId uuid,
+  courseId uuid,
+  group bigint,
+  CONSTRAINT students_pkey PRIMARY KEY (id),
+  CONSTRAINT students_courseId_fkey FOREIGN KEY (courseId) REFERENCES public.courses(id),
+  CONSTRAINT students_userInfoId_fkey FOREIGN KEY (userInfoId) REFERENCES public.userInfo(id)
+);
+CREATE TABLE public.userInfo (
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  firstName text,
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  lastName text,
+  userId uuid,
+  email text,
+  canvasToken text,
+  CONSTRAINT userInfo_pkey PRIMARY KEY (id),
+  CONSTRAINT userInfo_userId_fkey FOREIGN KEY (userId) REFERENCES auth.users(id)
+);
+```
+
+Anteriormente se calculaba la nota final en la plataforma, pero por motivos de simplicidad, se dejó de calcular. Esto se puede ver en el diagrama de la base de datos antiguo.
+
+![Diagrama de la base de datos antiguo](./docs/db_diagram.png)
 
 #### Setup
 
