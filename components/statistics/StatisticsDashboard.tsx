@@ -1,17 +1,23 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import GeneralStatsCards from './GeneralStatsCards'
 import TemporalAnalysis from './TemporalAnalysis'
 import DailyResponsesChart from './DailyResponsesChart'
 import GroupStatsTable from './GroupStatsTable'
+import SectionFilter from './SectionFilter'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import { GeneralStats, TemporalStats, DailyResponse, GroupStats } from './types'
+import { getSection, addSectionToStudents, getUniqueSections } from '@/utils/statistics'
 
 interface StatisticsDashboardProps {
   evaluationId: string
 }
 
 export default function StatisticsDashboard({ evaluationId }: StatisticsDashboardProps) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [stats, setStats] = useState<GroupStats[]>([])
   const [dailyData, setDailyData] = useState<DailyResponse[]>([])
   const [temporalStats, setTemporalStats] = useState<TemporalStats>({
@@ -33,6 +39,26 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
   const [error, setError] = useState<string | null>(null)
   const [sections, setSections] = useState<string[]>([])
   const [selectedSection, setSelectedSection] = useState<string>('Todas')
+
+  // Inicializar sección desde search params
+  useEffect(() => {
+    const sectionFromParams = searchParams.get('section')
+    if (sectionFromParams) {
+      setSelectedSection(sectionFromParams)
+    }
+  }, [searchParams])
+
+  // Actualizar URL cuando cambia la sección
+  const handleSectionChange = (section: string) => {
+    setSelectedSection(section)
+    const params = new URLSearchParams(searchParams.toString())
+    if (section === 'Todas') {
+      params.delete('section')
+    } else {
+      params.set('section', section)
+    }
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -60,18 +86,9 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
         }
         const studentsData = await studentsResponse.json()
 
-        // Calcular sección a partir del grupo (todos menos el último caracter)
-        const getSection = (group: string | undefined | null) => {
-          if (!group || group === 'Sin grupo') return 'Sin sección'
-          return group.slice(0, -1)
-        }
-        // Agregar propiedad section calculada a cada estudiante
-        const studentsWithSection = studentsData.students?.map((s: any) => ({
-          ...s,
-          section: getSection(s.group)
-        })) || []
-        // Extraer secciones únicas
-        const uniqueSections = Array.from(new Set(studentsWithSection.map((s: any) => s.section).filter(Boolean))) as string[]
+        // Agregar propiedad section calculada a cada estudiante y extraer secciones únicas
+        const studentsWithSection = addSectionToStudents(studentsData.students || [])
+        const uniqueSections = getUniqueSections(studentsWithSection)
         setSections(uniqueSections)
 
         // Filtrar estudiantes y respuestas por sección
@@ -250,11 +267,7 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
   }, [evaluationId, selectedSection])
 
   if (loading) {
-    return (
-      <div className='flex items-center justify-center h-64'>
-        <div className='text-lg'>Cargando estadísticas...</div>
-      </div>
-    )
+    return <LoadingSpinner label='Cargando estadísticas...' />
   }
 
   if (error) {
@@ -267,20 +280,11 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
 
   return (
     <div className='space-y-6'>
-      <div className='flex items-center gap-2'>
-        <label htmlFor='section-select' className='font-medium'>Sección:</label>
-        <select
-          id='section-select'
-          className='border rounded px-2 py-1 dark:bg-neutral-900 dark:text-white'
-          value={selectedSection}
-          onChange={e => setSelectedSection(e.target.value)}
-        >
-          <option value='Todas'>Todas</option>
-          {sections.map(section => (
-            <option key={section} value={section}>{section}</option>
-          ))}
-        </select>
-      </div>
+      <SectionFilter
+        sections={sections}
+        selectedSection={selectedSection}
+        onChange={handleSectionChange}
+      />
       <GeneralStatsCards stats={generalStats} />
       <TemporalAnalysis temporalStats={temporalStats} />
       <DailyResponsesChart dailyData={dailyData} />
