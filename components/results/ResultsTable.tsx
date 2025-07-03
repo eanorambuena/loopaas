@@ -4,12 +4,24 @@ import { ColumnDef } from '@tanstack/react-table'
 import { GenericTable } from '@/components/GenericTable'
 import { StudentWithGrades } from '@/utils/schema'
 
+function getSectionFromGroup(group: string | number | null | undefined): string {
+  if (!group) return 'N/A'
+  const g = String(group)
+  if (g.length <= 1) return g
+  return g.slice(0, -1)
+}
+
 interface ResultsTableProps {
   students: StudentWithGrades[]
 }
 
 export function ResultsTable({ students }: ResultsTableProps) {
-  const columns: ColumnDef<StudentWithGrades>[] = [
+  const studentsWithSection = students.map(s => ({
+    ...s,
+    section: getSectionFromGroup(s.group)
+  }))
+
+  const columns: ColumnDef<any>[] = [
     {
       accessorKey: 'userInfo',
       header: 'Estudiante',
@@ -29,11 +41,19 @@ export function ResultsTable({ students }: ResultsTableProps) {
       accessorKey: 'group',
       header: 'Grupo',
       filterFn: (row, columnId, filterValue) => {
-        const rowValue = Number(row.getValue(columnId))
-        const inputValue = Number(filterValue)
-        return filterValue === '' || rowValue === inputValue
+        const rowValue = String(row.getValue(columnId))
+        return filterValue === '' || rowValue === filterValue
       },
       cell: ({ row }) => row.original.group ?? 'N/A'
+    },
+    {
+      accessorKey: 'section',
+      header: 'Sección',
+      filterFn: (row, columnId, filterValue) => {
+        const rowValue = String(row.getValue(columnId))
+        return filterValue === '' || rowValue === filterValue
+      },
+      cell: ({ row }) => row.original.section ?? 'N/A'
     },
     {
       accessorKey: 'peerEvaluationScore',
@@ -51,9 +71,9 @@ export function ResultsTable({ students }: ResultsTableProps) {
 
   return (
     <GenericTable
-      data={students}
+      data={studentsWithSection}
       columns={columns}
-      filterColumnIds={['email', 'group']}
+      filterColumnIds={['email', 'group', 'section']}
       emptyMessage='No hay resultados registrados.'
     />
   )
