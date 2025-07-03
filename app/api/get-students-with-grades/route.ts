@@ -18,14 +18,12 @@ export async function POST(req: Request) {
       try {
         console.log(`Processing student: ${student.userInfo?.firstName} ${student.userInfo?.lastName} (${student.userInfoId})`)
         
-        const grades = await getGrades(evaluation, student.userInfoId)
-        console.log(`Grades for student ${student.userInfoId}:`, grades)
+        const grade = await getGrades(evaluation, student.userInfoId)
+        console.log(`Grade for student ${student.userInfoId}:`, grade)
         
         const result = {
           ...student,
-          groupGrade: grades?.groupGrade ?? 'N/A',
-          coGrade: grades?.evaluationGrade ?? 'N/A',
-          finalGrade: grades?.finalGrade ?? 'N/A'
+          peerEvaluationScore: grade?.score ?? 'N/A',
         }
         
         console.log(`Result for student ${student.userInfoId}:`, result)
@@ -35,9 +33,7 @@ export async function POST(req: Request) {
         console.error(`Error processing student ${student.userInfoId}:`, error)
         return {
           ...student,
-          groupGrade: 'N/A',
-          coGrade: 'N/A',
-          finalGrade: 'N/A'
+          peerEvaluationScore: 'N/A',
         }
       }
     })
