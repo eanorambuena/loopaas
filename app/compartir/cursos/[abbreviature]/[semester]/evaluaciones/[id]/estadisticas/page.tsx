@@ -21,3 +21,26 @@ export default function Page({ params }: EstadisticasPageProps) {
     </div>
   )
 }
+
+export const metadata = {
+  title: 'Estadísticas públicas de la evaluación',
+  description: 'Visualiza y comparte las estadísticas de esta evaluación en IDSApp.',
+  openGraph: {
+    title: 'Estadísticas públicas de la evaluación',
+    description: 'Visualiza y comparte las estadísticas de esta evaluación en IDSApp.',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'IDSApp Estadísticas',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Estadísticas públicas de la evaluación',
+    description: 'Visualiza y comparte las estadísticas de esta evaluación en IDSApp.',
+    images: ['/opengraph-image.png'],
+  },
+}
