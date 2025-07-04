@@ -16,6 +16,7 @@ import {
   fetchStudentsWithGrades
 } from '@/components/results/resultsDisplayLogic'
 import { UpdateScoresButton } from '@/components/results/UpdateScoresButton'
+import { CacheStatus } from '@/components/results/CacheStatus'
 import { useRouter } from 'next/navigation'
 
 interface ResultsDisplayProps {
@@ -34,6 +35,7 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
   const [copied, setCopied] = useState(false)
   const [allScoresReady, setAllScoresReady] = useState(!!initialStudentsWithGrades)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [lastUpdated, setLastUpdated] = useState<Date | undefined>(initialStudentsWithGrades ? new Date() : undefined)
   const pendingPromises = useRef<Promise<any>[]>([])
   const studentsRef = useRef<StudentWithGrades[]>([])
 
@@ -110,6 +112,30 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
     return () => { isCancelled = true }
   }, [evaluation, students, publicView, initialStudentsWithGrades])
 
+  async function handleRefreshCache() {
+    if (!evaluation || !students.length) return
+    
+    setIsUpdating(true)
+    try {
+      const response = await fetch('/api/get-students-with-grades', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ evaluation, students })
+      })
+      
+      if (!response.ok) throw new Error('Error al actualizar datos')
+      
+      const freshData = await response.json()
+      setStudentsWithGrades(freshData)
+      setLastUpdated(new Date())
+      setAllScoresReady(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al actualizar')
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
   function handleCopyTable() {
     if (!studentsWithGrades.length) return
     const headers = ['Estudiante', 'Correo', 'Grupo', 'Sección', 'Puntaje de Coevaluación']
@@ -148,6 +174,16 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
   return (
     <>
       {!publicView && <DebugInfo evaluation={evaluation} students={students} studentsWithGrades={studentsWithGrades} />}
+      
+      {publicView && (
+        <CacheStatus
+          evaluationId={evaluation?.id || ''}
+          onRefresh={handleRefreshCache}
+          isRefreshing={isUpdating}
+          lastUpdated={lastUpdated}
+        />
+      )}
+      
       <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
         <CopyTableButton studentsWithGrades={studentsWithGrades} onCopy={handleCopyTable} copied={copied} />
         {!initialStudentsWithGrades && <LoadingWarning allScoresReady={allScoresReady} />}

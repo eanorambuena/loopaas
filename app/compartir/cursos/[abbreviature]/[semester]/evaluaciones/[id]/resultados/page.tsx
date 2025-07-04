@@ -2,7 +2,7 @@ import Fallback from '@/components/Fallback'
 import { getCourse, getCourseStudents, getEvaluationByParams } from '@/utils/queries'
 import { ResultsDisplay } from '@/components/results/ResultsDisplay'
 import { isDeadlinePassed } from '@/utils/dateUtils'
-import { getStudentsWithGradesSSR } from '@/lib/getStudentsWithGradesSSR'
+import { getCachedResultsWithBackgroundRefresh } from '@/utils/cachedResults'
 
 interface Props {
   params: {
@@ -25,7 +25,7 @@ export default async function Page({ params }: Props) {
   const evaluation = await getEvaluationByParams(params)
   if (!evaluation) return <Fallback>No se encontró la evaluación</Fallback>
   
-  const studentsWithGrades = await getStudentsWithGradesSSR(evaluation, students)
+  const studentsWithGrades = await getCachedResultsWithBackgroundRefresh(evaluation, students)
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-8 opacity-0'>

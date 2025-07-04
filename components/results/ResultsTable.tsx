@@ -24,20 +24,25 @@ export function ResultsTable({ students }: ResultsTableProps) {
 
   // Responsive column visibility: hide Estudiante and Sección on mobile
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    userInfo: window.innerWidth >= 768, // md+
-    section: window.innerWidth >= 768,  // md+
+    userInfo: false, // Start hidden on mobile, will be updated in useEffect
+    section: false,  // Start hidden on mobile, will be updated in useEffect
   })
 
   useEffect(() => {
-    const handleResize = () => {
-      setColumnVisibility((v) => ({
-        ...v,
+    // Set initial visibility based on screen size
+    const updateVisibility = () => {
+      setColumnVisibility({
         userInfo: window.innerWidth >= 768,
         section: window.innerWidth >= 768,
-      }))
+      })
     }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    
+    // Set initial state
+    updateVisibility()
+    
+    // Add resize listener
+    window.addEventListener('resize', updateVisibility)
+    return () => window.removeEventListener('resize', updateVisibility)
   }, [])
 
   const columns: ColumnDef<any>[] = [

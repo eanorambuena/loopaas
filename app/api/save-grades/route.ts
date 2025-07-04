@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { saveGrades } from '@/utils/saveGrades'
+import { ServerResultsCache } from '@/utils/cache'
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +19,12 @@ export async function POST(req: Request) {
     console.log('Calling saveGrades function...')
     await saveGrades(evaluation, students)
     console.log('saveGrades function completed successfully')
+    
+    // Clear cache for this evaluation since grades were updated
+    if (evaluation?.id) {
+      ServerResultsCache.clear(evaluation.id)
+      console.log(`🗑️ Cache cleared for evaluation ${evaluation.id} after grade update`)
+    }
     
     return NextResponse.json({ ok: true, message: 'Grades saved successfully' })
   } catch (error) {
