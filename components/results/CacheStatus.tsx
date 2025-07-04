@@ -39,7 +39,12 @@ export function CacheStatus({ evaluationId, onRefresh, isRefreshing = false, las
           {isLoading 
             ? 'Actualizando...' 
             : lastUpdated 
-              ? `Actualizado ${lastUpdated.toLocaleTimeString()}`
+              ? `Actualizado ${lastUpdated.toLocaleTimeString('es-CL', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                  hour12: false
+                })}`
               : 'Sin datos cacheados'
           }
         </span>
