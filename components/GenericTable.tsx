@@ -7,6 +7,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  OnChangeFn,
   SortingState,
   useReactTable,
   VisibilityState,
@@ -36,7 +37,7 @@ type GenericTableProps<TData> = {
   filterColumnIds?: string[] // optional: IDs de columnas para el input de filtro
   emptyMessage?: string // mensaje personalizado
   columnVisibility?: VisibilityState
-  setColumnVisibility?: (v: VisibilityState) => void
+  setColumnVisibility?: OnChangeFn<VisibilityState>
 }
 
 export function GenericTable<TData>({
@@ -121,7 +122,7 @@ export function GenericTable<TData>({
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
-                  {column.columnDef.meta?.displayName || 
+                                    {(column.columnDef.meta as any)?.displayName ||
                    (typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id)}
                 </DropdownMenuCheckboxItem>
               ))}
