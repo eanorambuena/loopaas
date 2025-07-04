@@ -2,6 +2,7 @@ import Card from '@/components/Card'
 import Fallback from '@/components/Fallback'
 import EvaluationIcon from '@/components/icons/EvaluationIcon'
 import UsersIcon from '@/components/icons/UsersIcon'
+import SettingsIcon from '@/components/icons/SettingsIcon'
 import { isProfessorServer } from '@/utils/isProfessorServer'
 import { evaluationPath, studentsPath } from '@/utils/paths'
 import { getCourse, getCurrentUser, getUserInfo } from '@/utils/queries'
@@ -30,6 +31,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
           <>
             <Card icon={UsersIcon} title='Estudiantes' path={studentsPath(params)} />
             <Card icon={UsersIcon} title='Profesores' path={`/cursos/${params.abbreviature}/${params.semester}/profesores`} />
+            <Card icon={SettingsIcon} title='Configuración' path={`/cursos/${params.abbreviature}/${params.semester}/configuracion`} />
           </>
         )}
       </main>
