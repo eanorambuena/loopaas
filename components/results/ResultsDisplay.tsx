@@ -17,6 +17,7 @@ import {
 } from '@/components/results/resultsDisplayLogic'
 import { UpdateScoresButton } from '@/components/results/UpdateScoresButton'
 import { CacheStatus } from '@/components/results/CacheStatus'
+import { useLocalCache } from '@/utils/hooks/useLocalCache'
 import { useRouter } from 'next/navigation'
 
 interface ResultsDisplayProps {
@@ -30,14 +31,46 @@ interface ResultsDisplayProps {
 
 export function ResultsDisplay({ evaluation, students, abbreviature, semester, publicView, studentsWithGrades: initialStudentsWithGrades }: ResultsDisplayProps) {
   const [studentsWithGrades, setStudentsWithGrades] = useState<StudentWithGrades[]>(initialStudentsWithGrades || [])
-  const [loading, setLoading] = useState(publicView ? !initialStudentsWithGrades?.length : !initialStudentsWithGrades)
+  const [loading, setLoading] = useState(!initialStudentsWithGrades)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
-  const [allScoresReady, setAllScoresReady] = useState(!!initialStudentsWithGrades?.length)
+  const [allScoresReady, setAllScoresReady] = useState(!!initialStudentsWithGrades)
   const [isUpdating, setIsUpdating] = useState(false)
-  const [lastUpdated, setLastUpdated] = useState<Date | undefined>(initialStudentsWithGrades?.length ? new Date() : undefined)
+  const [lastUpdated, setLastUpdated] = useState<Date | undefined>(initialStudentsWithGrades ? new Date() : undefined)
   const pendingPromises = useRef<Promise<any>[]>([])
   const studentsRef = useRef<StudentWithGrades[]>([])
+
+  // Use local cache for public view only
+  const cacheKey = publicView && evaluation?.id ? `results-${evaluation.id}` : 'default'
+  
+  const {
+    data: cachedStudentsWithGrades,
+    loading: cacheLoading,
+    error: cacheError,
+    lastUpdated: cacheLastUpdated,
+    refresh: refreshCache
+  } = useLocalCache(
+    cacheKey,
+    async () => {
+      const response = await fetch('/api/get-students-with-grades', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ evaluation, students })
+      })
+      if (!response.ok) throw new Error('Error al obtener datos')
+      return await response.json()
+    },
+    [evaluation?.id, students.length]
+  )
+
+  // Update state based on cache for public view
+  useEffect(() => {
+    if (publicView && cachedStudentsWithGrades) {
+      setStudentsWithGrades(cachedStudentsWithGrades)
+      setAllScoresReady(true)
+      setLastUpdated(cacheLastUpdated || undefined)
+    }
+  }, [publicView, cachedStudentsWithGrades, cacheLastUpdated])
 
   useEffect(() => {
     if (initialStudentsWithGrades?.length && !publicView) return // SSR: skip client fetching for private view
@@ -113,26 +146,30 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
   }, [evaluation, students, publicView, initialStudentsWithGrades])
 
   async function handleRefreshCache() {
-    if (!evaluation || !students.length) return
-    
-    setIsUpdating(true)
-    try {
-      const response = await fetch('/api/get-students-with-grades', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ evaluation, students })
-      })
+    if (publicView) {
+      await refreshCache()
+    } else {
+      if (!evaluation || !students.length) return
       
-      if (!response.ok) throw new Error('Error al actualizar datos')
-      
-      const freshData = await response.json()
-      setStudentsWithGrades(freshData)
-      setLastUpdated(new Date())
-      setAllScoresReady(true)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar')
-    } finally {
-      setIsUpdating(false)
+      setIsUpdating(true)
+      try {
+        const response = await fetch('/api/get-students-with-grades', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ evaluation, students })
+        })
+        
+        if (!response.ok) throw new Error('Error al actualizar datos')
+        
+        const freshData = await response.json()
+        setStudentsWithGrades(freshData)
+        setLastUpdated(new Date())
+        setAllScoresReady(true)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al actualizar')
+      } finally {
+        setIsUpdating(false)
+      }
     }
   }
 
@@ -169,7 +206,7 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
     )
   }
 
-  if (error) return <ErrorMessage error={error} />
+  if (error || cacheError) return <ErrorMessage error={error || cacheError || 'Error desconocido'} />
 
   return (
     <>
@@ -179,17 +216,17 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
         <CacheStatus
           evaluationId={evaluation?.id || ''}
           onRefresh={handleRefreshCache}
-          isRefreshing={isUpdating}
+          isRefreshing={isUpdating || cacheLoading}
           lastUpdated={lastUpdated}
         />
       )}
       
       <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
         <CopyTableButton studentsWithGrades={studentsWithGrades} onCopy={handleCopyTable} copied={copied} />
-        {(!initialStudentsWithGrades?.length || publicView) && <LoadingWarning allScoresReady={allScoresReady} />}
-        {(!initialStudentsWithGrades?.length || publicView) && <ShareLinkButton abbreviature={abbreviature || ''} semester={semester || ''} evaluation={evaluation} />}
+        {(!initialStudentsWithGrades || publicView) && <LoadingWarning allScoresReady={allScoresReady} />}
+        {(!initialStudentsWithGrades || publicView) && <ShareLinkButton abbreviature={abbreviature || ''} semester={semester || ''} evaluation={evaluation} />}
       </div>
-      {(!initialStudentsWithGrades?.length || publicView) && <LoadingScores allScoresReady={allScoresReady || isUpdating} />}
+      {(!initialStudentsWithGrades || publicView) && <LoadingScores allScoresReady={allScoresReady || isUpdating || cacheLoading} />}
       <ResultsTable students={studentsWithGrades} />
     </>
   )

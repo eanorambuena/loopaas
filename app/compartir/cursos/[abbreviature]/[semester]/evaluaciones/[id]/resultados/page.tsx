@@ -2,7 +2,7 @@ import Fallback from '@/components/Fallback'
 import { getCourse, getCourseStudents, getEvaluationByParams } from '@/utils/queries'
 import { ResultsDisplay } from '@/components/results/ResultsDisplay'
 import { isDeadlinePassed } from '@/utils/dateUtils'
-import { getCachedResults } from '@/utils/cachedResults'
+import { getStudentsWithGradesSSR } from '@/lib/getStudentsWithGradesSSR'
 
 interface Props {
   params: {
@@ -12,8 +12,7 @@ interface Props {
   }
 }
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+export const revalidate = 60
 
 export default async function Page({ params }: Props) {
   const course = await getCourse(params.abbreviature, params.semester)
@@ -26,9 +25,7 @@ export default async function Page({ params }: Props) {
   const evaluation = await getEvaluationByParams(params)
   if (!evaluation) return <Fallback>No se encontró la evaluación</Fallback>
   
-  // Don't wait for grades calculation to avoid timeout
-  // The client will fetch the data
-  const studentsWithGrades: any[] = []
+  const studentsWithGrades = await getStudentsWithGradesSSR(evaluation, students)
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-8 opacity-0'>
