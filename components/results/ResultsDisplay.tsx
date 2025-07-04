@@ -30,17 +30,17 @@ interface ResultsDisplayProps {
 
 export function ResultsDisplay({ evaluation, students, abbreviature, semester, publicView, studentsWithGrades: initialStudentsWithGrades }: ResultsDisplayProps) {
   const [studentsWithGrades, setStudentsWithGrades] = useState<StudentWithGrades[]>(initialStudentsWithGrades || [])
-  const [loading, setLoading] = useState(!initialStudentsWithGrades)
+  const [loading, setLoading] = useState(publicView ? !initialStudentsWithGrades?.length : !initialStudentsWithGrades)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
-  const [allScoresReady, setAllScoresReady] = useState(!!initialStudentsWithGrades)
+  const [allScoresReady, setAllScoresReady] = useState(!!initialStudentsWithGrades?.length)
   const [isUpdating, setIsUpdating] = useState(false)
-  const [lastUpdated, setLastUpdated] = useState<Date | undefined>(initialStudentsWithGrades ? new Date() : undefined)
+  const [lastUpdated, setLastUpdated] = useState<Date | undefined>(initialStudentsWithGrades?.length ? new Date() : undefined)
   const pendingPromises = useRef<Promise<any>[]>([])
   const studentsRef = useRef<StudentWithGrades[]>([])
 
   useEffect(() => {
-    if (initialStudentsWithGrades) return // SSR: skip client fetching
+    if (initialStudentsWithGrades?.length && !publicView) return // SSR: skip client fetching for private view
     let isCancelled = false
     async function fetchGradesRowByRow() {
       setLoading(true)
@@ -186,10 +186,10 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
       
       <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
         <CopyTableButton studentsWithGrades={studentsWithGrades} onCopy={handleCopyTable} copied={copied} />
-        {!initialStudentsWithGrades && <LoadingWarning allScoresReady={allScoresReady} />}
-        {!initialStudentsWithGrades && <ShareLinkButton abbreviature={abbreviature || ''} semester={semester || ''} evaluation={evaluation} />}
+        {(!initialStudentsWithGrades?.length || publicView) && <LoadingWarning allScoresReady={allScoresReady} />}
+        {(!initialStudentsWithGrades?.length || publicView) && <ShareLinkButton abbreviature={abbreviature || ''} semester={semester || ''} evaluation={evaluation} />}
       </div>
-      {!initialStudentsWithGrades && <LoadingScores allScoresReady={allScoresReady || isUpdating} />}
+      {(!initialStudentsWithGrades?.length || publicView) && <LoadingScores allScoresReady={allScoresReady || isUpdating} />}
       <ResultsTable students={studentsWithGrades} />
     </>
   )

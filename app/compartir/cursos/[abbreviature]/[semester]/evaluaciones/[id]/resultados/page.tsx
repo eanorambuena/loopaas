@@ -2,7 +2,7 @@ import Fallback from '@/components/Fallback'
 import { getCourse, getCourseStudents, getEvaluationByParams } from '@/utils/queries'
 import { ResultsDisplay } from '@/components/results/ResultsDisplay'
 import { isDeadlinePassed } from '@/utils/dateUtils'
-import { getCachedResultsWithBackgroundRefresh } from '@/utils/cachedResults'
+import { getCachedResults } from '@/utils/cachedResults'
 
 interface Props {
   params: {
@@ -12,7 +12,8 @@ interface Props {
   }
 }
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function Page({ params }: Props) {
   const course = await getCourse(params.abbreviature, params.semester)
@@ -25,7 +26,9 @@ export default async function Page({ params }: Props) {
   const evaluation = await getEvaluationByParams(params)
   if (!evaluation) return <Fallback>No se encontró la evaluación</Fallback>
   
-  const studentsWithGrades = await getCachedResultsWithBackgroundRefresh(evaluation, students)
+  // Don't wait for grades calculation to avoid timeout
+  // The client will fetch the data
+  const studentsWithGrades: any[] = []
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-8 opacity-0'>
@@ -34,7 +37,7 @@ export default async function Page({ params }: Props) {
         <p className='text-red-500 w-full'>Advertencia: La evaluación aún no ha finalizado</p>
       )}
       <ResultsDisplay
-          evaluation={evaluation}
+        evaluation={evaluation}
         students={students}
         studentsWithGrades={studentsWithGrades}
         abbreviature={params.abbreviature}

@@ -15,17 +15,10 @@ export async function getCachedResults(
     return cachedResults
   }
 
-  // Check if cache is stale and we should refresh in background
-  const isStale = ServerResultsCache.isStale(evaluationId)
-  
-  // Fetch fresh results
-  console.log(`🔄 Fetching fresh results for evaluation ${evaluationId}`)
-  const freshResults = await getStudentsWithGradesSSR(evaluation, students)
-  
-  // Cache the results
-  ServerResultsCache.set(evaluationId, freshResults)
-  
-  return freshResults
+  // For public view, return empty array to avoid timeout
+  // The client will fetch the data
+  console.log(`⏱️ No cache available for evaluation ${evaluationId}, returning empty for fast SSR`)
+  return []
 }
 
 export async function getCachedResultsWithBackgroundRefresh(
