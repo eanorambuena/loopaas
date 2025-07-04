@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
@@ -28,7 +28,7 @@ export default function ConfiguracionCursoPage() {
     fetchData()
   }, [params.abbreviature, params.semester])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setCourse({ ...course, [e.target.name]: e.target.value })
   }
 

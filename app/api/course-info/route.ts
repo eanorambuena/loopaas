@@ -22,6 +22,9 @@ export async function GET(req: Request) {
   if (error || !course) {
     return NextResponse.json({ error: 'No se encontró el curso' }, { status: 404 })
   }
+  if (!userInfo || !userInfo.id) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
   const isProfessor = await isProfessorServer({ userInfoId: String(userInfo.id), courseId: String(course.id) })
   return NextResponse.json({ course, isProfessor })
 } 
