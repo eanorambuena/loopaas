@@ -61,7 +61,7 @@ export default function ConfiguracionCursoPage() {
         <Input label="Semestre" name="semester" value={course.semester || ''} onChange={handleChange} required />
         <Input label="Color" name="color" type="color" value={course.color || '#eeeeee'} onChange={handleChange} />
         <Input label="URL de imagen" name="img" value={course.img || ''} onChange={handleChange} />
-        <Button type="submit" disabled={saving} className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white">
+        <Button type="submit" disabled={saving} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
           {saving ? 'Guardando...' : 'Guardar cambios'}
         </Button>
       </form>
