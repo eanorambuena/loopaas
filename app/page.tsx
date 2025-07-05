@@ -1,14 +1,16 @@
-import { Spotlight } from '@/components/ui/spotlight-new'
 import Link from 'next/link'
 
 export default async function Index() {
   return (
     <div className='bg-center min-h-screen max-w-screen bg-cover bg-[url(../public/background-compressed.webp)] bg-gray-800 bg-blend-multiply flex items-center justify-center'>
-      <Spotlight />
-      <main className='px-14 mx-auto text-center py-24 lg:py-56'>
+      <main className='flex flex-col gap-4 px-14 mx-auto text-center py-24 lg:py-56'>
         <h1 className="sr-only">Instituto para el Desarrollo Sustentable App</h1>
-        <h2 className='mb-4 text-4xl !leading-tight text-white md:text-5xl lg:text-6xl'>Convocando saberes para el<br className="hidden lg:inline" /> cuidado de la Tierra</h2>
-        <p className='mb-8 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 lg:px-48'>En esta plataforma del Instituto para el Desarrollo Sustentable podrás encontrar las coevaluaciones de todos los cursos.</p>
+        <h2 className='text-4xl md:text-6xl text-balance font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50 lg:text-7xl'>
+          Convocando saberes para el cuidado de la Tierra
+        </h2>
+        <p className='mb-8 text-lg font-normal text-balance text-gray-300 lg:text-xl sm:px-16 lg:px-48'>
+          En esta plataforma del Instituto para el Desarrollo Sustentable podrás encontrar las coevaluaciones de todos los cursos.
+        </p>
         <div className='flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0'>
           <Link href='/cursos'className='inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-900'>
             Ir a los Cursos

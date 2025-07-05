@@ -3,21 +3,25 @@ import React from 'react'
 import { CardBody, CardContainer, CardItem } from '@/components/ui/3d-card'
 
 export interface CardProps {
-  icon: React.FunctionComponent<{ size: number }>
-  title: string
+  icon?: React.FunctionComponent<{ size: number }>
+  title?: string
   path?: string
   className?: string
+  children?: React.ReactNode
 }
 
-export default function Card({ icon, path, title, className } : CardProps) {
+export default function Card({ icon, path, title, className, children } : CardProps) {
   if (!path) {
     return (
       <CardContainer>
-        <CardBody className={`max-w-4xl bg-gray-50 aspect-square flex flex-col justify-center items-center relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] rounded-xl p-6 border ${className}`}>
-          <CardItem className='flex flex-col justify-center items-center'>
-            {icon({ size: 48 })}
-            <h3 className="text-xl font-bold">{title}</h3>
-          </CardItem>
+        <CardBody className={`w-full h-fit max-w-4xl bg-gray-50 flex flex-col gap-4 justify-center items-center relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] rounded-xl p-6 border ${className}`}>
+          {(icon || title) &&(
+            <CardItem className='flex flex-col justify-center items-center'>
+              {icon && icon({ size: 48 })}
+              {title && <h3 className="text-xl font-bold">{title}</h3>}
+            </CardItem>
+          )}
+          {children}
         </CardBody>
       </CardContainer>
     )
@@ -27,7 +31,9 @@ export default function Card({ icon, path, title, className } : CardProps) {
     <Link
       href={path}
     >
-      <Card icon={icon} title={title} className={className} />
+      <Card icon={icon} title={title} className={className}>
+        {children}
+      </Card>
     </Link>
   )
 }

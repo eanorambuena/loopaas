@@ -6,6 +6,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { GeistSans } from 'geist/font/sans'
 import './globals.css'
+import { Spotlight } from '@/components/ui/spotlight-new'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -26,11 +27,12 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={GeistSans.className}>
-      <body className="bg-background text-foreground">
-        <main className="min-h-screen flex flex-col items-center">
+      <body className="bg-background overflow-x-hidden text-foreground">
+        <main className="min-h-screen overflow-x-hidden flex flex-col items-center">
           <Header />
           <GoBackLink />
-          <section className="flex-1 w-full flex flex-col gap-5 items-center">
+          <section className="flex-1 overflow-x-hidden w-full flex flex-col gap-5 items-center">
+            <Spotlight />
             {children}
             <Toaster />
             <Footer />

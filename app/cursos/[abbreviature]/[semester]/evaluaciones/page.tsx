@@ -30,7 +30,8 @@ export default async function Page({ params }: { params: { abbreviature: string,
     .eq('courseId', courses?.[0].id)
     .order('created_at', { ascending: false })
 
-  if (courseEvaluationsError || !courseEvaluations || courseEvaluations?.length === 0)
+  const thereIsNoEvaluations = courseEvaluationsError || !courseEvaluations || courseEvaluations?.length === 0
+  if (thereIsNoEvaluations && !isProfessor)
     return <Fallback>No se encontraron evaluaciones</Fallback>
 
   return (
