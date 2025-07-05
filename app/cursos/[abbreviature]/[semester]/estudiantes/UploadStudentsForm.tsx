@@ -1,7 +1,7 @@
 'use client'
 
 import Input from '@/components/Input'
-import SecondaryButton from '@/components/SecondaryButton'
+import MainButton from '@/components/MainButton'
 import { useState } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -117,14 +117,14 @@ export default function UploadStudentsForm() {
           onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
           required
         />
-        <SecondaryButton
+        <MainButton
           className='w-full'
           type='submit'
           pendingText='Agregando estudiante...'
           disabled={loading}
         >
           Agregar estudiante
-        </SecondaryButton>
+        </MainButton>
       </form>
       <form onSubmit={handleSubmit}  className='flex flex-col gap-4 border border-foreground/20 rounded-md p-4'>
         <legend className='text-lg flex flex-col gap-2'>
@@ -142,13 +142,13 @@ export default function UploadStudentsForm() {
           onChange={(e) => setCsv(e.target.value)}
           required
         />
-        <SecondaryButton
+        <MainButton
           className='w-full'
           type='submit'
           pendingText='Guardando estudiantes...'
         >
           Importar estudiantes desde CSV
-        </SecondaryButton>
+        </MainButton>
       </form>
     </div>
   )
