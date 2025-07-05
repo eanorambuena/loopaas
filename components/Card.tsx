@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
+import { CardBody, CardContainer, CardItem } from '@/components/ui/3d-card'
 
 export interface CardProps {
   icon: React.FunctionComponent<{ size: number }>
@@ -11,12 +12,14 @@ export interface CardProps {
 export default function Card({ icon, path, title, className } : CardProps) {
   if (!path) {
     return (
-      <div className={`w-full max-w-4xl rounded-md bg-[#eeeeee] dark:bg-gray-900 ${className}`}>
-        <div className="flex gap-2 p-10 flex-col items-center justify-center">
-          {icon({ size: 48 })}
-          <h3 className="text-xl font-bold">{title}</h3>
-        </div>
-      </div>
+      <CardContainer>
+        <CardBody className={`w-full max-w-4xl rounded-md bg-[#eeeeee] dark:bg-gray-900 ${className}`}>
+          <CardItem>
+            {icon({ size: 48 })}
+            <h3 className="text-xl font-bold">{title}</h3>
+          </CardItem>
+        </CardBody>
+      </CardContainer>
     )
   }
 
