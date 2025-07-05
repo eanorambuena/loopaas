@@ -13,8 +13,8 @@ export default function Card({ icon, path, title, className } : CardProps) {
   if (!path) {
     return (
       <CardContainer>
-        <CardBody className={`w-full max-w-4xl rounded-md bg-[#eeeeee] dark:bg-gray-900 ${className}`}>
-          <CardItem>
+        <CardBody className={`size-16 bg-gray-50 aspect-square flex flex-col justify-center items-center relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] rounded-xl p-6 border ${className}`}>
+          <CardItem className='flex flex-col justify-center items-center'>
             {icon({ size: 48 })}
             <h3 className="text-xl font-bold">{title}</h3>
           </CardItem>
@@ -25,7 +25,6 @@ export default function Card({ icon, path, title, className } : CardProps) {
 
   return (
     <Link
-      className={`w-full max-w-4xl rounded-md flex justify-center items-center bg-[#eeeeee] dark:bg-gray-900 hover:scale-105 transition-transform duration-300 hover:shadow-[0_20px_30px_rgba(_8,_184,_112,_0.7)] ${className}`}
       href={path}
     >
       <Card icon={icon} title={title} className={className} />

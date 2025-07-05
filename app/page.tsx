@@ -1,8 +1,10 @@
+import { Spotlight } from '@/components/ui/spotlight-new'
 import Link from 'next/link'
 
 export default async function Index() {
   return (
     <div className='bg-center min-h-screen max-w-screen bg-cover bg-[url(../public/background-compressed.webp)] bg-gray-800 bg-blend-multiply flex items-center justify-center'>
+      <Spotlight />
       <main className='px-14 mx-auto text-center py-24 lg:py-56'>
         <h1 className="sr-only">Instituto para el Desarrollo Sustentable App</h1>
         <h2 className='mb-4 text-4xl !leading-tight text-white md:text-5xl lg:text-6xl'>Convocando saberes para el<br className="hidden lg:inline" /> cuidado de la Tierra</h2>
