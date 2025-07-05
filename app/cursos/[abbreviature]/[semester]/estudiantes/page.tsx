@@ -37,8 +37,6 @@ export default async function Page({ params }: { params: { abbreviature: string,
   let students
   try {
     students = course && await getCourseStudents({ course })
-    if (!students ||students?.length === 0)
-      return <Fallback>No hay estudiantes inscritos en el curso</Fallback>
   }
   catch (error) {
     Console.Error(`Error al obtener los estudiantes: ${error}`)
