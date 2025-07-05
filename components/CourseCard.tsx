@@ -18,7 +18,7 @@ export default async function CourseCard({ course }: { course: any }) {
   return (
     <Card
       path={`/cursos/${course.abbreviature}/${course.semester}`}
-      className='w-fit max-w-4xl p-0 ga-0'
+      className='w-fit max-w-4xl pt-0 px-0 '
     >
       <CardItem>
         <img src={course.img} alt={course.title} className="w-full rounded-t-md" />
