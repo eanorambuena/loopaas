@@ -47,7 +47,7 @@ export default function DeleteCourseButton({ courseId }: { courseId: string }) {
     })
   }
   return (
-    <Button onClick={handleDelete} className="mt-4 w-fit self-end bg-red-500 hover:bg-red-600 text-white dark:bg-red-600 dark:hover:bg-red-700 flex items-center gap-2">
+    <Button onClick={handleDelete} className="mt-4 w-fit self-end bg-red-500 hover:bg-red-600 text-white dark:bg-red-700 dark:hover:bg-red-800 flex items-center gap-2">
       <Trash2Icon size={20} />
       Eliminar curso
     </Button>
