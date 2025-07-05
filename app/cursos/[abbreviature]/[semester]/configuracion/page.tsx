@@ -6,6 +6,7 @@ import Input from '@/components/Input'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import DeleteCourseButton from '../DeleteCourseButton'
+import MainButton from '@/components/MainButton'
 
 export default function ConfiguracionCursoPage() {
   const router = useRouter()
@@ -61,9 +62,9 @@ export default function ConfiguracionCursoPage() {
         <Input label="Semestre" name="semester" value={course.semester || ''} onChange={handleChange} required />
         <Input label="Color" name="color" type="color" value={course.color || '#eeeeee'} onChange={handleChange} />
         <Input label="URL de imagen" name="img" value={course.img || ''} onChange={handleChange} />
-        <Button type="submit" disabled={saving} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+        <MainButton type="submit" disabled={saving}>
           {saving ? 'Guardando...' : 'Guardar cambios'}
-        </Button>
+        </MainButton>
       </form>
       {isProfessor && (
         <div className="mt-8 border-2 border-red-600 rounded-lg p-6 bg-red-50 dark:bg-red-950/90">
@@ -76,4 +77,4 @@ export default function ConfiguracionCursoPage() {
       )}
     </div>
   )
-} 
+}

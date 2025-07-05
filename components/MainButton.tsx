@@ -8,7 +8,7 @@ interface Props extends SubmitButtonProps {
 export default function MainButton({ children, className = '', ...props }: Props) {
   return (
     <SubmitButton
-      className={`bg-emerald-600 text-emerald-50 rounded-md px-4 py-2 mb-2 font-semibold hover:scale-105 transition-transform duration-300 hover:bg-emerald-700 ${className}`}
+      className={`bg-emerald-700 text-emerald-50 rounded-md px-4 py-2 mb-2 font-semibold hover:scale-105 transition-transform duration-300 hover:bg-emerald-800 ${className}`}
       {...props}
     >
       {children}
