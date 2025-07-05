@@ -61,14 +61,16 @@ export default function ConfiguracionCursoPage() {
         <Input label="Semestre" name="semester" value={course.semester || ''} onChange={handleChange} required />
         <Input label="Color" name="color" type="color" value={course.color || '#eeeeee'} onChange={handleChange} />
         <Input label="URL de imagen" name="img" value={course.img || ''} onChange={handleChange} />
-        <Button type="submit" disabled={saving}>{saving ? 'Guardando...' : 'Guardar cambios'}</Button>
+        <Button type="submit" disabled={saving} className="flex items-center gap-2">
+          {saving ? 'Guardando...' : 'Guardar cambios'}
+        </Button>
       </form>
       {isProfessor && (
-        <div className="mt-8 border-2 border-red-600 rounded-lg p-6 bg-red-50 dark:bg-red-950">
-          <h2 className="text-lg font-bold text-red-700 flex items-center gap-2 mb-2">
+        <div className="mt-8 border-2 border-red-600 rounded-lg p-6 bg-red-50 dark:bg-red-950/90">
+          <h2 className="text-lg font-bold flex items-center gap-2 mb-2">
             <span aria-label="Peligro" title="Peligro">⚠️</span> Danger Zone
           </h2>
-          <p className="mb-4 text-red-700 font-semibold">Eliminar el curso es irreversible. Todos los datos asociados se perderán.</p>
+          <p className="mb-4 font-semibold">Eliminar el curso es irreversible. Todos los datos asociados se perderán.</p>
           <DeleteCourseButton courseId={course.id} />
         </div>
       )}
