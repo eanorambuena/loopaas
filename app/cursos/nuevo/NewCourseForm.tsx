@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 
 const DEFAULT_COLOR = '#eeeeee'
+const DEFAULT_PROFESSOR_GROUP = 1000
 
 interface Props {
   userInfoId?: string
@@ -20,6 +21,31 @@ export default function NewCourseForm({ userInfoId }: Props) {
   const [pending, setPending] = useState(false)
 
   if (!userInfoId) return null
+
+  const addProfessorToCourse = async (courseId: string) => {
+    await supabase.from('professors').insert({ teacherInfoId: userInfoId, courseId })
+
+    await supabase.from('students').insert({ 
+      userInfoId: userInfoId, 
+      courseId, 
+      group: DEFAULT_PROFESSOR_GROUP 
+    })
+  }
+
+  const handleCourseCreationError = (error: any) => {
+    if (error.code === '23505') {
+      return toast({
+        title: 'Error',
+        description: 'El curso ya existe. Si crees que esto es un error, por favor ponte en contacto con nosotros.',
+        variant: 'destructive'
+      })
+    }
+    return toast({
+      title: 'Error',
+      description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros. Código de error: ${error.code}`,
+      variant: 'destructive'
+    })
+  }
 
   // --- CANVAS FORM ---
   const handleCanvasSubmit = async (e: any) => {
@@ -58,21 +84,10 @@ export default function NewCourseForm({ userInfoId }: Props) {
       .single()
     setPending(false)
     if (error) {
-      if (error.code === '23505') {
-        return toast({
-          title: 'Error',
-          description: 'El curso ya existe. Si crees que esto es un error, por favor ponte en contacto con nosotros.',
-          variant: 'destructive'
-        })
-      }
-      return toast({
-        title: 'Error',
-        description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros. Código de error: ${error.code}`,
-        variant: 'destructive'
-      })
+      return handleCourseCreationError(error)
     }
     if (data && data.id) {
-      await supabase.from('professors').insert({ teacherInfoId: userInfoId, courseId: data.id })
+      await addProfessorToCourse(data.id)
     }
     return toast({
       title: 'Éxito',
@@ -107,21 +122,10 @@ export default function NewCourseForm({ userInfoId }: Props) {
       .single()
     setPending(false)
     if (error) {
-      if (error.code === '23505') {
-        return toast({
-          title: 'Error',
-          description: 'El curso ya existe. Si crees que esto es un error, por favor ponte en contacto con nosotros.',
-          variant: 'destructive'
-        })
-      }
-      return toast({
-        title: 'Error',
-        description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros. Código de error: ${error.code}`,
-        variant: 'destructive'
-      })
+      return handleCourseCreationError(error)
     }
     if (data && data.id) {
-      await supabase.from('professors').insert({ teacherInfoId: userInfoId, courseId: data.id })
+      await addProfessorToCourse(data.id)
     }
     return toast({
       title: 'Éxito',
