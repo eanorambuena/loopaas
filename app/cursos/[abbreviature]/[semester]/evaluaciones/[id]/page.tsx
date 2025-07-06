@@ -19,7 +19,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
   })
   console.log(`Answering evaluation ${user.email}, isCourseProfessor: ${isCourseProfessor}`)
 
-  if (!await isStudentInCourse(course.id, userInfo.id)) {
+  if (!isCourseProfessor && !await isStudentInCourse(course.id, userInfo.id)) {
     return <Fallback>Debes estar inscrito en el curso para ver esta evaluación</Fallback>
   }
 
