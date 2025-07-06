@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <GoBackLink />
           <section className="flex-1 overflow-x-hidden w-full flex flex-col gap-5 items-center">
-            <Spotlight />
+            <Spotlight className="overflow-hidden" />
             {children}
             <Toaster />
             <Footer />
