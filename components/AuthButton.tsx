@@ -1,11 +1,12 @@
 'use client'
 
+import { getNavbarButtonStyles, NavbarButton } from '@/components/ui/resizable-navbar'
 import useCurrentUser from '@/utils/hooks/useCurrentUser'
 import useUserInfo from '@/utils/hooks/useUserInfo'
 import { createClient } from '@/utils/supabase/client'
+import { useUser } from '@auth0/nextjs-auth0'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useUser } from '@auth0/nextjs-auth0'
 
 export default function AuthButton() {
   const supabase = createClient()
@@ -29,18 +30,12 @@ export default function AuthButton() {
   return user ? (
     <div className="flex items-center gap-4">
       {userInfo?.firstName && <span className="hidden sm:inline">Hola, {userInfo?.firstName}!</span>}
-      <button
-        className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
-        onClick={signOut}
-      >
+      <NavbarButton variant='primary' onClick={signOut}>
         Cerrar sesión
-      </button>
+      </NavbarButton>
     </div>
   ) : (
-    <Link
-      href="/login"
-      className="py-2 px-3 flex rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
-    >
+    <Link href="/login" className={getNavbarButtonStyles('primary')}>
       Iniciar sesión
     </Link>
   )

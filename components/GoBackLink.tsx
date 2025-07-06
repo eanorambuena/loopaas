@@ -12,7 +12,7 @@ export default function GoBackLink() {
   }
 
   return (
-    <section className="w-full flex flex-row justify-start items-center max-w-4xl px-3 mt-8">
+    <section className="w-full flex flex-row justify-start items-center max-w-4xl mt-8">
       <a
         className='flex items-center py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover group text-sm w-fit'
         onClick={goBack}

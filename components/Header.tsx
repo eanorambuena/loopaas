@@ -1,8 +1,8 @@
 'use client'
 
-import AuthButton from '@/components/AuthButton'
 import useCurrentUser from '@/utils/hooks/useCurrentUser'
 import HoverableLink from '@/components/HoverableLink'
+import { ResizableNavbar } from '@/components/ResizeableNavbar'
 import { useUser } from '@auth0/nextjs-auth0'
 import { useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
@@ -21,7 +21,7 @@ async function signInWithAuth0(email: string) {
   }
 }
 
-export default function Header() {
+export default function Header() { 
   const { user, isLoading, error } = useCurrentUser()
   const { user: auth0User, isLoading: iL } = useUser()
 
@@ -40,24 +40,27 @@ export default function Header() {
   }, [auth0User, supabase.auth])
 
   const noUserOrUserInfoFallback = (
-    <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-      <div className="w-full max-w-4xl flex justify-end items-center p-3 text-sm">
-        <AuthButton />
-      </div>
-    </nav>
+    <ResizableNavbar items={[]} />
   )
   
   if (isLoading || error || !user) return noUserOrUserInfoFallback
 
+  const navItems = [
+    {
+      name: 'Cursos',
+      link: '/cursos',
+    },
+    {
+      name: 'Perfil',
+      link: '/perfil',
+    },
+    {
+      name: 'Ayuda',
+      link: 'mailto:soporte.idsapp@gmail.com',
+    }
+  ]
+
   return (
-    <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-      <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-        <div className="flex gap-4">
-          <HoverableLink href="/cursos">Cursos</HoverableLink>
-          <HoverableLink href="/perfil">Perfil</HoverableLink>
-        </div>
-        <AuthButton />
-      </div>
-    </nav>
+    <ResizableNavbar items={navItems} />
   )
 }
