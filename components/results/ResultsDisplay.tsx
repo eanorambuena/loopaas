@@ -221,7 +221,7 @@ export function ResultsDisplay({ evaluation, students, abbreviature, semester, p
         />
       )}
       
-      <div className="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
+      <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
         <CopyTableButton studentsWithGrades={studentsWithGrades} onCopy={handleCopyTable} copied={copied} />
         {(!initialStudentsWithGrades || publicView) && <LoadingWarning allScoresReady={allScoresReady} />}
         {(!initialStudentsWithGrades || publicView) && <ShareLinkButton abbreviature={abbreviature || ''} semester={semester || ''} evaluation={evaluation} />}

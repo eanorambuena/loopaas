@@ -25,10 +25,10 @@ export default async function Page({ params }: Props) {
   if (!evaluation) return <Fallback>No se encontró la evaluación</Fallback>
   
   return (
-    <div className='animate-in flex-1 flex flex-col gap-4 sm:gap-6 p-4 sm:p-8 opacity-0'>
-      <h1 className='text-2xl sm:text-3xl font-bold break-words'>{evaluation.title}</h1>
+    <div className='animate-in flex-1 flex flex-col gap-3 sm:gap-4 md:gap-6 p-3 sm:p-4 md:p-8 opacity-0'>
+      <h1 className='text-xl sm:text-2xl md:text-3xl font-bold break-words leading-tight'>{evaluation.title}</h1>
       {!isDeadlinePassed(evaluation.deadLine) && (
-        <p className='text-red-500 w-full text-sm sm:text-base'>Advertencia: La evaluación aún no ha finalizado</p>
+        <p className='text-red-500 w-full text-xs sm:text-sm md:text-base'>Advertencia: La evaluación aún no ha finalizado</p>
       )}
       <ResultsDisplay evaluation={evaluation} students={students} abbreviature={params.abbreviature} semester={params.semester} />
     </div>

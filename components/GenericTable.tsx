@@ -83,7 +83,7 @@ export function GenericTable<TData>({
 
   return (
     <div className='w-full'>
-      <div className='flex flex-col sm:flex-row items-start sm:items-center py-4 gap-2 sm:gap-0'>
+      <div className='flex flex-col sm:flex-row items-start sm:items-center py-3 sm:py-4 gap-2 sm:gap-0'>
         <div className='flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto'>
           {filterColumnIds?.map((columnId) => {
             const column = table.getColumn(columnId)
@@ -100,15 +100,15 @@ export function GenericTable<TData>({
                 placeholder={`Filtrar por ${label}`}
                 value={(column.getFilterValue() as string) ?? ''}
                 onChange={(e) => column.setFilterValue(e.target.value)}
-                className='w-full sm:max-w-sm'
+                className='w-full sm:max-w-sm text-xs sm:text-sm'
               />
             )
           })}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='w-full sm:w-auto sm:ml-auto'>
-              Columnas <ChevronDown />
+            <Button variant='outline' className='w-full sm:w-auto sm:ml-auto text-xs sm:text-sm'>
+              Columnas <ChevronDown className='w-3 h-3 sm:w-4 sm:h-4' />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end' className='bg-white dark:bg-black border shadow-md rounded-md'>
@@ -118,7 +118,7 @@ export function GenericTable<TData>({
               .map((column) => (
                 <DropdownMenuCheckboxItem
                   key={column.id}
-                  className='capitalize'
+                  className='capitalize text-xs sm:text-sm'
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
@@ -167,18 +167,19 @@ export function GenericTable<TData>({
         </Table>
       </div>
 
-      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between py-4 gap-4'>
-        <p className='text-sm text-muted-foreground'>
+      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between py-3 sm:py-4 gap-3 sm:gap-4'>
+        <p className='text-xs sm:text-sm text-muted-foreground'>
           Mostrando {table.getRowModel().rows.length} de{' '}
           {table.getFilteredRowModel().rows.length} resultados
         </p>
-        <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto'>
+        <div className='flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto'>
           <div className='flex items-center gap-2'>
             <Button
               variant='outline'
               size='sm'
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
+              className='text-xs sm:text-sm'
             >
               Previo
             </Button>
@@ -187,11 +188,12 @@ export function GenericTable<TData>({
               size='sm'
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
+              className='text-xs sm:text-sm'
             >
               Siguiente
             </Button>
           </div>
-          <div className='text-sm opacity-90'>
+          <div className='text-xs sm:text-sm opacity-90'>
             Página{' '}
             {table.getState().pagination.pageIndex + 1} de{' '}
             {table.getPageCount()}
@@ -200,7 +202,7 @@ export function GenericTable<TData>({
             <label htmlFor='page-size' className='text-xs text-muted-foreground'>Filas por página:</label>
             <select
               id='page-size'
-              className='border rounded px-2 py-1 text-sm bg-background'
+              className='border rounded px-2 py-1 text-xs sm:text-sm bg-background'
               value={pageSize}
               onChange={e => setPageSize(Number(e.target.value))}
             >
