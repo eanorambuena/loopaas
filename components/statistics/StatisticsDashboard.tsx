@@ -25,6 +25,7 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
     selectedSection,
     injusticeCases,
     injusticeLoading,
+    injusticeError,
     handleSectionChange
   } = useStatisticsDashboard(evaluationId)
 
@@ -48,7 +49,11 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
         onChange={handleSectionChange}
       />
       <GeneralStatsCards stats={generalStats} />
-      <InjusticeDetection injusticeCases={injusticeCases} loading={injusticeLoading} />
+      <InjusticeDetection 
+        injusticeCases={injusticeCases} 
+        loading={injusticeLoading} 
+        error={injusticeError}
+      />
       <TemporalAnalysis temporalStats={temporalStats} />
       <DailyResponsesChart dailyData={dailyData} />
       <GroupStatsTable stats={stats} />

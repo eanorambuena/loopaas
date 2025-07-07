@@ -36,7 +36,8 @@ export function useStatisticsDashboard(evaluationId: string) {
   const [sections, setSections] = useState<string[]>([])
   const [selectedSection, setSelectedSection] = useState<string>('Todas')
   const [injusticeCases, setInjusticeCases] = useState<InjusticeCase[]>([])
-  const [injusticeLoading, setInjusticeLoading] = useState(false)
+  const [injusticeLoading, setInjusticeLoading] = useState(true)
+  const [injusticeError, setInjusticeError] = useState<string | null>(null)
 
   // Inicializar sección desde search params
   useEffect(() => {
@@ -58,10 +59,12 @@ export function useStatisticsDashboard(evaluationId: string) {
     router.push(`?${params.toString()}`, { scroll: false })
   }
 
+  // Efecto para cargar estadísticas principales
   useEffect(() => {
     const fetchStats = async () => {
       try {
         setLoading(true)
+        setError(null)
         
         // Obtener respuestas
         const data = await fetchResponsesData(evaluationId)
@@ -85,18 +88,6 @@ export function useStatisticsDashboard(evaluationId: string) {
         setDailyData(processedData.dailyData)
         setStats(processedData.groupStats)
         
-        // Detectar casos de injusticia basados en coevaluación
-        setInjusticeLoading(true)
-        try {
-          const studentsWithScores = await fetchPeerEvaluationScores(evaluationData, studentsWithSection)
-          const detectedInjustices = processInjusticeCases(studentsWithScores)
-          setInjusticeCases(detectedInjustices)
-        } catch (peerError) {
-          console.error('Error fetching peer evaluation scores:', peerError)
-          // No fallar completamente si no se pueden obtener los scores de coevaluación
-        } finally {
-          setInjusticeLoading(false)
-        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido')
       } finally {
@@ -106,6 +97,37 @@ export function useStatisticsDashboard(evaluationId: string) {
 
     fetchStats()
   }, [evaluationId, selectedSection])
+
+  // Efecto separado para cargar casos de injusticia
+  useEffect(() => {
+    const fetchInjusticeCases = async () => {
+      try {
+        setInjusticeLoading(true)
+        setInjusticeError(null)
+        
+        // Obtener información del curso para saber el courseId
+        const evaluationData = await fetchEvaluationData(evaluationId)
+        
+        // Obtener todos los estudiantes del curso
+        const studentsData = await fetchStudentsData(evaluationData.courseId)
+        const studentsWithSection = addSectionToStudents(studentsData.students || [])
+        
+        // Detectar casos de injusticia basados en coevaluación
+        const studentsWithScores = await fetchPeerEvaluationScores(evaluationData, studentsWithSection)
+        const detectedInjustices = processInjusticeCases(studentsWithScores)
+        setInjusticeCases(detectedInjustices)
+        
+      } catch (err) {
+        console.error('Error fetching peer evaluation scores:', err)
+        setInjusticeError(err instanceof Error ? err.message : 'Error al cargar casos de injusticia')
+        setInjusticeCases([]) // Establecer array vacío en caso de error
+      } finally {
+        setInjusticeLoading(false)
+      }
+    }
+
+    fetchInjusticeCases()
+  }, [evaluationId]) // Solo depende de evaluationId, no de selectedSection
 
   return {
     // State
@@ -119,6 +141,7 @@ export function useStatisticsDashboard(evaluationId: string) {
     selectedSection,
     injusticeCases,
     injusticeLoading,
+    injusticeError,
     
     // Actions
     handleSectionChange

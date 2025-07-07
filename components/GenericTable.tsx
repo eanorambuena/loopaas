@@ -53,6 +53,7 @@ export function GenericTable<TData>({
   const [uncontrolledColumnVisibility, uncontrolledSetColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [pageSize, setPageSize] = React.useState(10)
+  const [isMobile, setIsMobile] = React.useState(false)
 
   // Use controlled or uncontrolled state
   const columnVisibility = controlledColumnVisibility ?? uncontrolledColumnVisibility
@@ -76,6 +77,36 @@ export function GenericTable<TData>({
       rowSelection,
     },
   })
+
+  // Detectar si es mobile y configurar visibilidad de columnas
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+      
+      // Configurar visibilidad de columnas basada en meta.hideOnMobile
+      const newVisibility: VisibilityState = {}
+      columns.forEach((column) => {
+        const columnId = column.id || column.accessorKey as string
+        if (columnId) {
+          const shouldHideOnMobile = (column.meta as any)?.hideOnMobile
+          if (shouldHideOnMobile && mobile) {
+            newVisibility[columnId] = false
+          } else if (shouldHideOnMobile && !mobile) {
+            newVisibility[columnId] = true
+          }
+        }
+      })
+      
+      if (Object.keys(newVisibility).length > 0) {
+        setColumnVisibility(prev => ({ ...prev, ...newVisibility }))
+      }
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [columns, setColumnVisibility])
 
   React.useEffect(() => {
     table.setPageSize(pageSize)

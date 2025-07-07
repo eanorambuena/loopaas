@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       .from('responses')
       .select('id')
       .in('evaluationId', evaluationIds)
-    hasResponses = responsesResult.data && responsesResult.data.length > 0
+    hasResponses = !!(responsesResult.data && responsesResult.data.length > 0)
     responsesCount = responsesResult.data ? responsesResult.data.length : 0
   }
   

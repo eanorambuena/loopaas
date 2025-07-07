@@ -2,14 +2,15 @@
 
 import { InjusticeCase } from '@/components/statistics/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertTriangle, TrendingDown, Users } from 'lucide-react'
+import { AlertTriangle, TrendingDown, Users, AlertCircle } from 'lucide-react'
 
 interface InjusticeDetectionProps {
   injusticeCases: InjusticeCase[]
   loading?: boolean
+  error?: string | null
 }
 
-export default function InjusticeDetection({ injusticeCases, loading = false }: InjusticeDetectionProps) {
+export default function InjusticeDetection({ injusticeCases, loading = false, error = null }: InjusticeDetectionProps) {
   if (loading) {
     return (
       <Card className="border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900/20">
@@ -24,6 +25,27 @@ export default function InjusticeDetection({ injusticeCases, loading = false }: 
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 dark:border-gray-400"></div>
             <span>Analizando coevaluaciones...</span>
           </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card className="border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-orange-700 dark:text-orange-300">
+            <AlertCircle className="h-5 w-5" />
+            <span className="text-lg font-semibold">Detección de Injusticias</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-orange-600 dark:text-orange-400">
+            ⚠️ No se pudieron cargar los casos de injusticia: {error}
+          </p>
+          <p className="text-orange-500 dark:text-orange-400 text-sm mt-2">
+            Las demás estadísticas están disponibles normalmente.
+          </p>
         </CardContent>
       </Card>
     )
@@ -83,25 +105,25 @@ export default function InjusticeDetection({ injusticeCases, loading = false }: 
                 {injusticeCase.studentCount} estudiante{injusticeCase.studentCount !== 1 ? 's' : ''}
               </div>
               
-                             <div className="space-y-1">
-                 {injusticeCase.students.map((student) => (
-                   <div
-                     key={student.userInfoId}
-                     className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm"
-                   >
-                     <span className="text-gray-700 dark:text-gray-300 truncate">
-                       {student.name}
-                     </span>
-                     <span className={`font-medium ${
-                       student.score < 0 
-                         ? 'text-red-600 dark:text-red-400' 
-                         : 'text-gray-600 dark:text-gray-400'
-                     }`}>
-                       {student.score.toFixed(3)}
-                     </span>
-                   </div>
-                 ))}
-               </div>
+              <div className="space-y-1">
+                {injusticeCase.students.map((student) => (
+                  <div
+                    key={student.userInfoId}
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-sm"
+                  >
+                    <span className="text-gray-700 dark:text-gray-300 truncate">
+                      {student.name}
+                    </span>
+                    <span className={`font-medium ${
+                      student.score < 0 
+                        ? 'text-red-600 dark:text-red-400' 
+                        : 'text-gray-600 dark:text-gray-400'
+                    }`}>
+                      {student.score.toFixed(3)}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

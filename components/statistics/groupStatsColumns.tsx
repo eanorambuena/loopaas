@@ -67,6 +67,9 @@ export const groupStatsColumns: ColumnDef<GroupStats>[] = [
     accessorKey: 'totalResponses',
     header: 'Respuestas totales',
     enableSorting: true,
+    meta: {
+      hideOnMobile: true
+    },
     cell: ({ row }) => {
       const count = row.getValue('totalResponses') as number
       return (
