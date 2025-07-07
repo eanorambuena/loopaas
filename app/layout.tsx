@@ -29,9 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background overflow-x-hidden text-foreground">
         <Spotlight className="overflow-hidden" />
-        <main className="min-h-screen relative w-full overflow-x-hidden flex flex-col items-center">
+        <main className="min-h-screen relative w-full flex flex-col items-center">
           <Header />
-          <section className="flex-1 mt-20 overflow-x-hidden w-full flex flex-col gap-5 items-center">
+          <section className="flex-1 mt-20 w-full flex flex-col gap-5 items-center">
             <GoBackLink />
             {children}
             <Toaster />

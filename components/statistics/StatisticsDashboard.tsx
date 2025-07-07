@@ -41,7 +41,7 @@ export default function StatisticsDashboard({ evaluationId }: StatisticsDashboar
   }
 
   return (
-    <div className='space-y-4 sm:space-y-6'>
+    <div className='space-y-4 sm:space-y-6 w-full'>
       <SectionFilter
         sections={sections}
         selectedSection={selectedSection}
