@@ -30,12 +30,12 @@ export default function AuthButton() {
   return user ? (
     <div className="flex items-center gap-4">
       {userInfo?.firstName && <span className="hidden sm:inline">Hola, {userInfo?.firstName}!</span>}
-      <NavbarButton variant='primary' onClick={signOut}>
+      <NavbarButton variant='secondary' onClick={signOut}>
         Cerrar sesión
       </NavbarButton>
     </div>
   ) : (
-    <Link href="/login" className={getNavbarButtonStyles('primary')}>
+    <Link href="/login" className={getNavbarButtonStyles('secondary')}>
       Iniciar sesión
     </Link>
   )
