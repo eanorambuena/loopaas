@@ -23,9 +23,9 @@ export default async function CursosPage() {
   return (
     <div className="animate-in flex flex-col justify-center items-center gap-6 p-6 opacity-0 max-w-4xl px-3">
       <h1 className='text-3xl font-bold'>Cursos</h1>
-      <main className="flex w-full flex-wrap gap-8 p-4 justify-start items-center">
+      <main className="flex w-full flex-wrap gap-8 p-4 items-center">
         {isProfessor && (
-          <AddCard title="Nuevo Curso" path="/cursos/nuevo" className="text-center size-[20rem]" />
+          <AddCard title="Nuevo Curso" path="/cursos/nuevo" className="text-center size-[18rem]" />
         )}
         {!courses?.length && (
           <Fallback>No se encontraron cursos</Fallback>
