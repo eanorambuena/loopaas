@@ -18,4 +18,4 @@ export default function NuevaOrganizacionPage() {
       </div>
     </main>
   )
-} 
+}
