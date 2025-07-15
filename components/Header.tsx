@@ -55,6 +55,10 @@ export default function Header() {
       link: '/perfil',
     },
     {
+      name: 'Instrucciones',
+      link: '/instrucciones',
+    },
+    {
       name: 'Ayuda',
       link: 'mailto:soporte.idsapp@gmail.com',
     }

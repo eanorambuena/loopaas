@@ -87,7 +87,7 @@ export function GenericTable<TData>({
       // Configurar visibilidad de columnas basada en meta.hideOnMobile
       const newVisibility: VisibilityState = {}
       columns.forEach((column) => {
-        const columnId = column.id || column.accessorKey as string
+        const columnId = column.id || (column.meta as any)?.accessorKey || ''
         if (columnId) {
           const shouldHideOnMobile = (column.meta as any)?.hideOnMobile
           if (shouldHideOnMobile && mobile) {
