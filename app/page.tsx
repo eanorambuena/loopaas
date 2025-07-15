@@ -5,6 +5,25 @@ import { Button } from '@/components/ui/button'
 import { motion } from 'motion/react'
 import { FeaturesSection } from '@/components/FeaturesSection'
 
+const features = [
+  {
+    title: 'Organizaciones y equipos',
+    description: 'Crea y administra organizaciones educativas, gestiona equipos de trabajo y centraliza la información de tus cursos en un solo lugar.'
+  },
+  {
+    title: 'Gestión de cursos',
+    description: 'Agrega, edita y visualiza cursos fácilmente. Asocia cada curso a tu organización y mantén todo ordenado.'
+  },
+  {
+    title: 'Evaluaciones colaborativas',
+    description: 'Crea evaluaciones, recopila respuestas y analiza resultados de manera intuitiva y visual.'
+  },
+  {
+    title: 'Interfaz moderna',
+    description: 'Disfruta de una experiencia visual renovada, con un diseño atractivo, responsivo y acento emerald.'
+  },
+]
+
 export default function LandingPage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950 dark:to-black">
@@ -52,7 +71,7 @@ export default function LandingPage() {
         >
           Con AI, puedes lanzar tu sitio web en horas, no en días. Prueba nuestras
           herramientas de IA de clase mundial, de vanguardia y de punta, para
-          que tu sitio web esté listo.
+          que tu sitio web esté listo. La plataforma colaborativa para gestionar cursos, evaluaciones y equipos en tu organización educativa.
         </motion.p>
         <motion.div
           initial={{
@@ -67,9 +86,9 @@ export default function LandingPage() {
           }}
           className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-4"
         >
-          <button className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
-            Explorar ahora
-          </button>
+          <Link href="/organizacion/nueva" className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
+            Crea tu organización
+          </Link>
           <button className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
             Contactar soporte
           </button>
@@ -99,17 +118,6 @@ export default function LandingPage() {
             />
           </div>
         </motion.div>
-      </div>
-      <div className="max-w-xl w-full px-6 py-12 rounded-xl shadow-lg bg-white/80 dark:bg-black/80 flex flex-col items-center gap-8 border border-emerald-100 dark:border-emerald-900">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-emerald-600 tracking-tight">loopaas</h1>
-        <p className="text-lg sm:text-xl text-center text-gray-700 dark:text-gray-200">
-          La plataforma colaborativa para gestionar cursos, evaluaciones y equipos en tu organización educativa. <span className="text-emerald-500 font-semibold">Simple, potente y flexible.</span>
-        </p>
-        <Link href="/organizacion/nueva">
-          <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white text-lg px-8 py-4 rounded-full shadow-md">
-            Crear organización
-          </Button>
-        </Link>
       </div>
       <FeaturesSection />
     </main>

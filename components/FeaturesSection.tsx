@@ -8,32 +8,32 @@ import { IconBrandYoutubeFilled } from '@tabler/icons-react'
 export function FeaturesSection() {
   const features = [
     {
-      title: 'Track issues effectively',
+      title: 'Organizaciones y equipos',
       description:
-        'Track and manage your project issues with ease using our intuitive interface.',
+        'Crea y administra organizaciones educativas, gestiona equipos de trabajo y centraliza la información de tus cursos en un solo lugar.',
       skeleton: <SkeletonOne />,
       className:
         'col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800',
     },
     {
-      title: 'Capture pictures with AI',
+      title: 'Gestión de cursos',
       description:
-        'Capture stunning photos effortlessly using our advanced AI technology.',
+        'Agrega, edita y visualiza cursos fácilmente. Asocia cada curso a tu organización y mantén todo ordenado.',
       skeleton: <SkeletonTwo />,
       className: 'border-b col-span-1 lg:col-span-2 dark:border-neutral-800',
     },
     {
-      title: 'Watch our AI on YouTube',
+      title: 'Evaluaciones colaborativas',
       description:
-        'Whether its you or Tyler Durden, you can get to know about our product on YouTube',
+        'Crea evaluaciones, recopila respuestas y analiza resultados de manera intuitiva y visual.',
       skeleton: <SkeletonThree />,
       className:
         'col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800',
     },
     {
-      title: 'Deploy in seconds',
+      title: 'Despliega en segundos',
       description:
-        'With our blazing fast, state of the art, cutting edge, we are so back cloud servies (read AWS) - you can deploy your model in seconds.',
+        'Con nuestros servicios de cloud, puedes desplegar tu plataforma en segundos.',
       skeleton: <SkeletonFour />,
       className: 'col-span-1 lg:col-span-3 border-b lg:border-none',
     },
@@ -42,12 +42,13 @@ export function FeaturesSection() {
     <div className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto">
       <div className="px-8">
         <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
-          Packed with thousands of features
+          Empaquetado con miles de características
         </h4>
 
         <p className="text-sm lg:text-base  max-w-2xl  my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
-          From Image generation to video generation, Everything AI has APIs for
-          literally everything. It can even create this website copy for you.
+          Desde la generación de imágenes hasta la generación de videos, todo lo que
+          necesitas lo tienes en nuestra plataforma. Incluso puede crear este
+          sitio web para ti.
         </p>
       </div>
 
