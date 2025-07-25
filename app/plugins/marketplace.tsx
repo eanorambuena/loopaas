@@ -7,7 +7,7 @@ import PermissionManager from '@/components/PermissionManager'
 import PluginList from '@/components/PluginList'
 import ActivePlugins from '@/components/ActivePlugins'
 
-export default function PluginsMarketplace() {
+export function PluginsMarketplace() {
   const {
     enabledPlugins,
     availablePlugins,
