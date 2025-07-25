@@ -4,7 +4,7 @@ import { usePermissions, PermissionError } from 'plugini'
 export const id = 'org-course'
 export const permissions = ['getCourses']
 
-export const component = (props: any) => {
+export const Component = (props: any) => {
   const allow = usePermissions(props, permissions)
   try {
     const cursos = allow.getCourses()
