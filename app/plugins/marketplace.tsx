@@ -33,7 +33,7 @@ export function PluginsMarketplace() {
           onEnablePlugin={handleEnablePlugin}
           onDisablePlugin={handleDisablePlugin}
         />
-        <ActivePlugins enabledPlugins={enabledPlugins} />
+        <ActivePlugins enabledPlugins={enabledPlugins} activePermissions={activePermissions} />
       </div>
     </main>
   )
