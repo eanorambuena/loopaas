@@ -3,9 +3,9 @@
 import React from 'react'
 import { usePluginManager } from 'plugini'
 import { microkernel } from './pluginConfig'
-import PermissionManager from '@/components/PermissionManager'
-import PluginList from '@/components/PluginList'
-import ActivePlugins from '@/components/ActivePlugins'
+import PermissionManager from '@/components/plugins/PermissionManager'
+import PluginList from '@/components/plugins/PluginList'
+import ActivePlugins from '@/components/plugins/ActivePlugins'
 
 export function PluginsMarketplace() {
   const {
