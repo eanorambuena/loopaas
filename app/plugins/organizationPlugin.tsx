@@ -3,6 +3,11 @@ import { usePermissions, PermissionError, Allow } from 'plugini'
 
 export const id = 'org-course'
 export const permissions = ['getCourses']
+export const metadata = {
+  preferredWidth: 'medium', // small, medium, large, extra-large
+  name: 'Organización de Cursos',
+  description: 'Gestiona la organización de tus cursos'
+}
 
 // Definir el componente por separado
 const OrganizationComponent = (props: any) => {

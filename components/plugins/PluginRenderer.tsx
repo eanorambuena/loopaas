@@ -52,8 +52,10 @@ export default function PluginRenderer({ plugin, activePermissions }: PluginRend
   }
   
   return (
-    <div className="p-6">
-      <Component {...enhancedProps} />
+    <div className="p-6 min-h-[400px]">
+      <div className="transition-opacity duration-300 ease-in-out">
+        <Component {...enhancedProps} />
+      </div>
     </div>
   )
 }

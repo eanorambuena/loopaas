@@ -3,6 +3,11 @@ import { Allow } from 'plugini'
 
 export const id = 'student-stats'
 export const permissions = ['getStudents']
+export const metadata = {
+  preferredWidth: 'extra-large', // small, medium, large, extra-large
+  name: 'Estadísticas de Estudiantes',
+  description: 'Dashboard con estadísticas detalladas de estudiantes'
+}
 
 // Componente de estadísticas de estudiantes
 const StudentStatsComponent = (props: any) => {

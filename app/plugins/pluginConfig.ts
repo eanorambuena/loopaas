@@ -1,6 +1,7 @@
 import { Microkernel, Allow } from 'plugini'
 import * as organizationPlugin from './organizationPlugin'
 import * as studentStatsPlugin from './studentStatsPlugin'
+import * as compactPlugin from './compactPlugin'
 
 // Registrar permiso getCourses
 Allow.registerPermission({
@@ -26,6 +27,13 @@ Allow.registerPermission({
   description: 'Acceder a la información de estudiantes'
 })
 
+// Registrar permiso readNotes
+Allow.registerPermission({
+  name: 'readNotes',
+  func: () => true, // Simplemente permitir el acceso
+  description: 'Acceder a las notas y recordatorios'
+})
+
 // Crear microkernel y registrar plugins
 export const microkernel = new Microkernel()
-microkernel.registerPlugins([organizationPlugin, studentStatsPlugin])
+microkernel.registerPlugins([organizationPlugin, studentStatsPlugin, compactPlugin])

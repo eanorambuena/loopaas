@@ -42,9 +42,9 @@ export default function ActivePluginsSidebar({ enabledPlugins, activePermissions
     <section className="w-full">
       <h3 className="text-lg font-semibold mb-4">Plugins Activos</h3>
       
-      <div className="flex h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
+      <div className="flex h-[600px] w-full max-w-6xl mx-auto border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
         {/* Sidebar */}
-        <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+        <div className="w-80 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
           {/* Header del sidebar */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-emerald-50 dark:bg-emerald-950">
             <h4 className="font-semibold text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
@@ -68,9 +68,9 @@ export default function ActivePluginsSidebar({ enabledPlugins, activePermissions
                   key={pluginId}
                   onClick={() => setSelectedPlugin(index)}
                   className={`w-full p-4 text-left border-b border-gray-200 dark:border-gray-700 
-                            transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700
+                            transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700
                             ${isSelected 
-                              ? 'bg-emerald-100 dark:bg-emerald-900 border-l-4 border-l-emerald-500 shadow-sm' 
+                              ? 'bg-emerald-100 dark:bg-emerald-900 border-l-4 border-l-emerald-500 shadow-sm transform-gpu' 
                               : 'hover:border-l-4 hover:border-l-emerald-300 dark:hover:border-l-emerald-600'
                             }`}
                 >
@@ -132,9 +132,9 @@ export default function ActivePluginsSidebar({ enabledPlugins, activePermissions
         </div>
 
         {/* Contenido principal */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Header del plugin activo */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900 flex-shrink-0">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">
                 {(currentPlugin?.name || 'P').charAt(0).toUpperCase()}
@@ -161,11 +161,15 @@ export default function ActivePluginsSidebar({ enabledPlugins, activePermissions
           </div>
 
           {/* Contenido del plugin */}
-          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-emerald-400 hover:scrollbar-thumb-emerald-600 dark:hover:scrollbar-thumb-emerald-300">
-            <PluginRenderer 
-              plugin={currentPlugin}
-              activePermissions={activePermissions}
-            />
+          <div className="flex-1 bg-white dark:bg-gray-900 overflow-hidden">
+            <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-emerald-400 hover:scrollbar-thumb-emerald-600 dark:hover:scrollbar-thumb-emerald-300">
+              <div key={selectedPlugin} className="transition-opacity duration-200 ease-in-out">
+                <PluginRenderer 
+                  plugin={currentPlugin}
+                  activePermissions={activePermissions}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
