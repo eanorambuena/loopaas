@@ -20,9 +20,9 @@ export function PluginsMarketplace() {
 
   // Debug: log what we're getting from usePluginManager
   React.useEffect(() => {
-    console.log('PluginsMarketplace - enabledPlugins:', enabledPlugins)
-    console.log('PluginsMarketplace - availablePlugins:', availablePlugins)
-  }, [enabledPlugins, availablePlugins])
+    console.log('PluginsMarketplace - Active permissions:', Array.from(activePermissions))
+    console.log('PluginsMarketplace - Enabled plugins count:', enabledPlugins.length)
+  }, [enabledPlugins, activePermissions])
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950 dark:to-black py-10">

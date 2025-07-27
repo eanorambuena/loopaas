@@ -11,13 +11,10 @@ export default function ActivePlugins({ enabledPlugins, activePermissions }: Act
   
   // Debug: log the enabledPlugins to see what we're receiving
   React.useEffect(() => {
-    console.log('ActivePlugins - enabledPlugins:', enabledPlugins)
-    enabledPlugins.forEach((plugin, index) => {
-      console.log(`Plugin ${index}:`, plugin)
-      console.log(`Plugin ${index} keys:`, Object.keys(plugin))
-      console.log(`Plugin ${index} component:`, plugin.component)
-      console.log(`Plugin ${index} Component (capital):`, plugin.Component)
-    })
+    console.log('ActivePlugins - Number of enabled plugins:', enabledPlugins.length)
+    if (enabledPlugins.length > 0) {
+      console.log('ActivePlugins - First plugin structure:', enabledPlugins[0])
+    }
   }, [enabledPlugins])
   
   return (
@@ -64,10 +61,19 @@ export default function ActivePlugins({ enabledPlugins, activePermissions }: Act
 
           const props = plugin.props || {}
           
+          // Añadir los permisos activos a las props del plugin
+          const enhancedProps = {
+            ...props,
+            activePermissions: activePermissions,
+            permissionsArray: activePermissions ? Array.from(activePermissions) : []
+          }
+          
+          console.log(`Plugin "${name}" props:`, enhancedProps)
+          
           return (
             <div key={name + permKey + index} className="mb-6 p-4 border border-emerald-200 dark:border-emerald-800 rounded-lg bg-white dark:bg-black">
               <h4 className="font-semibold mb-2 text-emerald-700 dark:text-emerald-300">Plugin: {name}</h4>
-              <Component {...props} />
+              <Component {...enhancedProps} />
             </div>
           );
         })
