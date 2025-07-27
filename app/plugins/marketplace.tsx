@@ -5,7 +5,7 @@ import { usePluginManager } from 'plugini'
 import { microkernel } from './pluginConfig'
 import PermissionManager from '@/components/plugins/PermissionManager'
 import PluginList from '@/components/plugins/PluginList'
-import ActivePlugins from '@/components/plugins/ActivePlugins'
+import ActivePluginsSidebar from '@/components/plugins/ActivePluginsSidebar'
 
 export function PluginsMarketplace() {
   const {
@@ -39,7 +39,7 @@ export function PluginsMarketplace() {
           onEnablePlugin={handleEnablePlugin}
           onDisablePlugin={handleDisablePlugin}
         />
-        <ActivePlugins enabledPlugins={enabledPlugins} activePermissions={activePermissions} />
+        <ActivePluginsSidebar enabledPlugins={enabledPlugins} activePermissions={activePermissions} />
       </div>
     </main>
   )
