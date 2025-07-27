@@ -4,7 +4,8 @@ import { usePermissions, PermissionError } from 'plugini'
 export const id = 'org-course'
 export const permissions = ['getCourses']
 
-export const Component = (props: any) => {
+// Definir el componente por separado
+const OrganizationComponent = (props: any) => {
   const allow = usePermissions(props, permissions)
   try {
     const cursos = allow.getCourses()
@@ -27,3 +28,7 @@ export const Component = (props: any) => {
     return <div className="text-red-500">Error: {error.message}</div>
   }
 }
+
+// Exportar como Component (como estaba) y también como default
+export const Component = OrganizationComponent
+export default OrganizationComponent

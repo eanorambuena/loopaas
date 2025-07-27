@@ -18,6 +18,12 @@ export function PluginsMarketplace() {
     getPluginPermissions
   } = usePluginManager(microkernel)
 
+  // Debug: log what we're getting from usePluginManager
+  React.useEffect(() => {
+    console.log('PluginsMarketplace - enabledPlugins:', enabledPlugins)
+    console.log('PluginsMarketplace - availablePlugins:', availablePlugins)
+  }, [enabledPlugins, availablePlugins])
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950 dark:to-black py-10">
       <h1 className="text-3xl font-bold mb-8 text-emerald-700 dark:text-emerald-300">Marketplace de Plugins</h1>
