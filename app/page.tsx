@@ -69,9 +69,9 @@ export default function LandingPage() {
           }}
           className="relative z-10 mx-auto max-w-xl py-4 text-center text-lg font-normal text-neutral-600 dark:text-neutral-400"
         >
-          Con AI, puedes lanzar tu sitio web en horas, no en días. Prueba nuestras
-          herramientas de IA de clase mundial, de vanguardia y de punta, para
-          que tu sitio web esté listo. La plataforma colaborativa para gestionar cursos, evaluaciones y equipos en tu organización educativa.
+          Plataforma colaborativa para gestionar cursos, evaluaciones peer-to-peer y 
+          equipos en tu organización educativa. Sistema modular con plugins extensibles 
+          y gestión de permisos granular para máxima flexibilidad.
         </motion.p>
         <motion.div
           initial={{
