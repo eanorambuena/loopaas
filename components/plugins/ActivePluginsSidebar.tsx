@@ -57,7 +57,7 @@ export default function ActivePluginsSidebar({ enabledPlugins, activePermissions
           </div>
 
           {/* Lista de plugins */}
-          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-gray-100 dark:scrollbar-track-gray-700 scrollbar-thumb-emerald-300 dark:scrollbar-thumb-emerald-600 hover:scrollbar-thumb-emerald-400 dark:hover:scrollbar-thumb-emerald-500">
+          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500 scrollbar-track-gray-200 dark:scrollbar-track-gray-700 dark:scrollbar-thumb-emerald-400 hover:scrollbar-thumb-emerald-600 dark:hover:scrollbar-thumb-emerald-300">
             {enabledPlugins.map((plugin, index) => {
               const isSelected = selectedPlugin === index
               const pluginName = plugin.name || `Plugin ${index + 1}`
@@ -161,7 +161,7 @@ export default function ActivePluginsSidebar({ enabledPlugins, activePermissions
           </div>
 
           {/* Contenido del plugin */}
-          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-gray-100 dark:scrollbar-track-gray-800 scrollbar-thumb-emerald-300 dark:scrollbar-thumb-emerald-600 hover:scrollbar-thumb-emerald-400 dark:hover:scrollbar-thumb-emerald-500">
+          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-emerald-400 hover:scrollbar-thumb-emerald-600 dark:hover:scrollbar-thumb-emerald-300">
             <PluginRenderer 
               plugin={currentPlugin}
               activePermissions={activePermissions}
