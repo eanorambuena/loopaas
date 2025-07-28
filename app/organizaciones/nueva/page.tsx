@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -62,6 +62,14 @@ const pricingPlans = [
 ]
 
 export default function NuevaOrganizacionPage() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <NuevaOrganizacionContent />
+    </Suspense>
+  )
+}
+
+function NuevaOrganizacionContent() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [organizationName, setOrganizationName] = useState('')
   const [showForm, setShowForm] = useState(false)

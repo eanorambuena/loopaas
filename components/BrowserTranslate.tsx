@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Languages } from 'lucide-react';
+import { useState, useEffect } from 'react'
+import { Button } from './ui/button'
+import { Languages } from 'lucide-react'
 
 declare global {
   interface Window {
@@ -14,8 +14,8 @@ declare global {
 }
 
 export default function BrowserTranslate() {
-  const [canTranslate, setCanTranslate] = useState(false);
-  const [isTranslating, setIsTranslating] = useState(false);
+  const [canTranslate, setCanTranslate] = useState(false)
+  const [isTranslating, setIsTranslating] = useState(false)
 
   useEffect(() => {
     // Verificar si el browser soporta la Translation API
@@ -25,50 +25,50 @@ export default function BrowserTranslate() {
           const availability = await window.translation.canTranslate({
             sourceLanguage: 'es',
             targetLanguage: 'en'
-          });
-          setCanTranslate(availability === 'readily');
+          })
+          setCanTranslate(availability === 'readily')
         } catch (error) {
-          console.log('Translation API no disponible');
+          console.log('Translation API no disponible')
         }
       }
-    };
+    }
 
-    checkTranslationSupport();
-  }, []);
+    checkTranslationSupport()
+  }, [])
 
   const translatePage = async () => {
-    if (!canTranslate) return;
+    if (!canTranslate) return
     
-    setIsTranslating(true);
+    setIsTranslating(true)
     try {
       const translator = await window.translation.createTranslator({
         sourceLanguage: 'es',
         targetLanguage: 'en'
-      });
+      })
 
       // Traducir elementos de texto
-      const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, button, label');
+      const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, button, label')
       
       for (let i = 0; i < textElements.length; i++) {
-        const element = textElements[i];
-        const originalText = element.textContent;
+        const element = textElements[i]
+        const originalText = element.textContent
         if (originalText && originalText.trim()) {
           try {
-            const translatedText = await translator.translate(originalText);
-            element.textContent = translatedText;
+            const translatedText = await translator.translate(originalText)
+            element.textContent = translatedText
           } catch (error) {
-            console.log('Error traduciendo:', originalText);
+            console.log('Error traduciendo:', originalText)
           }
         }
       }
     } catch (error) {
-      console.error('Error en traducción:', error);
+      console.error('Error en traducción:', error)
     } finally {
-      setIsTranslating(false);
+      setIsTranslating(false)
     }
-  };
+  }
 
-  if (!canTranslate) return null;
+  if (!canTranslate) return null
 
   return (
     <Button
@@ -81,5 +81,5 @@ export default function BrowserTranslate() {
       <Languages className="h-4 w-4" />
       {isTranslating ? 'Traduciendo...' : 'Translate to English'}
     </Button>
-  );
+  )
 }

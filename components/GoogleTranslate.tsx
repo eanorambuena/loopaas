@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 
 declare global {
   interface Window {
@@ -19,28 +19,28 @@ export default function GoogleTranslate() {
           autoDisplay: false,
         },
         'google_translate_element'
-      );
-    };
+      )
+    }
 
     // Cargar el script de Google Translate
-    const script = document.createElement('script');
-    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    script.async = true;
-    document.head.appendChild(script);
+    const script = document.createElement('script')
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'
+    script.async = true
+    document.head.appendChild(script)
 
     return () => {
       // Cleanup
-      const existingScript = document.querySelector('script[src*="translate.google.com"]');
+      const existingScript = document.querySelector('script[src*="translate.google.com"]')
       if (existingScript) {
-        existingScript.remove();
+        existingScript.remove()
       }
-    };
-  }, []);
+    }
+  }, [])
 
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm text-gray-600 dark:text-gray-400">Traducir:</span>
       <div id="google_translate_element" className="inline-block"></div>
     </div>
-  );
+  )
 }

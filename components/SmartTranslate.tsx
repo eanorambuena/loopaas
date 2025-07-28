@@ -1,32 +1,32 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Languages, Globe } from 'lucide-react';
-import GoogleTranslate from './GoogleTranslate';
-import BrowserTranslate from './BrowserTranslate';
+import { useState, useEffect } from 'react'
+import { Button } from './ui/button'
+import { Languages, Globe } from 'lucide-react'
+import GoogleTranslate from './GoogleTranslate'
+import BrowserTranslate from './BrowserTranslate'
 
 export default function SmartTranslate() {
-  const [userLanguage, setUserLanguage] = useState<string>('');
-  const [showTranslateOptions, setShowTranslateOptions] = useState(false);
+  const [userLanguage, setUserLanguage] = useState<string>('')
+  const [showTranslateOptions, setShowTranslateOptions] = useState(false)
 
   useEffect(() => {
     // Detectar idioma del usuario
-    const detectedLanguage = navigator.language || navigator.languages?.[0] || '';
-    setUserLanguage(detectedLanguage.toLowerCase());
+    const detectedLanguage = navigator.language || navigator.languages?.[0] || ''
+    setUserLanguage(detectedLanguage.toLowerCase())
     
     // Mostrar opciones de traducción si no es español
     if (!detectedLanguage.toLowerCase().startsWith('es')) {
-      setShowTranslateOptions(true);
+      setShowTranslateOptions(true)
     }
-  }, []);
+  }, [])
 
   const suggestTranslation = () => {
     // Sugerir usar traducción automática del browser
     if (window.confirm('¿Te gustaría traducir esta página al inglés? Puedes usar la traducción automática de tu navegador (clic derecho → Traducir) o usar nuestro traductor integrado.')) {
-      setShowTranslateOptions(true);
+      setShowTranslateOptions(true)
     }
-  };
+  }
 
   return (
     <div className="flex items-center justify-center gap-2">
@@ -60,7 +60,7 @@ export default function SmartTranslate() {
             
             {/* Instrucciones para traducción manual del browser */}
             <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">
-              o clic derecho → "Traducir"
+              o clic derecho → &quot;Traducir&quot;
             </span>
           </div>
           
@@ -75,5 +75,5 @@ export default function SmartTranslate() {
         </div>
       )}
     </div>
-  );
+  )
 }

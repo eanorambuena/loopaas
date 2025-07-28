@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 
 export default function LocizeTranslate() {
   useEffect(() => {
     // Configuración de Locize
-    const script = document.createElement('script');
-    script.src = 'https://cdn.locize.app/js/locize.min.js';
+    const script = document.createElement('script')
+    script.src = 'https://cdn.locize.app/js/locize.min.js'
     script.onload = () => {
       // @ts-ignore
       window.locize.init({
@@ -14,17 +14,17 @@ export default function LocizeTranslate() {
           apiKey: 'your-api-key',
           version: 'latest'
         }
-      });
-    };
-    document.head.appendChild(script);
+      })
+    }
+    document.head.appendChild(script)
 
     return () => {
-      const existingScript = document.querySelector('script[src*="locize"]');
+      const existingScript = document.querySelector('script[src*="locize"]')
       if (existingScript) {
-        existingScript.remove();
+        existingScript.remove()
       }
-    };
-  }, []);
+    }
+  }, [])
 
-  return null; // Invisible, funciona automáticamente
+  return null // Invisible, funciona automáticamente
 }

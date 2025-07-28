@@ -103,7 +103,7 @@ export default function PluginTabs({ enabledPlugins, activePermissions }: Plugin
           ) : (
             <div className="text-center py-8">
               <p className="text-red-600 dark:text-red-400">
-                Error: No se pudo cargar el componente para el plugin "{activePlugin.name}"
+                Error: No se pudo cargar el componente para el plugin &quot;{activePlugin.name}&quot;
               </p>
             </div>
           )}

@@ -98,16 +98,16 @@ const StudentStatsComponent = (props: any) => {
           </div>
         )
       } else {
-        return <div className="text-red-500">Error: No se pudo encontrar la función del permiso 'getStudents'</div>
+        return <div className="text-red-500">Error: No se pudo encontrar la función del permiso &apos;getStudents&apos;</div>
       }
     } else {
       // Si no hay permisos activos, mostrar mensaje informativo
       const activePerms = props.activePermissions ? Array.from(props.activePermissions) : []
       return (
         <div className="text-orange-600">
-          <p className="font-semibold">El permiso 'getStudents' no está activo.</p>
+          <p className="font-semibold">El permiso &apos;getStudents&apos; no está activo.</p>
           <p>Permisos activos: {activePerms.length > 0 ? activePerms.join(', ') : 'ninguno'}</p>
-          <p className="text-sm mt-2">Para activar el permiso, ve a la sección de "Gestión de Permisos del Sistema" arriba y activa 'getStudents'.</p>
+          <p className="text-sm mt-2">Para activar el permiso, ve a la sección de &quot;Gestión de Permisos del Sistema&quot; arriba y activa &apos;getStudents&apos;.</p>
         </div>
       )
     }

@@ -111,7 +111,7 @@ const CompactPlugin = (props: any) => {
   } else {
     return (
       <div className="text-center py-8 text-orange-600 dark:text-orange-400">
-        <p className="font-semibold">El permiso 'readNotes' no está activo.</p>
+        <p className="font-semibold">El permiso &apos;readNotes&apos; no está activo.</p>
         <p className="text-sm mt-2">Para activar el permiso, ve a la sección de permisos arriba.</p>
       </div>
     )

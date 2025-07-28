@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
 // Diccionario completo para textos críticos
 const translations: Record<string, string> = {
@@ -269,45 +269,45 @@ const translations: Record<string, string> = {
   'Viernes': 'Friday',
   'Sábado': 'Saturday',
   'Domingo': 'Sunday'
-};
+}
 
 export default function SilentTranslator() {
-  const [hasTranslated, setHasTranslated] = useState(false);
-  const [userWantsEnglish, setUserWantsEnglish] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState<'es' | 'en'>('es');
-  const [showLanguageToggle, setShowLanguageToggle] = useState(false);
+  const [hasTranslated, setHasTranslated] = useState(false)
+  const [userWantsEnglish, setUserWantsEnglish] = useState(false)
+  const [currentLanguage, setCurrentLanguage] = useState<'es' | 'en'>('es')
+  const [showLanguageToggle, setShowLanguageToggle] = useState(false)
 
   useEffect(() => {
     // Detectar si el usuario prefiere inglés
     const detectUserLanguagePreference = () => {
-      const userLang = navigator.language || navigator.languages?.[0] || '';
-      const browserLangs = navigator.languages || [];
+      const userLang = navigator.language || navigator.languages?.[0] || ''
+      const browserLangs = navigator.languages || []
       
       // Verificar si prefiere inglés
       const prefersEnglish = userLang.toLowerCase().startsWith('en') ||
-                           browserLangs.some(lang => lang.toLowerCase().startsWith('en'));
+                           browserLangs.some(lang => lang.toLowerCase().startsWith('en'))
       
-      return prefersEnglish && !userLang.toLowerCase().startsWith('es');
-    };
+      return prefersEnglish && !userLang.toLowerCase().startsWith('es')
+    }
 
-    const shouldTranslate = detectUserLanguagePreference();
-    setUserWantsEnglish(shouldTranslate);
+    const shouldTranslate = detectUserLanguagePreference()
+    setUserWantsEnglish(shouldTranslate)
     
     // Mostrar el toggle siempre que se detecte preferencia por inglés o el usuario ya haya traducido
     if (shouldTranslate || hasTranslated) {
-      setShowLanguageToggle(true);
+      setShowLanguageToggle(true)
     }
 
     if (shouldTranslate && !hasTranslated && currentLanguage === 'es') {
       // Esperar un poco para que la página se cargue completamente
       const timer = setTimeout(() => {
-        translatePageContent();
-        setCurrentLanguage('en');
-      }, 1000);
+        translatePageContent()
+        setCurrentLanguage('en')
+      }, 1000)
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer)
     }
-  }, [hasTranslated, currentLanguage]);
+  }, [hasTranslated, currentLanguage]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const translatePageContent = async () => {
     try {
@@ -318,32 +318,32 @@ export default function SilentTranslator() {
           const canTranslate = await window.translation?.canTranslate({
             sourceLanguage: 'es',
             targetLanguage: 'en'
-          });
+          })
 
           if (canTranslate === 'readily') {
             // @ts-ignore
             const translator = await window.translation.createTranslator({
               sourceLanguage: 'es',
               targetLanguage: 'en'
-            });
+            })
 
-            await translateWithAPI(translator);
-            setHasTranslated(true);
-            return;
+            await translateWithAPI(translator)
+            setHasTranslated(true)
+            return
           }
         } catch (error) {
-          console.log('Translation API no disponible, usando diccionario');
+          console.log('Translation API no disponible, usando diccionario')
         }
       }
 
       // Método 2: Usar diccionario manual como fallback
-      translateWithDictionary();
-      setHasTranslated(true);
+      translateWithDictionary()
+      setHasTranslated(true)
 
     } catch (error) {
-      console.log('Error en traducción automática:', error);
+      console.log('Error en traducción automática:', error)
     }
-  };
+  }
 
   const translateWithAPI = async (translator: any) => {
     // Traducir elementos de texto principales
@@ -353,14 +353,14 @@ export default function SilentTranslator() {
       'button:not([data-translate="no"])',
       'label', 'td', 'th',
       '[data-translate="yes"]'
-    ];
+    ]
 
     for (const selector of selectors) {
-      const elements = document.querySelectorAll(selector);
+      const elements = document.querySelectorAll(selector)
       
       for (let i = 0; i < elements.length; i++) {
-        const element = elements[i];
-        const textContent = element.textContent?.trim();
+        const element = elements[i]
+        const textContent = element.textContent?.trim()
         
         if (textContent && 
             textContent.length > 1 && 
@@ -370,79 +370,79 @@ export default function SilentTranslator() {
             !element.hasAttribute('data-translated')) {
           
           try {
-            const translatedText = await translator.translate(textContent);
+            const translatedText = await translator.translate(textContent)
             if (translatedText && translatedText !== textContent) {
-              element.setAttribute('data-original-text', textContent);
-              element.textContent = translatedText;
-              element.setAttribute('data-translated', 'true');
+              element.setAttribute('data-original-text', textContent)
+              element.textContent = translatedText
+              element.setAttribute('data-translated', 'true')
             }
           } catch (error) {
             // Si falla la API, usar diccionario para este elemento
-            const dictTranslation = translations[textContent];
+            const dictTranslation = translations[textContent]
             if (dictTranslation) {
-              element.setAttribute('data-original-text', textContent);
-              element.textContent = dictTranslation;
-              element.setAttribute('data-translated', 'true');
+              element.setAttribute('data-original-text', textContent)
+              element.textContent = dictTranslation
+              element.setAttribute('data-translated', 'true')
             }
           }
         }
       }
     }
-  };
+  }
 
   const translateWithDictionary = () => {
     // Traducir usando el diccionario manual
     Object.entries(translations).forEach(([spanish, english]) => {
-      const elements = document.querySelectorAll('*');
+      const elements = document.querySelectorAll('*')
       
       for (let i = 0; i < elements.length; i++) {
-        const element = elements[i];
+        const element = elements[i]
         
         if (element.textContent === spanish && 
             !element.querySelector('*') && 
             !element.hasAttribute('data-translated') &&
             !element.hasAttribute('data-translate') ||
             element.getAttribute('data-translate') !== 'no') {
-          element.textContent = english;
-          element.setAttribute('data-translated', 'true');
-          element.setAttribute('data-original-text', spanish);
+          element.textContent = english
+          element.setAttribute('data-translated', 'true')
+          element.setAttribute('data-original-text', spanish)
         }
       }
-    });
-  };
+    })
+  }
 
   const restoreOriginalText = () => {
     // Restaurar texto original
-    const translatedElements = document.querySelectorAll('[data-translated="true"]');
+    const translatedElements = document.querySelectorAll('[data-translated="true"]')
     
     for (let i = 0; i < translatedElements.length; i++) {
-      const element = translatedElements[i];
-      const originalText = element.getAttribute('data-original-text');
+      const element = translatedElements[i]
+      const originalText = element.getAttribute('data-original-text')
       
       if (originalText) {
-        element.textContent = originalText;
-        element.removeAttribute('data-translated');
-        element.removeAttribute('data-original-text');
+        element.textContent = originalText
+        element.removeAttribute('data-translated')
+        element.removeAttribute('data-original-text')
       }
     }
-  };
+  }
 
   const toggleLanguage = () => {
     if (currentLanguage === 'es') {
       // Cambiar a inglés
       if (!hasTranslated) {
-        translatePageContent();
+        translatePageContent()
       } else {
-        translateWithDictionary();
+        translateWithDictionary()
       }
-      setCurrentLanguage('en');
-      setHasTranslated(true);
+      setCurrentLanguage('en')
+      setHasTranslated(true)
     } else {
       // Cambiar a español
-      restoreOriginalText();
-      setCurrentLanguage('es');
+      restoreOriginalText()
+      setCurrentLanguage('es')
     }
-  };
+  }
 
   // Mostrar toggle si el usuario quiere inglés o ya ha traducido
   if (showLanguageToggle) {
@@ -460,9 +460,9 @@ export default function SilentTranslator() {
           </span>
         </button>
       </div>
-    );
+    )
   }
 
   // Componente invisible cuando no se necesita el toggle
-  return null;
+  return null
 }

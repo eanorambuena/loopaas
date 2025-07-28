@@ -46,8 +46,8 @@ export default function ActivePlugins({ enabledPlugins, activePermissions }: Act
           
           // Safety check: ensure Component exists and is a valid React component
           if (!Component || (typeof Component !== 'function' && typeof Component !== 'object')) {
-            console.warn(`Plugin "${name}" has an invalid component:`, Component);
-            console.warn(`Plugin "${name}" full object:`, plugin);
+            console.warn(`Plugin "${name}" has an invalid component:`, Component)
+            console.warn(`Plugin "${name}" full object:`, plugin)
             return (
               <div key={name + permKey + index} className="mb-6 p-4 border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950">
                 <h4 className="font-semibold mb-2 text-red-700 dark:text-red-300">Plugin: {name}</h4>
@@ -56,7 +56,7 @@ export default function ActivePlugins({ enabledPlugins, activePermissions }: Act
                   Debug keys: {JSON.stringify(Object.keys(plugin), null, 2)}
                 </pre>
               </div>
-            );
+            )
           }
 
           const props = plugin.props || {}
@@ -75,7 +75,7 @@ export default function ActivePlugins({ enabledPlugins, activePermissions }: Act
               <h4 className="font-semibold mb-2 text-emerald-700 dark:text-emerald-300">Plugin: {name}</h4>
               <Component {...enhancedProps} />
             </div>
-          );
+          )
         })
       )}
     </section>
