@@ -9,7 +9,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "prepare": "husky"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^2.2.0",
@@ -39,6 +40,7 @@
     "lucide-react": "0.376.0",
     "motion": "^12.23.0",
     "next": "latest",
+    "next-intl": "^4.3.4",
     "plugini": "^1.0.3",
     "postcss": "8.4.33",
     "react": "18.2.0",
@@ -61,7 +63,14 @@
     "encoding": "0.1.13",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.4",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
+    "lint-staged": "^16.1.2",
     "vitest": "^3.2.4"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix"
+    ]
   }
 }
