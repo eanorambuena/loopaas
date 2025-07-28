@@ -26,14 +26,16 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={GeistSans.className}>
+    <html lang="es" className={GeistSans.className}>
       <body className="bg-background overflow-x-hidden text-foreground">
         <Spotlight className="overflow-hidden" />
         <main className="min-h-screen relative w-full flex flex-col items-center">
           <Header />
           <section className="flex-1 mt-20 w-full flex flex-col gap-5 items-center">
             <GoBackLink />
-            {children}
+            <div translate="yes">
+              {children}
+            </div>
             <Toaster />
             <Footer />
           </section>

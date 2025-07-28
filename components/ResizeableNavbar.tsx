@@ -1,6 +1,7 @@
 'use client'
 
 import AuthButton from '@/components/AuthButton'
+import SmartTranslate from '@/components/SmartTranslate'
 import {
   Navbar,
   NavBody,
@@ -27,6 +28,7 @@ export function ResizableNavbar({ items }: ResizableNavbarProps) {
         <NavbarLogo />
         <NavItems items={items} />
         <div className="flex items-center gap-4">
+          <SmartTranslate />
           <AuthButton />
         </div>
       </NavBody>
@@ -56,6 +58,7 @@ export function ResizableNavbar({ items }: ResizableNavbarProps) {
             </a>
           ))}
           <div className="flex w-full flex-col gap-4">
+            <SmartTranslate />
             <AuthButton />
           </div>
         </MobileNavMenu>
