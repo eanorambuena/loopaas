@@ -51,6 +51,14 @@ export default function Header() {
       link: '/cursos',
     },
     {
+      name: 'Organizaciones',
+      link: '/organizaciones',
+    },
+    {
+      name: 'Pricing',
+      link: '/pricing',
+    },
+    {
       name: 'Perfil',
       link: '/perfil',
     },

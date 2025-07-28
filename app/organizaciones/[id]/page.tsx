@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/utils/supabase/client'
 import { useToast } from '@/components/ui/use-toast'
-import { Calendar, Users, Crown, Settings, BookOpen, ExternalLink } from 'lucide-react'
+import { Calendar, Users, Crown, Settings, BookOpen, ExternalLink, ArrowUpCircle, BarChart3, Shield, Zap } from 'lucide-react'
 
 export default function AdminOrganizacionPage() {
   const [organization, setOrganization] = useState<any>(null)
@@ -78,7 +78,7 @@ export default function AdminOrganizacionPage() {
             description: 'No tienes permisos para acceder a esta organización',
             variant: 'destructive'
           })
-          router.push('/organizacion')
+          router.push('/organizaciones')
           return
         }
 
@@ -183,13 +183,13 @@ export default function AdminOrganizacionPage() {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full flex items-center justify-center">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-4 min-w-0 flex-1">
+                <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                   <Crown className="w-6 h-6 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">
                     Gestión de Organización
                   </h1>
                   <p className="text-gray-600 dark:text-gray-400">
@@ -197,12 +197,28 @@ export default function AdminOrganizacionPage() {
                   </p>
                 </div>
               </div>
-              <Badge 
-                variant={organization.plan === 'Pro' ? 'default' : 'secondary'}
-                className={organization.plan === 'Pro' ? 'bg-emerald-600' : ''}
-              >
-                Plan {organization.plan}
-              </Badge>
+              <div className="flex gap-2 flex-shrink-0">
+                <Button 
+                  variant="outline" 
+                  onClick={() => router.push(`/organizaciones/${params.id}/analytics`)}
+                >
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Analytics
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => router.push(`/organizaciones/${params.id}/configuracion`)}
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Configuración
+                </Button>
+                <Badge 
+                  variant={organization.plan === 'Pro' ? 'default' : 'secondary'}
+                  className={organization.plan === 'Pro' ? 'bg-emerald-600' : ''}
+                >
+                  Plan {organization.plan}
+                </Badge>
+              </div>
             </div>
 
             {/* Organization Name */}
@@ -274,6 +290,53 @@ export default function AdminOrganizacionPage() {
             </div>
           </div>
 
+          {/* Upgrade Plan Section */}
+          {organization.plan === 'Free' && (
+            <div className="bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-900/20 dark:to-blue-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800 p-6 mb-8">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full flex items-center justify-center">
+                    <ArrowUpCircle className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                      Actualiza a Pro
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
+                      Desbloquea todo el potencial de tu organización con funcionalidades avanzadas
+                    </p>
+                    <div className="grid md:grid-cols-3 gap-4 mb-4">
+                      <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <Users className="w-4 h-4 text-emerald-600" />
+                        <span>Estudiantes ilimitados</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <BarChart3 className="w-4 h-4 text-emerald-600" />
+                        <span>Análisis avanzado</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <Shield className="w-4 h-4 text-emerald-600" />
+                        <span>Soporte prioritario</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                    $29<span className="text-sm font-normal text-gray-600 dark:text-gray-400">/mes</span>
+                  </div>
+                  <Button 
+                    onClick={() => router.push('/pricing')}
+                    className="bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    <Zap className="w-4 h-4 mr-2" />
+                    Actualizar ahora
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Courses Section */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
@@ -311,7 +374,7 @@ export default function AdminOrganizacionPage() {
                 {courses.map((course) => (
                   <div
                     key={course.id}
-                    onClick={() => router.push(`/cursos/${course.id}`)}
+                    onClick={() => router.push(`/cursos/${course.abbreviature}/${course.semester}`)}
                     className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 cursor-pointer group"
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -352,7 +415,7 @@ export default function AdminOrganizacionPage() {
 
           {/* Back to Landing */}
           <div className="text-center mt-8 space-x-4">
-            <Button variant="outline" onClick={() => router.push('/organizacion')}>
+            <Button variant="outline" onClick={() => router.push('/organizaciones')}>
               ← Ver todas las organizaciones
             </Button>
             <Button variant="outline" onClick={() => router.push('/')}>

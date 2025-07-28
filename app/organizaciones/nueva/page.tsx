@@ -82,7 +82,7 @@ export default function NuevaOrganizacionPage() {
         
         if (!user) {
           // Redirigir al login si no está autenticado
-          router.push('/login?redirect=/organizacion/nueva')
+          router.push('/login?redirect=/organizaciones/nueva')
           return
         }
         
@@ -99,7 +99,7 @@ export default function NuevaOrganizacionPage() {
         }
       } catch (error) {
         console.error('Error verificando autenticación:', error)
-        router.push('/login?redirect=/organizacion/nueva')
+        router.push('/login?redirect=/organizaciones/nueva')
       } finally {
         setLoading(false)
       }
@@ -154,7 +154,7 @@ export default function NuevaOrganizacionPage() {
       })
 
       // Redirigir a la página de gestión de la organización
-      router.push(`/organizacion/${data.organization.id}`)
+      router.push(`/organizaciones/${data.organization.id}`)
 
     } catch (error: any) {
       console.error('❌ [Frontend] Error creating organization:', error)
@@ -380,7 +380,7 @@ export default function NuevaOrganizacionPage() {
 
         {/* Footer */}
         <div className="text-center mt-16 space-x-6">
-          <Link href="/organizacion" className="text-emerald-600 hover:underline font-medium">
+          <Link href="/organizaciones" className="text-emerald-600 hover:underline font-medium">
             Ver mis organizaciones
           </Link>
           <span className="text-gray-300">•</span>
