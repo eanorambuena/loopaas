@@ -327,7 +327,7 @@ export default function PricingPage() {
                 onClick={() => router.push('/login')}
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-emerald-600 text-lg px-8"
+                className="border-white/80 text-white hover:bg-white hover:text-emerald-600 bg-transparent backdrop-blur-sm text-lg px-8 transition-all duration-200"
               >
                 Iniciar sesión
               </Button>
