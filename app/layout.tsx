@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <section className="flex-1 mt-20 w-full flex flex-col gap-5 items-center">
             <GoBackLink />
-            <div translate="yes">
+            <div>
               {children}
             </div>
             <Toaster />
