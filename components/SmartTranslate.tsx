@@ -29,14 +29,14 @@ export default function SmartTranslate() {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center justify-center gap-2">
       {/* Mostrar sugerencia si el usuario no habla español */}
       {userLanguage && !userLanguage.startsWith('es') && !showTranslateOptions && (
         <Button
           onClick={suggestTranslation}
           variant="outline"
           size="sm"
-          className="gap-2 text-blue-600 border-blue-200 hover:bg-blue-50"
+          className="gap-2 text-blue-600 border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/20"
         >
           <Globe className="h-4 w-4" />
           Translate page?
@@ -45,26 +45,30 @@ export default function SmartTranslate() {
 
       {/* Opciones de traducción */}
       {showTranslateOptions && (
-        <div className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-          <Languages className="h-4 w-4 text-blue-600" />
-          <span className="text-sm text-blue-700 dark:text-blue-300">Traducir:</span>
+        <div className="flex flex-col sm:flex-row items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 max-w-full">
+          <div className="flex items-center gap-2">
+            <Languages className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">Traducir:</span>
+          </div>
           
-          {/* Google Translate Widget */}
-          <GoogleTranslate />
-          
-          {/* Browser Translation API (si está disponible) */}
-          <BrowserTranslate />
-          
-          {/* Instrucciones para traducción manual del browser */}
-          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-            o clic derecho → "Traducir"
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Google Translate Widget */}
+            <GoogleTranslate />
+            
+            {/* Browser Translation API (si está disponible) */}
+            <BrowserTranslate />
+            
+            {/* Instrucciones para traducción manual del browser */}
+            <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">
+              o clic derecho → "Traducir"
+            </span>
+          </div>
           
           <Button
             onClick={() => setShowTranslateOptions(false)}
             variant="ghost"
             size="sm"
-            className="ml-2 h-6 w-6 p-0"
+            className="ml-2 h-6 w-6 p-0 hover:bg-blue-100 dark:hover:bg-blue-800"
           >
             ×
           </Button>
