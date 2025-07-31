@@ -57,10 +57,6 @@ export default function Header() {
     {
       name: 'Instrucciones',
       link: '/instrucciones',
-    },
-    {
-      name: 'Plugins Demo',
-      link: '/demo/plugins',
     }
   ]
 
