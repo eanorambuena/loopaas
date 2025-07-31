@@ -51,24 +51,16 @@ export default function Header() {
       link: '/cursos',
     },
     {
-      name: 'Organizaciones',
-      link: '/organizaciones',
-    },
-    {
       name: 'Pricing',
       link: '/pricing',
-    },
-    {
-      name: 'Perfil',
-      link: '/perfil',
     },
     {
       name: 'Instrucciones',
       link: '/instrucciones',
     },
     {
-      name: 'Ayuda',
-      link: 'mailto:soporte.idsapp@gmail.com',
+      name: 'Plugins Demo',
+      link: '/demo/plugins',
     }
   ]
 

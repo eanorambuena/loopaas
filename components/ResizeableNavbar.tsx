@@ -50,12 +50,12 @@ export function ResizableNavbar({ items }: ResizableNavbarProps) {
               key={`mobile-link-${idx}`}
               href={item.link}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="relative text-neutral-600 dark:text-neutral-300"
+              className="relative text-neutral-600 dark:text-neutral-300 py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
               <span className="block">{item.name}</span>
             </a>
           ))}
-          <div className="flex w-full flex-col gap-4">
+          <div className="flex w-full flex-col gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <AuthButton />
           </div>
         </MobileNavMenu>
