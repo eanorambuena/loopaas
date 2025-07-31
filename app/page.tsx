@@ -89,7 +89,7 @@ export default function LandingPage() {
           <Link href="/organizaciones/nueva" className="flex justify-center w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
             Crea tu organización
           </Link>
-          <Link href="/pricing" className="w-60 transform rounded-lg border border-emerald-300 bg-emerald-50 px-6 py-2 font-medium text-emerald-700 transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-900 dark:text-emerald-200 dark:hover:bg-emerald-800 text-center">
+          <Link href="/pricing" className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
             Ver planes
           </Link>
         </motion.div>
