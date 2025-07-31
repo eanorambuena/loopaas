@@ -7,7 +7,7 @@ import { Home, ArrowLeft, Search } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <main className="min-h-screen flex flex-col items-center justify-center">
       <div className="text-center px-4 py-10 max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
