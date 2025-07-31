@@ -97,7 +97,10 @@ export default function AuthButton() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors duration-200"
+        className={
+          'flex items-center gap-2 px-4 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 shadow-sm'
+        }
+        style={{ fontWeight: 500 }}
       >
         <span className="hidden sm:inline">
           {userInfo?.firstName ? `Hola, ${userInfo.firstName}!` : 'Mi cuenta'}
