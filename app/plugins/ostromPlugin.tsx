@@ -44,8 +44,17 @@ const OstromAttendanceComponent = (props: any) => {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(false)
   const [cameraError, setCameraError] = useState<string>('')
+  const [debugInfo, setDebugInfo] = useState<string[]>([])
   const videoRef = useRef<HTMLVideoElement>(null)
   const qrScannerRef = useRef<QrScanner | null>(null)
+
+  // Función para agregar mensajes de debug
+  const addDebugMessage = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString()
+    const fullMessage = `[${timestamp}] ${message}`
+    console.log(fullMessage)
+    setDebugInfo(prev => [...prev.slice(-4), fullMessage]) // Mantener solo los últimos 5 mensajes
+  }
 
   // Obtener datos de permisos usando useEffect
   useEffect(() => {
@@ -159,113 +168,165 @@ const OstromAttendanceComponent = (props: any) => {
   const supabasePermission = allPermissions.find(p => p.name === 'supabaseAccess')
   const dbAccess = supabasePermission?.func?.() || {}
 
-  // Funciones del escáner QR
+    // Funciones del escáner QR
   const startScanner = async () => {
-    if (!videoRef.current) return
+    addDebugMessage('🚀 Iniciando escáner QR...')
+    
+    if (!videoRef.current) {
+      addDebugMessage('❌ Error: Elemento de video no encontrado')
+      setCameraError('Error: Elemento de video no encontrado')
+      return
+    }
+    
+    addDebugMessage('✅ Elemento de video encontrado')
     
     setCameraError('')
     setScannerActive(true)
     setScannedData('')
     
+    addDebugMessage('📱 Estado del escáner: activo')
+    
     try {
-      // Verificar si estamos en HTTPS (requerido para cámara en móvil)
+      // Verificar protocolo
+      addDebugMessage(`🔒 Protocolo: ${location.protocol} - Host: ${location.hostname}`)
+      
       if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
         throw new Error('Se requiere HTTPS para usar la cámara en dispositivos móviles')
       }
 
-      // Obtener permiso de cámara a través del sistema de permisos
+      // Verificar permisos activos
+      const activePerms = props.activePermissions ? Array.from(props.activePermissions) : []
+      addDebugMessage(`🔑 Permisos activos: ${activePerms.join(', ')}`)
+      
+      if (!props.activePermissions || !props.activePermissions.has('camera')) {
+        throw new Error('Permiso de cámara no otorgado. Activa el permiso "camera" primero.')
+      }
+
+      // Obtener permisos del sistema
       const allPermissions = Allow.getAllPermissions()
+      addDebugMessage(`📋 Permisos registrados: ${allPermissions.map(p => p.name).join(', ')}`)
+      
       const cameraPermission = allPermissions.find(p => p.name === 'camera')
       
-      if (cameraPermission?.func) {
-        const cameraAccess = await cameraPermission.func()
-        
-        // Crear instancia del escáner QR con configuración mejorada para móvil
-        qrScannerRef.current = new QrScanner(
-          videoRef.current,
-          (result) => {
-            // Procesar resultado del escaneo
-            processScannedEmail(result.data)
-            stopScanner()
-          },
-          {
-            highlightScanRegion: true,
-            highlightCodeOutline: true,
-            preferredCamera: 'environment', // Usar cámara trasera preferentemente
-            maxScansPerSecond: 5, // Limitar escaneos para mejor performance en móvil
-            calculateScanRegion: (video) => {
-              // Región de escaneo adaptativa para móvil
-              const smallerDimension = Math.min(video.videoWidth, video.videoHeight)
-              const regionSize = Math.round(0.7 * smallerDimension)
-              
-              return {
-                x: Math.round((video.videoWidth - regionSize) / 2),
-                y: Math.round((video.videoHeight - regionSize) / 2),
-                width: regionSize,
-                height: regionSize,
-              }
+      if (!cameraPermission) {
+        throw new Error('Permiso de cámara no registrado en el sistema')
+      }
+      
+      addDebugMessage('📷 Solicitando acceso a cámara...')
+      const cameraAccess = await cameraPermission.func()
+      addDebugMessage('✅ Acceso a cámara obtenido')
+      
+      // Verificar QrScanner
+      if (typeof QrScanner === 'undefined') {
+        throw new Error('QrScanner library no está disponible')
+      }
+      
+      addDebugMessage('📦 Creando instancia de QrScanner...')
+      
+      // Crear instancia del escáner QR
+      qrScannerRef.current = new QrScanner(
+        videoRef.current,
+        (result) => {
+          addDebugMessage(`🎯 QR detectado: ${result.data}`)
+          processScannedEmail(result.data)
+          stopScanner()
+        },
+        {
+          highlightScanRegion: true,
+          highlightCodeOutline: true,
+          preferredCamera: 'environment',
+          maxScansPerSecond: 5,
+          calculateScanRegion: (video) => {
+            const smallerDimension = Math.min(video.videoWidth, video.videoHeight)
+            const regionSize = Math.round(0.7 * smallerDimension)
+            
+            return {
+              x: Math.round((video.videoWidth - regionSize) / 2),
+              y: Math.round((video.videoHeight - regionSize) / 2),
+              width: regionSize,
+              height: regionSize,
             }
           }
-        )
-        
-        // Iniciar el escáner
-        await qrScannerRef.current.start()
-      }
+        }
+      )
+      
+      addDebugMessage('🎬 Iniciando QrScanner...')
+      await qrScannerRef.current.start()
+      addDebugMessage('✅ QrScanner iniciado exitosamente')
+      
     } catch (error) {
-      console.error('Error accessing camera:', error)
-      let errorMessage = 'Error desconocido'
+      const errorMsg = error instanceof Error ? error.message : 'Error desconocido'
+      addDebugMessage(`💥 Error: ${errorMsg}`)
+      
+      let userErrorMessage = 'Error desconocido'
       
       if (error instanceof Error) {
         if (error.name === 'NotAllowedError') {
-          errorMessage = 'Acceso a cámara denegado. Por favor permite el acceso a la cámara en tu navegador.'
+          userErrorMessage = 'Acceso a cámara denegado. Por favor permite el acceso a la cámara en tu navegador.'
         } else if (error.name === 'NotFoundError') {
-          errorMessage = 'No se encontró ninguna cámara en tu dispositivo.'
+          userErrorMessage = 'No se encontró ninguna cámara en tu dispositivo.'
         } else if (error.name === 'NotSupportedError') {
-          errorMessage = 'Tu navegador no soporta acceso a cámara.'
+          userErrorMessage = 'Tu navegador no soporta acceso a cámara.'
         } else if (error.name === 'SecurityError') {
-          errorMessage = 'Error de seguridad. Asegúrate de estar usando HTTPS.'
+          userErrorMessage = 'Error de seguridad. Asegúrate de estar usando HTTPS.'
         } else {
-          errorMessage = error.message
+          userErrorMessage = error.message
         }
       }
       
-      setCameraError(errorMessage)
+      setCameraError(userErrorMessage)
       setScannerActive(false)
     }
   }
 
   const stopScanner = () => {
+    console.log('[QR DEBUG] 🛑 stopScanner called')
     if (qrScannerRef.current) {
+      console.log('[QR DEBUG] 🛑 Stopping and destroying QrScanner...')
       qrScannerRef.current.stop()
       qrScannerRef.current.destroy()
       qrScannerRef.current = null
+      console.log('[QR DEBUG] ✅ QrScanner stopped and destroyed')
     }
     setScannerActive(false)
+    console.log('[QR DEBUG] ✅ Scanner state set to inactive')
   }
 
   // Simular escaneo de QR con email (para testing)
   const simulateQRScan = async () => {
-    if (students.length === 0) return
+    console.log('[QR DEBUG] 🎯 simulateQRScan called')
+    console.log('[QR DEBUG] 📊 Students count:', students.length)
+    
+    if (students.length === 0) {
+      console.log('[QR DEBUG] ❌ No students available for simulation')
+      return
+    }
     
     // Simular escaneo de un email aleatorio
     const randomStudent = students[Math.floor(Math.random() * students.length)]
     const scannedEmail = randomStudent.email
     
+    console.log('[QR DEBUG] 🎲 Simulated scan for:', scannedEmail)
     setScannedData(scannedEmail)
     await processScannedEmail(scannedEmail)
   }
 
   // Procesar email escaneado y comparar con estudiantes
   const processScannedEmail = async (email: string) => {
+    console.log('[QR DEBUG] 📧 processScannedEmail called with:', email)
+    console.log('[QR DEBUG] 👥 Available students:', students.map(s => ({ name: s.name, email: s.email })))
+    
     const student = students.find((s: Student) => s.email.toLowerCase() === email.toLowerCase())
     
     if (student) {
+      console.log('[QR DEBUG] ✅ Student found:', student)
       await markAttendance(student.id, true)
       // Mostrar notificación de éxito
       setTimeout(() => {
         alert(`✅ Asistencia registrada para: ${student.name}`)
       }, 100)
     } else {
+      console.log('[QR DEBUG] ❌ Student not found for email:', email)
       // Mostrar error si el email no está en la lista
       setTimeout(() => {
         alert(`❌ Email ${email} no encontrado en la lista de estudiantes del curso`)
@@ -275,8 +336,11 @@ const OstromAttendanceComponent = (props: any) => {
 
   // Función para input manual de email (para testing)
   const handleManualEmailInput = async (email: string) => {
+    console.log('[QR DEBUG] ✍️ handleManualEmailInput called with:', email)
     if (email.trim()) {
       await processScannedEmail(email.trim())
+    } else {
+      console.log('[QR DEBUG] ❌ Empty email provided')
     }
   }
 
@@ -410,6 +474,30 @@ const OstromAttendanceComponent = (props: any) => {
 
       {selectedCourse && (
         <>
+          {/* Panel de Debug */}
+          {debugInfo.length > 0 && (
+            <div className="border border-blue-200 dark:border-blue-700 rounded-lg p-3 bg-blue-50 dark:bg-blue-950">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 flex items-center gap-1">
+                  🐛 Debug QR Scanner
+                </h4>
+                <Button 
+                  onClick={() => setDebugInfo([])}
+                  size="sm"
+                  variant="outline"
+                  className="text-xs px-2 py-1"
+                >
+                  Limpiar
+                </Button>
+              </div>
+              <div className="text-xs text-blue-700 dark:text-blue-300 space-y-1 max-h-24 overflow-y-auto font-mono">
+                {debugInfo.map((msg, idx) => (
+                  <div key={idx} className="break-words">{msg}</div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Scanner QR */}
           <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-4">
