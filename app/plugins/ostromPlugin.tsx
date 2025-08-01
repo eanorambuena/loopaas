@@ -42,47 +42,28 @@ const OstromAttendanceComponent = (props: any) => {
   const [students, setStudents] = useState<Student[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(false)
-  const [debugLogs, setDebugLogs] = useState<string[]>([])
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  // Función helper para logging visible
-  const addDebugLog = (message: string) => {
-    const timestamp = new Date().toLocaleTimeString()
-    const logMessage = `[${timestamp}] ${message}`
-    console.log(logMessage)
-    setDebugLogs(prev => [...prev.slice(-4), logMessage]) // Mantener solo últimos 5 logs
-  }
 
   // Obtener datos de permisos usando useEffect
   useEffect(() => {
     const loadData = async () => {
-      addDebugLog('🔄 Iniciando carga de datos...')
-      addDebugLog(`🔑 Permisos activos: ${props.activePermissions ? Array.from(props.activePermissions).join(', ') : 'ninguno'}`)
-      
       setLoading(true)
       try {
         // Solo cargar cursos si el permiso getCourses está activo
         if (props.activePermissions && props.activePermissions.has('getCourses')) {
           const allPermissions = Allow.getAllPermissions()
           const coursesPermission = allPermissions.find(p => p.name === 'getCourses')
-          addDebugLog('✅ Permiso getCourses activo, cargando cursos...')
           
           if (coursesPermission?.func) {
             const coursesData = await coursesPermission.func()
-            addDebugLog(`📚 Cursos recibidos: ${coursesData?.length || 0}`)
-            if (Array.isArray(coursesData) && coursesData.length > 0) {
-              addDebugLog(`📋 Primer curso: ID=${coursesData[0].id} (${typeof coursesData[0].id})`)
-              addDebugLog(`🏷️ IDs: ${coursesData.map(c => `${c.id}(${typeof c.id})`).join(', ')}`)
-            }
             setCourses(coursesData || [])
           }
         } else {
-          addDebugLog('❌ Permiso getCourses no activo')
           setCourses([])
         }
       } catch (error) {
-        addDebugLog(`💥 Error loading courses: ${error}`)
+        console.error('[OSTROM] Error loading courses:', error)
       } finally {
         setLoading(false)
       }
@@ -95,28 +76,23 @@ const OstromAttendanceComponent = (props: any) => {
   useEffect(() => {
     const loadStudents = async () => {
       if (!selectedCourse) {
-        console.log('[OSTROM] No hay curso seleccionado')
         setStudents([])
         return
       }
 
       // Solo cargar estudiantes si el permiso getStudents está activo
       if (!props.activePermissions || !props.activePermissions.has('getStudents')) {
-        console.log('[OSTROM] Permiso getStudents no activo, no se cargan estudiantes')
         setStudents([])
         return
       }
 
-      console.log('[OSTROM] Cargando estudiantes para curso:', selectedCourse.id)
       setLoading(true)
       try {
         const allPermissions = Allow.getAllPermissions()
         const studentsPermission = allPermissions.find(p => p.name === 'getStudents')
-        console.log('[OSTROM] Permiso getStudents activo, cargando estudiantes...')
         
         if (studentsPermission?.func) {
           const studentsData = await studentsPermission.func(selectedCourse.id)
-          console.log('[OSTROM] Datos de estudiantes:', studentsData)
           setStudents(studentsData || [])
         }
       } catch (error) {
@@ -234,10 +210,7 @@ const OstromAttendanceComponent = (props: any) => {
           today
         )
         
-        if (result.success) {
-          console.log('✅ Asistencia guardada en localStorage:', result.data)
-        } else {
-          console.error('❌ Error al guardar en localStorage:', result.error)
+        if (!result.success) {
           // Mostrar notificación de error
           setTimeout(() => {
             alert(`⚠️ Error al guardar en localStorage: ${result.error}`)
@@ -290,20 +263,6 @@ const OstromAttendanceComponent = (props: any) => {
         )}
       </div>
 
-      {/* Debug Logs */}
-      {debugLogs.length > 0 && (
-        <div className="bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-3">
-          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">🔍 Debug Logs (últimos 5):</h4>
-          <div className="space-y-1 text-xs font-mono">
-            {debugLogs.map((log, index) => (
-              <div key={index} className="text-gray-600 dark:text-gray-400">
-                {log}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Selector de curso */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -325,33 +284,21 @@ const OstromAttendanceComponent = (props: any) => {
               className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               value={selectedCourse?.id || ''}
               onChange={(e) => {
-                console.log('[OSTROM] Select onChange triggered')
-                console.log('[OSTROM] e.target.value:', e.target.value, typeof e.target.value)
-                
                 if (!e.target.value) {
-                  console.log('[OSTROM] Valor vacío, deseleccionando curso')
                   setSelectedCourse(null)
                   setAttendanceList({})
                   return
                 }
                 
                 const courseId = e.target.value // Mantener como string para UUIDs
-                console.log('[OSTROM] courseId (como string):', courseId)
                 
                 // Buscar curso comparando strings directamente
                 const foundCourse = courses.find((course: Course) => {
-                  const match = String(course.id) === String(courseId)
-                  console.log('[OSTROM] Comparando:', String(course.id), '===', String(courseId), '=', match)
-                  return match
+                  return String(course.id) === String(courseId)
                 })
-                
-                console.log('[OSTROM] Curso encontrado:', foundCourse)
-                console.log('[OSTROM] Cursos disponibles:', courses.map(c => ({ id: c.id, name: c.name })))
                 
                 setSelectedCourse(foundCourse || null)
                 setAttendanceList({}) // Limpiar asistencia al cambiar curso
-                
-                console.log('[OSTROM] Estado actualizado - selectedCourse:', foundCourse)
               }}
               disabled={loading}
             >
@@ -611,8 +558,8 @@ const OstromAttendanceComponent = (props: any) => {
                 <button 
                   onClick={() => {
                     const records = localStorage.getItem('attendance_records')
-                    console.log('📋 Registros de asistencia en localStorage:', JSON.parse(records || '[]'))
-                    alert(`📋 Ver consola del navegador para los ${JSON.parse(records || '[]').length} registros guardados`)
+                    const recordCount = JSON.parse(records || '[]').length
+                    alert(`📋 Hay ${recordCount} registros de asistencia guardados en localStorage`)
                   }}
                   className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800"
                 >
