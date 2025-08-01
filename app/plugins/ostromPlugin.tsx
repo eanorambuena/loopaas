@@ -56,6 +56,21 @@ const OstromAttendanceComponent = (props: any) => {
     setDebugInfo(prev => [...prev.slice(-4), fullMessage]) // Mantener solo los últimos 5 mensajes
   }
 
+  // Debug: Monitorear cambios en el estado del scanner
+  useEffect(() => {
+    addDebugMessage(`🔄 Scanner state changed: active=${scannerActive}`)
+    if (scannerActive) {
+      addDebugMessage(`📹 Video ref available: ${!!videoRef.current}`)
+    }
+  }, [scannerActive])
+
+  // Debug: Monitorear errores de cámara
+  useEffect(() => {
+    if (cameraError) {
+      addDebugMessage(`🚨 Camera error: ${cameraError}`)
+    }
+  }, [cameraError])
+
   // Obtener datos de permisos usando useEffect
   useEffect(() => {
     const loadData = async () => {
@@ -172,17 +187,22 @@ const OstromAttendanceComponent = (props: any) => {
   const startScanner = async () => {
     addDebugMessage('🚀 Iniciando escáner QR...')
     
+    // Esperar un momento para que el DOM se actualice
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
     if (!videoRef.current) {
       addDebugMessage('❌ Error: Elemento de video no encontrado')
-      setCameraError('Error: Elemento de video no encontrado')
+      addDebugMessage(`📊 Video ref status: ${videoRef.current}`)
+      addDebugMessage(`📊 Scanner active: ${scannerActive}`)
+      setCameraError('Error: Elemento de video no encontrado. Intenta refrescar la página.')
+      setScannerActive(false)
       return
     }
     
     addDebugMessage('✅ Elemento de video encontrado')
+    addDebugMessage(`📊 Video element: ${videoRef.current.tagName} - Ready state: ${videoRef.current.readyState}`)
     
     setCameraError('')
-    setScannerActive(true)
-    setScannedData('')
     
     addDebugMessage('📱 Estado del escáner: activo')
     
@@ -526,92 +546,96 @@ const OstromAttendanceComponent = (props: any) => {
               </div>
             </div>
             
-            {scannerActive ? (
-              <div className="space-y-4">
-                {cameraError ? (
-                  <div className="bg-red-100 dark:bg-red-950 p-4 rounded-lg text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="text-4xl">📷</div>
-                      <div>
-                        <p className="text-red-800 dark:text-red-200 font-medium mb-2">
-                          ❌ Error de cámara
-                        </p>
-                        <p className="text-red-600 dark:text-red-400 text-sm mb-3">
-                          {cameraError}
-                        </p>
-                        
-                        {/* Consejos específicos para móvil */}
-                        <div className="text-left bg-red-50 dark:bg-red-900 p-3 rounded text-xs">
-                          <p className="font-medium text-red-700 dark:text-red-300 mb-2">💡 Soluciones comunes:</p>
-                          <ul className="text-red-600 dark:text-red-400 space-y-1 list-disc list-inside">
-                            <li>Permite acceso a la cámara en tu navegador</li>
-                            <li>En móvil: usa Chrome, Firefox o Safari</li>
-                            <li>Verifica que tengas una cámara funcional</li>
-                            <li>En algunos casos, recarga la página</li>
-                          </ul>
-                        </div>
-                      </div>
-                      
-                      <div className="flex gap-2 flex-wrap justify-center">
-                        <Button 
-                          onClick={() => {setCameraError(''); setScannerActive(false)}}
-                          size="sm"
-                          variant="outline"
-                        >
-                          Cerrar
-                        </Button>
-                        <Button 
-                          onClick={() => {setCameraError(''); startScanner()}}
-                          size="sm"
-                          className="bg-emerald-600 hover:bg-emerald-700"
-                        >
-                          Reintentar
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="relative">
-                    <video 
-                      ref={videoRef}
-                      className="w-full max-w-md mx-auto rounded-lg bg-black aspect-square object-cover"
-                      playsInline
-                      muted
-                      autoPlay
-                      style={{ 
-                        maxHeight: '80vh', // Limitar altura en móvil
-                        minHeight: '250px' // Altura mínima para QR
-                      }}
-                    />
-                    
-                    {/* Overlay de guía para QR */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="border-2 border-emerald-500 bg-emerald-500/10 rounded-lg w-3/4 max-w-[200px] aspect-square flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="w-8 h-8 mx-auto mb-2 border-2 border-emerald-400 rounded"></div>
-                          <p className="text-emerald-100 text-xs font-medium px-2">
-                            Enfoca el QR aquí
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Esquinas del marco de escaneo */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="relative w-3/4 max-w-[200px] aspect-square">
-                        {/* Esquina superior izquierda */}
-                        <div className="absolute top-0 left-0 w-6 h-6 border-l-3 border-t-3 border-emerald-400"></div>
-                        {/* Esquina superior derecha */}
-                        <div className="absolute top-0 right-0 w-6 h-6 border-r-3 border-t-3 border-emerald-400"></div>
-                        {/* Esquina inferior izquierda */}
-                        <div className="absolute bottom-0 left-0 w-6 h-6 border-l-3 border-b-3 border-emerald-400"></div>
-                        {/* Esquina inferior derecha */}
-                        <div className="absolute bottom-0 right-0 w-6 h-6 border-r-3 border-b-3 border-emerald-400"></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+            {/* Área del escáner QR */}
+            <div className="space-y-4">
+              {/* Video element - siempre presente pero oculto cuando no está activo */}
+              <div className={`relative ${scannerActive && !cameraError ? 'block' : 'hidden'}`}>
+                <video 
+                  ref={videoRef}
+                  className="w-full max-w-md mx-auto rounded-lg bg-black aspect-square object-cover"
+                  playsInline
+                  muted
+                  autoPlay
+                  style={{ 
+                    maxHeight: '80vh', // Limitar altura en móvil
+                    minHeight: '250px' // Altura mínima para QR
+                  }}
+                />
                 
+                {/* Overlay de guía para QR */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="border-2 border-emerald-500 bg-emerald-500/10 rounded-lg w-3/4 max-w-[200px] aspect-square flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-8 h-8 mx-auto mb-2 border-2 border-emerald-400 rounded"></div>
+                      <p className="text-emerald-100 text-xs font-medium px-2">
+                        Enfoca el QR aquí
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Esquinas del marco de escaneo */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="relative w-3/4 max-w-[200px] aspect-square">
+                    {/* Esquina superior izquierda */}
+                    <div className="absolute top-0 left-0 w-6 h-6 border-l-3 border-t-3 border-emerald-400"></div>
+                    {/* Esquina superior derecha */}
+                    <div className="absolute top-0 right-0 w-6 h-6 border-r-3 border-t-3 border-emerald-400"></div>
+                    {/* Esquina inferior izquierda */}
+                    <div className="absolute bottom-0 left-0 w-6 h-6 border-l-3 border-b-3 border-emerald-400"></div>
+                    {/* Esquina inferior derecha */}
+                    <div className="absolute bottom-0 right-0 w-6 h-6 border-r-3 border-b-3 border-emerald-400"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mensaje de error */}
+              {cameraError && (
+                <div className="bg-red-100 dark:bg-red-950 p-4 rounded-lg text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="text-4xl">📷</div>
+                    <div>
+                      <p className="text-red-800 dark:text-red-200 font-medium mb-2">
+                        ❌ Error de cámara
+                      </p>
+                      <p className="text-red-600 dark:text-red-400 text-sm mb-3">
+                        {cameraError}
+                      </p>
+                      
+                      {/* Consejos específicos para móvil */}
+                      <div className="text-left bg-red-50 dark:bg-red-900 p-3 rounded text-xs">
+                        <p className="font-medium text-red-700 dark:text-red-300 mb-2">� Soluciones comunes:</p>
+                        <ul className="text-red-600 dark:text-red-400 space-y-1 list-disc list-inside">
+                          <li>Permite acceso a la cámara en tu navegador</li>
+                          <li>En móvil: usa Chrome, Firefox o Safari</li>
+                          <li>Verifica que tengas una cámara funcional</li>
+                          <li>En algunos casos, recarga la página</li>
+                        </ul>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2 flex-wrap justify-center">
+                      <Button 
+                        onClick={() => {setCameraError(''); setScannerActive(false)}}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Cerrar
+                      </Button>
+                      <Button 
+                        onClick={() => {setCameraError(''); startScanner()}}
+                        size="sm"
+                        className="bg-emerald-600 hover:bg-emerald-700"
+                      >
+                        Reintentar
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Estado del escáner */}
+              {scannerActive && !cameraError && (
                 <div className="text-center">
                   <p className="text-gray-600 dark:text-gray-400 mb-2">
                     📱 Escáner QR activo con cámara real
@@ -629,35 +653,38 @@ const OstromAttendanceComponent = (props: any) => {
                     </div>
                   </div>
                 </div>
-                
-                {/* Botón de simulación como fallback */}
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
-                  <div className="text-center space-y-2">
-                    <Button 
-                      onClick={simulateQRScan}
-                      size="sm"
-                      variant="outline"
-                      className="mx-auto"
-                    >
-                      🎯 Simular escaneo (para testing)
-                    </Button>
-                    <p className="text-xs text-gray-500">
-                      (Solo para pruebas - el escáner real funciona con la cámara)
-                    </p>
-                  </div>
+              )}
+
+              {/* Estado inactivo */}
+              {!scannerActive && !cameraError && (
+                <div className="bg-gray-50 dark:bg-gray-900 p-8 rounded-lg text-center">
+                  <QrCode size={64} className="mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500 dark:text-gray-500">
+                    Haz clic en &quot;Activar escáner&quot; para comenzar
+                  </p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Los estudiantes deben mostrar su QR con su email institucional
+                  </p>
+                </div>
+              )}
+              
+              {/* Botón de simulación como fallback */}
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                <div className="text-center space-y-2">
+                  <Button 
+                    onClick={simulateQRScan}
+                    size="sm"
+                    variant="outline"
+                    className="mx-auto"
+                  >
+                    🎯 Simular escaneo (para testing)
+                  </Button>
+                  <p className="text-xs text-gray-500">
+                    (Solo para pruebas - el escáner real funciona con la cámara)
+                  </p>
                 </div>
               </div>
-            ) : (
-              <div className="bg-gray-50 dark:bg-gray-900 p-8 rounded-lg text-center">
-                <QrCode size={64} className="mx-auto mb-4 text-gray-400" />
-                <p className="text-gray-500 dark:text-gray-500">
-                  Haz clic en &quot;Activar escáner&quot; para comenzar
-                </p>
-                <p className="text-xs text-gray-400 mt-2">
-                  Los estudiantes deben mostrar su QR con su email institucional
-                </p>
-              </div>
-            )}
+            </div>
             
             {scannedData && (
               <div className="mt-4 p-3 bg-green-100 dark:bg-green-900 rounded-lg">
