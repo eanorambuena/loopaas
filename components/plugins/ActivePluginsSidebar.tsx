@@ -21,13 +21,13 @@ export default function ActivePluginsSidebar({ enabledPlugins, activePermissions
     return (
       <section className="w-full">
         <h3 className="text-lg font-semibold mb-4">Plugins Activos</h3>
-        <div className="p-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="p-8 md:p-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 text-center">
+          <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+            <svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
           </div>
-          <p className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">No hay plugins activos</p>
+          <p className="text-base md:text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">No hay plugins activos</p>
           <p className="text-sm text-gray-500 dark:text-gray-500">
             Habilita algunos plugins arriba para verlos aquí organizados
           </p>
@@ -42,7 +42,68 @@ export default function ActivePluginsSidebar({ enabledPlugins, activePermissions
     <section className="w-full">
       <h3 className="text-lg font-semibold mb-4">Plugins Activos</h3>
       
-      <div className="flex h-[600px] w-full max-w-6xl mx-auto border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
+      {/* Mobile: Tabs horizontales */}
+      <div className="md:hidden">
+        {/* Tabs navegación móvil */}
+        <div className="mb-4">
+          <div className="flex overflow-x-auto scrollbar-none border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            {enabledPlugins.map((plugin, index) => {
+              const isSelected = selectedPlugin === index
+              const pluginName = plugin.name || `Plugin ${index + 1}`
+              
+              return (
+                <button
+                  key={plugin.id || `plugin-${index}`}
+                  onClick={() => setSelectedPlugin(index)}
+                  className={`flex-shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap
+                            ${isSelected 
+                              ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950' 
+                              : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                            }`}
+                >
+                  {pluginName}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Contenido del plugin activo móvil */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
+          {/* Header del plugin activo */}
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-emerald-50 dark:bg-emerald-950">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                {(currentPlugin?.name || 'P').charAt(0).toUpperCase()}
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-lg text-emerald-700 dark:text-emerald-300 truncate">
+                  {currentPlugin?.name || `Plugin ${selectedPlugin + 1}`}
+                </h4>
+                <p className="text-emerald-600 dark:text-emerald-400 text-sm truncate">
+                  {currentPlugin?.description || 'Plugin personalizado activo'}
+                </p>
+              </div>
+
+              <span className="text-xs bg-emerald-500 text-white px-2 py-1 rounded-full font-medium">
+                {selectedPlugin + 1}/{enabledPlugins.length}
+              </span>
+            </div>
+          </div>
+
+          {/* Contenido del plugin móvil */}
+          <div className="p-4">
+            <PluginRenderer 
+              plugin={currentPlugin}
+              activePermissions={activePermissions}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop: Sidebar layout */}
+      <div className="hidden md:flex h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
         {/* Sidebar */}
         <div className="w-80 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
           {/* Header del sidebar */}
@@ -163,7 +224,7 @@ export default function ActivePluginsSidebar({ enabledPlugins, activePermissions
           {/* Contenido del plugin */}
           <div className="flex-1 bg-white dark:bg-gray-900 overflow-hidden">
             <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-emerald-400 hover:scrollbar-thumb-emerald-600 dark:hover:scrollbar-thumb-emerald-300">
-              <div key={selectedPlugin} className="transition-opacity duration-200 ease-in-out">
+              <div key={selectedPlugin} className="transition-opacity duration-200 ease-in-out p-6">
                 <PluginRenderer 
                   plugin={currentPlugin}
                   activePermissions={activePermissions}
