@@ -48,51 +48,73 @@ const OstromAttendanceComponent = (props: any) => {
   // Obtener datos de permisos usando useEffect
   useEffect(() => {
     const loadData = async () => {
+      console.log('[OSTROM] Iniciando carga de datos...')
+      console.log('[OSTROM] Permisos activos del plugin:', props.activePermissions ? Array.from(props.activePermissions) : 'ninguno')
+      
       setLoading(true)
       try {
-        const allPermissions = Allow.getAllPermissions()
-        const coursesPermission = allPermissions.find(p => p.name === 'getCourses')
-        
-        if (coursesPermission?.func) {
-          const coursesData = await coursesPermission.func()
-          setCourses(coursesData || [])
+        // Solo cargar cursos si el permiso getCourses está activo
+        if (props.activePermissions && props.activePermissions.has('getCourses')) {
+          const allPermissions = Allow.getAllPermissions()
+          const coursesPermission = allPermissions.find(p => p.name === 'getCourses')
+          console.log('[OSTROM] Permiso getCourses activo, cargando cursos...')
+          
+          if (coursesPermission?.func) {
+            const coursesData = await coursesPermission.func()
+            console.log('[OSTROM] Datos de cursos:', coursesData)
+            setCourses(coursesData || [])
+          }
+        } else {
+          console.log('[OSTROM] Permiso getCourses no activo, no se cargan cursos')
+          setCourses([])
         }
       } catch (error) {
-        console.error('Error loading courses:', error)
+        console.error('[OSTROM] Error loading courses:', error)
       } finally {
         setLoading(false)
       }
     }
     
     loadData()
-  }, [])
+  }, [props.activePermissions]) // Dependencia en permisos activos
 
   // Cargar estudiantes cuando se selecciona un curso
   useEffect(() => {
     const loadStudents = async () => {
       if (!selectedCourse) {
+        console.log('[OSTROM] No hay curso seleccionado')
         setStudents([])
         return
       }
 
+      // Solo cargar estudiantes si el permiso getStudents está activo
+      if (!props.activePermissions || !props.activePermissions.has('getStudents')) {
+        console.log('[OSTROM] Permiso getStudents no activo, no se cargan estudiantes')
+        setStudents([])
+        return
+      }
+
+      console.log('[OSTROM] Cargando estudiantes para curso:', selectedCourse.id)
       setLoading(true)
       try {
         const allPermissions = Allow.getAllPermissions()
         const studentsPermission = allPermissions.find(p => p.name === 'getStudents')
+        console.log('[OSTROM] Permiso getStudents activo, cargando estudiantes...')
         
         if (studentsPermission?.func) {
           const studentsData = await studentsPermission.func(selectedCourse.id)
+          console.log('[OSTROM] Datos de estudiantes:', studentsData)
           setStudents(studentsData || [])
         }
       } catch (error) {
-        console.error('Error loading students:', error)
+        console.error('[OSTROM] Error loading students:', error)
       } finally {
         setLoading(false)
       }
     }
 
     loadStudents()
-  }, [selectedCourse])
+  }, [selectedCourse, props.activePermissions]) // Dependencia en permisos activos
 
   // Verificar permisos
   const hasStudentsPermission = props.activePermissions?.has('getStudents')
@@ -119,7 +141,7 @@ const OstromAttendanceComponent = (props: any) => {
         <ul className="text-sm text-orange-600 dark:text-orange-400 ml-4 list-disc">
           <li><strong>getStudents:</strong> Ver lista de estudiantes del curso</li>
           <li><strong>getCourses:</strong> Acceder a los cursos disponibles</li>
-          <li><strong>supabaseAccess:</strong> Conectar con la base de datos para guardar asistencia</li>
+          <li><strong>supabaseAccess:</strong> Guardar asistencia en localStorage (modo desarrollo)</li>
         </ul>
         <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
           Permisos activos: {props.activePermissions ? Array.from(props.activePermissions).join(', ') : 'ninguno'}
@@ -181,14 +203,14 @@ const OstromAttendanceComponent = (props: any) => {
     }
   }
 
-  // Marcar asistencia y guardar en base de datos
+  // Marcar asistencia y guardar en localStorage
   const markAttendance = async (studentId: number, present: boolean) => {
     setAttendanceList(prev => ({
       ...prev,
       [studentId]: present
     }))
     
-    // Guardar en base de datos si hay acceso a Supabase y curso seleccionado
+    // Guardar en localStorage si hay acceso y curso seleccionado
     if (dbAccess.saveAttendance && selectedCourse) {
       try {
         const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
@@ -199,11 +221,13 @@ const OstromAttendanceComponent = (props: any) => {
           today
         )
         
-        if (!result.success) {
-          console.error('Error saving attendance to database:', result.error)
+        if (result.success) {
+          console.log('✅ Asistencia guardada en localStorage:', result.data)
+        } else {
+          console.error('❌ Error al guardar en localStorage:', result.error)
           // Mostrar notificación de error
           setTimeout(() => {
-            alert(`⚠️ Error al guardar en base de datos: ${result.error}`)
+            alert(`⚠️ Error al guardar en localStorage: ${result.error}`)
           }, 100)
         }
       } catch (error) {
@@ -240,10 +264,10 @@ const OstromAttendanceComponent = (props: any) => {
         <QrCode className="text-emerald-600 dark:text-emerald-400" size={24} />
         <div>
           <h3 className="font-bold text-emerald-800 dark:text-emerald-200">
-            Ostrom - Control de Asistencia Real
+            Ostrom - Control de Asistencia (LocalStorage)
           </h3>
           <p className="text-sm text-emerald-600 dark:text-emerald-400">
-            Sistema conectado a Supabase para gestión real de asistencia
+            Sistema de asistencia con datos reales - Guardado en localStorage
           </p>
         </div>
         {loading && (
@@ -258,29 +282,43 @@ const OstromAttendanceComponent = (props: any) => {
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Seleccionar curso real:
         </label>
-        <select 
-          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-          value={selectedCourse?.id || ''}
-          onChange={(e) => {
-            const course = courses.find((c: Course) => c.id === parseInt(e.target.value))
-            setSelectedCourse(course || null)
-            setAttendanceList({}) // Limpiar asistencia al cambiar curso
-          }}
-          disabled={loading}
-        >
-          <option value="">
-            {loading ? '-- Cargando cursos...' : '-- Seleccionar curso --'}
-          </option>
-          {courses.map((course: Course) => (
-            <option key={course.id} value={course.id}>
-              {course.name} - {course.organizacion}
-            </option>
-          ))}
-        </select>
-        {courses.length === 0 && !loading && (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            No se encontraron cursos. Verifica tu conexión a Supabase.
-          </p>
+        
+        {!props.activePermissions || !props.activePermissions.has('getCourses') ? (
+          <div className="w-full p-4 border border-orange-300 rounded-md bg-orange-50 dark:bg-orange-950">
+            <p className="text-orange-700 dark:text-orange-300 text-sm">
+              ⚠️ Necesita el permiso <strong>getCourses</strong> para ver los cursos disponibles
+            </p>
+            <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+              Habilite el permiso en la sección de gestión de permisos arriba
+            </p>
+          </div>
+        ) : (
+          <>
+            <select 
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              value={selectedCourse?.id || ''}
+              onChange={(e) => {
+                const course = courses.find((c: Course) => c.id === parseInt(e.target.value))
+                setSelectedCourse(course || null)
+                setAttendanceList({}) // Limpiar asistencia al cambiar curso
+              }}
+              disabled={loading}
+            >
+              <option value="">
+                {loading ? '-- Cargando cursos...' : '-- Seleccionar curso --'}
+              </option>
+              {courses.map((course: Course) => (
+                <option key={course.id} value={course.id}>
+                  {course.name} - {course.organizacion}
+                </option>
+              ))}
+            </select>
+            {courses.length === 0 && !loading && (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                No se encontraron cursos. Verifica tu conexión a Supabase y que tengas cursos registrados.
+              </p>
+            )}
+          </>
         )}
       </div>
 
@@ -420,6 +458,18 @@ const OstromAttendanceComponent = (props: any) => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
                 <p className="text-gray-500">Cargando estudiantes...</p>
               </div>
+            ) : !props.activePermissions || !props.activePermissions.has('getStudents') ? (
+              <div className="text-center py-8">
+                <Users size={48} className="mx-auto mb-4 text-gray-400" />
+                <div className="p-4 border border-orange-300 rounded-md bg-orange-50 dark:bg-orange-950">
+                  <p className="text-orange-700 dark:text-orange-300 text-sm mb-2">
+                    ⚠️ Necesita el permiso <strong>getStudents</strong> para ver los estudiantes
+                  </p>
+                  <p className="text-xs text-orange-600 dark:text-orange-400">
+                    Habilite el permiso en la sección de gestión de permisos arriba
+                  </p>
+                </div>
+              </div>
             ) : students.length === 0 ? (
               <div className="text-center py-8">
                 <Users size={48} className="mx-auto mb-4 text-gray-400" />
@@ -491,6 +541,43 @@ const OstromAttendanceComponent = (props: any) => {
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Sin marcar</p>
                 </div>
+              </div>
+            </div>
+
+            {/* Información sobre almacenamiento */}
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <h5 className="font-medium text-blue-800 dark:text-blue-200">Información de almacenamiento</h5>
+              </div>
+              <p className="text-sm text-blue-700 dark:text-blue-300 mb-1">
+                📱 Los datos de asistencia se guardan en <strong>localStorage</strong> del navegador
+              </p>
+              <p className="text-xs text-blue-600 dark:text-blue-400">
+                • Clave: attendance_records • Persistente hasta que se limpie el navegador • Solo visible en este dispositivo
+              </p>
+              <div className="mt-2 flex gap-2">
+                <button 
+                  onClick={() => {
+                    const records = localStorage.getItem('attendance_records')
+                    console.log('📋 Registros de asistencia en localStorage:', JSON.parse(records || '[]'))
+                    alert(`📋 Ver consola del navegador para los ${JSON.parse(records || '[]').length} registros guardados`)
+                  }}
+                  className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800"
+                >
+                  Ver registros guardados
+                </button>
+                <button 
+                  onClick={() => {
+                    if (confirm('¿Estás seguro de que quieres borrar todos los registros de asistencia?')) {
+                      localStorage.removeItem('attendance_records')
+                      alert('🗑️ Todos los registros de asistencia han sido borrados')
+                    }
+                  }}
+                  className="text-xs px-2 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800"
+                >
+                  Limpiar todo
+                </button>
               </div>
             </div>
           </div>

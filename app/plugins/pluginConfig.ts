@@ -6,31 +6,26 @@ import { createClient } from '@/utils/supabase/client'
 Allow.registerPermission({
   name: 'getCourses',
   func: async () => {
-    const supabase = createClient()
     try {
-      const { data: courses, error } = await supabase
-        .from('courses')
-        .select(`
-          id,
-          name,
-          abbreviature,
-          semester,
-          organizations (
-            name
-          )
-        `)
-        .eq('active', true)
+      const response = await fetch('/api/plugins/courses', {
+        credentials: 'include' // Incluir cookies de sesión
+      })
       
-      if (error) {
-        console.error('Error fetching courses:', error)
+      if (!response.ok) {
+        console.error('Error fetching courses from API:', response.status, response.statusText)
+        
+        // Si es error de autenticación, devolver array vacío en lugar de fallar
+        if (response.status === 401) {
+          console.warn('Usuario no autenticado, devolviendo lista vacía de cursos')
+          return []
+        }
+        
         return []
       }
       
-      return courses?.map(course => ({
-        id: course.id,
-        name: `${course.name} (${course.abbreviature}-${course.semester})`,
-        organizacion: (course.organizations as any)?.name || 'Sin organización'
-      })) || []
+      const data = await response.json()
+      console.log('✅ Cursos obtenidos exitosamente:', data.courses?.length || 0)
+      return data.courses || []
     } catch (error) {
       console.error('Error in getCourses permission:', error)
       return []
@@ -43,35 +38,31 @@ Allow.registerPermission({
 Allow.registerPermission({
   name: 'getStudents',
   func: async (courseId?: number) => {
-    if (!courseId) return []
+    if (!courseId) {
+      console.warn('getStudents llamado sin courseId')
+      return []
+    }
     
-    const supabase = createClient()
     try {
-      const { data: students, error } = await supabase
-        .from('students')
-        .select(`
-          id,
-          userInfo (
-            firstName,
-            lastName,
-            email
-          )
-        `)
-        .eq('courseId', courseId)
-        .eq('active', true)
+      const response = await fetch(`/api/plugins/students/${courseId}`, {
+        credentials: 'include' // Incluir cookies de sesión
+      })
       
-      if (error) {
-        console.error('Error fetching students:', error)
+      if (!response.ok) {
+        console.error('Error fetching students from API:', response.status, response.statusText)
+        
+        // Si es error de autenticación, devolver array vacío
+        if (response.status === 401) {
+          console.warn('Usuario no autenticado, devolviendo lista vacía de estudiantes')
+          return []
+        }
+        
         return []
       }
       
-      return students?.map(student => ({
-        id: student.id,
-        name: `${(student.userInfo as any)?.firstName || ''} ${(student.userInfo as any)?.lastName || ''}`.trim(),
-        email: (student.userInfo as any)?.email || '',
-        grade: 0, // Se puede agregar si existe en la BD
-        active: true
-      })) || []
+      const data = await response.json()
+      console.log(`✅ Estudiantes obtenidos exitosamente para curso ${courseId}:`, data.students?.length || 0)
+      return data.students || []
     } catch (error) {
       console.error('Error in getStudents permission:', error)
       return []
@@ -80,45 +71,76 @@ Allow.registerPermission({
   description: 'Acceder a los estudiantes reales de un curso desde Supabase'
 })
 
-// Registrar permiso supabaseAccess - acceso real a Supabase
+// Registrar permiso supabaseAccess - usando localStorage por ahora
 Allow.registerPermission({
   name: 'supabaseAccess',
   func: () => {
-    const supabase = createClient()
     return {
-      client: supabase,
       canReadStudents: true,
       canReadCourses: true,
       canWriteAttendance: true,
-      // Función para guardar asistencia
+      // Función para guardar asistencia en localStorage
       saveAttendance: async (courseId: number, studentId: number, present: boolean, date: string) => {
         try {
-          const { data, error } = await supabase
-            .from('attendance')
-            .upsert({
-              courseId,
-              studentId,
-              present,
-              date,
-              createdAt: new Date().toISOString()
-            }, {
-              onConflict: 'courseId,studentId,date'
-            })
+          // Obtener asistencias existentes del localStorage
+          const existingAttendance = JSON.parse(localStorage.getItem('attendance_records') || '[]')
           
-          if (error) {
-            console.error('Error saving attendance:', error)
-            return { success: false, error }
+          // Crear clave única para este registro
+          const recordKey = `${courseId}_${studentId}_${date}`
+          
+          // Buscar si ya existe un registro para este estudiante/curso/fecha
+          const existingIndex = existingAttendance.findIndex(
+            (record: any) => record.key === recordKey
+          )
+          
+          const newRecord = {
+            key: recordKey,
+            courseId,
+            studentId,
+            present,
+            date,
+            createdAt: new Date().toISOString()
           }
           
-          return { success: true, data }
+          if (existingIndex !== -1) {
+            // Actualizar registro existente
+            existingAttendance[existingIndex] = newRecord
+          } else {
+            // Agregar nuevo registro
+            existingAttendance.push(newRecord)
+          }
+          
+          // Guardar en localStorage
+          localStorage.setItem('attendance_records', JSON.stringify(existingAttendance))
+          
+          console.log('📝 Asistencia guardada en localStorage:', newRecord)
+          return { success: true, data: newRecord }
         } catch (error) {
-          console.error('Error in saveAttendance:', error)
-          return { success: false, error }
+          console.error('Error saving attendance to localStorage:', error)
+          return { success: false, error: error instanceof Error ? error.message : 'Error desconocido' }
+        }
+      },
+      
+      // Función para obtener asistencias desde localStorage
+      getAttendance: async (courseId: number, date?: string) => {
+        try {
+          const attendanceRecords = JSON.parse(localStorage.getItem('attendance_records') || '[]')
+          
+          let filtered = attendanceRecords.filter((record: any) => record.courseId === courseId)
+          
+          if (date) {
+            filtered = filtered.filter((record: any) => record.date === date)
+          }
+          
+          return { success: true, data: filtered }
+        } catch (error) {
+          console.error('Error getting attendance from localStorage:', error)
+          return { success: false, error: error instanceof Error ? error.message : 'Error desconocido' }
         }
       }
     }
   },
-  description: 'Acceso real a Supabase para operaciones de asistencia'
+  description: 'Acceso a localStorage para operaciones de asistencia (modo desarrollo)'
 })
 
 // Crear microkernel y registrar solo el plugin de asistencia
