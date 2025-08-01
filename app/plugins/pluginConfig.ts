@@ -6,32 +6,6 @@ import { createClient } from '@/utils/supabase/client'
 Allow.registerPermission({
   name: 'getCourses',
   func: async () => {
-    console.log('🔄 getCourses: Iniciando...')
-    
-    // SIEMPRE devolver datos de prueba para debug
-    const testCourses = [
-      {
-        id: 1,
-        name: 'Desarrollo de Software (IDS123-2024-1)',
-        organizacion: 'Universidad de Prueba'
-      },
-      {
-        id: 2,
-        name: 'Base de Datos (BD456-2024-1)',
-        organizacion: 'Universidad de Prueba'
-      },
-      {
-        id: 3,
-        name: 'Redes de Computadores (RC789-2024-1)',
-        organizacion: 'Universidad de Prueba'
-      }
-    ]
-    
-    console.log('✅ getCourses: Devolviendo cursos de prueba:', testCourses)
-    return testCourses
-    
-    /* 
-    // Código real (comentado para debug)
     try {
       const response = await fetch('/api/plugins/courses', {
         credentials: 'include' // Incluir cookies de sesión
@@ -56,7 +30,6 @@ Allow.registerPermission({
       console.error('Error in getCourses permission:', error)
       return []
     }
-    */
   },
   description: 'Acceder a los cursos reales del usuario desde Supabase'
 })
@@ -64,51 +37,12 @@ Allow.registerPermission({
 // Registrar permiso getStudents - datos reales de estudiantes de un curso
 Allow.registerPermission({
   name: 'getStudents',
-  func: async (courseId?: number) => {
-    console.log('🔄 getStudents: Iniciando para courseId:', courseId)
-    
+  func: async (courseId?: string) => {
     if (!courseId) {
       console.warn('getStudents llamado sin courseId')
       return []
     }
     
-    // SIEMPRE devolver datos de prueba para debug
-    const testStudents = [
-      {
-        id: 101,
-        name: 'Ana García López',
-        email: 'ana.garcia@universidad.edu',
-        grade: 8.5,
-        active: true
-      },
-      {
-        id: 102,
-        name: 'Carlos Rodríguez Pérez',
-        email: 'carlos.rodriguez@universidad.edu',
-        grade: 7.8,
-        active: true
-      },
-      {
-        id: 103,
-        name: 'María González Silva',
-        email: 'maria.gonzalez@universidad.edu',
-        grade: 9.2,
-        active: true
-      },
-      {
-        id: 104,
-        name: 'Juan Martínez Torres',
-        email: 'juan.martinez@universidad.edu',
-        grade: 6.9,
-        active: true
-      }
-    ]
-    
-    console.log(`✅ getStudents: Devolviendo ${testStudents.length} estudiantes de prueba para curso ${courseId}`)
-    return testStudents
-    
-    /* 
-    // Código real (comentado para debug)
     try {
       const response = await fetch(`/api/plugins/students/${courseId}`, {
         credentials: 'include' // Incluir cookies de sesión
@@ -133,7 +67,6 @@ Allow.registerPermission({
       console.error('Error in getStudents permission:', error)
       return []
     }
-    */
   },
   description: 'Acceder a los estudiantes reales de un curso desde Supabase'
 })
