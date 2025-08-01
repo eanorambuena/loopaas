@@ -31,7 +31,6 @@ export async function GET(
         )
       `)
       .eq('courseId', params.courseId)
-      .eq('active', true)
       .order('group', { ascending: true })
 
     if (error) {
