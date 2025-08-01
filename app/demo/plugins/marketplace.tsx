@@ -20,7 +20,7 @@ export function PluginsMarketplace() {
 
   // Debug: log what we're getting from usePluginManager
   React.useEffect(() => {
-    console.log('[MARKETPLACE] Available plugins:', availablePlugins.map(p => ({ id: p.id, name: p.name })))
+    console.log('[MARKETPLACE] Available plugins:', availablePlugins.map(p => ({ name: p.name })))
     console.log('[MARKETPLACE] Active permissions:', Array.from(activePermissions))
     console.log('[MARKETPLACE] Enabled plugins count:', enabledPlugins.length)
     console.log('[MARKETPLACE] Demo microkernel:', demoMicrokernel)
