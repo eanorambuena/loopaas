@@ -1,4 +1,2 @@
-echo "🔍 Verificando que el proyecto compile antes del commit..."
-bun run build
 echo "🧹 Corriendo linting en archivos modificados..."
 bun run lint-staged

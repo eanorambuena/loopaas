@@ -21,7 +21,9 @@ const StudentStatsComponent = (props: any) => {
       const getStudentsPermission = allPermissions.find(p => p.name === 'getStudents')
       
       if (getStudentsPermission && getStudentsPermission.func) {
-        const students = getStudentsPermission.func()
+        // Para el plugin de estadísticas, mostrar estudiantes de todos los cursos
+        // Llamamos con courseId 1 como ejemplo por defecto
+        const students = getStudentsPermission.func(1) || []
         
         // Calcular algunas estadísticas simples
         const totalStudents = students.length

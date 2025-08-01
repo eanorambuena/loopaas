@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { usePluginManager } from 'plugini'
-import { microkernel } from '../../plugins/pluginConfig'
+import { demoMicrokernel } from './demoPluginConfig'
 import PermissionManager from '@/components/plugins/PermissionManager'
 import PluginList from '@/components/plugins/PluginList'
 import ActivePluginsSidebar from '@/components/plugins/ActivePluginsSidebar'
@@ -16,13 +16,21 @@ export function PluginsMarketplace() {
     handleDisablePlugin,
     togglePermission,
     getPluginPermissions
-  } = usePluginManager(microkernel)
+  } = usePluginManager(demoMicrokernel)
 
   // Debug: log what we're getting from usePluginManager
   React.useEffect(() => {
-    console.log('PluginsMarketplace - Active permissions:', Array.from(activePermissions))
-    console.log('PluginsMarketplace - Enabled plugins count:', enabledPlugins.length)
-  }, [enabledPlugins, activePermissions])
+    console.log('[MARKETPLACE] Available plugins:', availablePlugins.map(p => ({ id: p.id, name: p.name })))
+    console.log('[MARKETPLACE] Active permissions:', Array.from(activePermissions))
+    console.log('[MARKETPLACE] Enabled plugins count:', enabledPlugins.length)
+    console.log('[MARKETPLACE] Demo microkernel:', demoMicrokernel)
+    
+    // Debug permisos de cada plugin
+    availablePlugins.forEach(plugin => {
+      const permissions = getPluginPermissions(plugin.name)
+      console.log(`[MARKETPLACE] Plugin "${plugin.name}" permisos:`, permissions)
+    })
+  }, [enabledPlugins, activePermissions, availablePlugins, getPluginPermissions])
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center py-10">
