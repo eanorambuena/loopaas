@@ -45,29 +45,40 @@ const DemoOstromPlugin = (props: any) => {
   useEffect(() => {
     const loadData = async () => {
       console.log('[DEMO OSTROM] Iniciando carga de datos...')
+      console.log('[DEMO OSTROM] Permisos activos del plugin:', props.activePermissions ? Array.from(props.activePermissions) : 'ninguno')
+      
       setLoading(true)
       try {
-        const allPermissions = Allow.getAllPermissions()
-        console.log('[DEMO OSTROM] Permisos disponibles:', allPermissions.map(p => p.name))
-        
-        // Obtener cursos
-        const coursesPermission = allPermissions.find(p => p.name === 'getCourses')
-        console.log('[DEMO OSTROM] Permiso getCourses encontrado:', !!coursesPermission)
-        
-        if (coursesPermission?.func) {
-          const coursesData = await coursesPermission.func()
-          console.log('[DEMO OSTROM] Datos de cursos:', coursesData)
-          setCourses(coursesData || [])
+        // Solo cargar cursos si el permiso getCourses está activo
+        if (props.activePermissions && props.activePermissions.has('getCourses')) {
+          const allPermissions = Allow.getAllPermissions()
+          const coursesPermission = allPermissions.find(p => p.name === 'getCourses')
+          console.log('[DEMO OSTROM] Permiso getCourses activo, cargando cursos...')
+          
+          if (coursesPermission?.func) {
+            const coursesData = await coursesPermission.func()
+            console.log('[DEMO OSTROM] Datos de cursos:', coursesData)
+            setCourses(coursesData || [])
+          }
+        } else {
+          console.log('[DEMO OSTROM] Permiso getCourses no activo, no se cargan cursos')
+          setCourses([])
         }
 
-        // Obtener acceso a base de datos demo
-        const databasePermission = allPermissions.find(p => p.name === 'demoDatabase')
-        console.log('[DEMO OSTROM] Permiso demoDatabase encontrado:', !!databasePermission)
-        
-        if (databasePermission?.func) {
-          const dbAccess = await databasePermission.func()
-          console.log('[DEMO OSTROM] Acceso a BD:', dbAccess)
-          setDatabaseAccess(dbAccess)
+        // Solo cargar acceso a BD si el permiso está activo
+        if (props.activePermissions && props.activePermissions.has('demoDatabase')) {
+          const allPermissions = Allow.getAllPermissions()
+          const databasePermission = allPermissions.find(p => p.name === 'demoDatabase')
+          console.log('[DEMO OSTROM] Permiso demoDatabase activo')
+          
+          if (databasePermission?.func) {
+            const dbAccess = await databasePermission.func()
+            console.log('[DEMO OSTROM] Acceso a BD:', dbAccess)
+            setDatabaseAccess(dbAccess)
+          }
+        } else {
+          console.log('[DEMO OSTROM] Permiso demoDatabase no activo')
+          setDatabaseAccess(null)
         }
       } catch (error) {
         console.error('[DEMO OSTROM] Error loading demo data:', error)
@@ -77,7 +88,7 @@ const DemoOstromPlugin = (props: any) => {
     }
     
     loadData()
-  }, [])
+  }, [props.activePermissions]) // Dependencia en permisos activos
 
   // Cargar estudiantes cuando se selecciona un curso
   useEffect(() => {
@@ -88,12 +99,19 @@ const DemoOstromPlugin = (props: any) => {
         return
       }
 
+      // Solo cargar estudiantes si el permiso getStudents está activo
+      if (!props.activePermissions || !props.activePermissions.has('getStudents')) {
+        console.log('[DEMO OSTROM] Permiso getStudents no activo, no se cargan estudiantes')
+        setStudents([])
+        return
+      }
+
       console.log('[DEMO OSTROM] Cargando estudiantes para curso:', selectedCourse.id)
       setLoading(true)
       try {
         const allPermissions = Allow.getAllPermissions()
         const studentsPermission = allPermissions.find(p => p.name === 'getStudents')
-        console.log('[DEMO OSTROM] Permiso getStudents encontrado:', !!studentsPermission)
+        console.log('[DEMO OSTROM] Permiso getStudents activo, cargando estudiantes...')
         
         if (studentsPermission?.func) {
           const studentsData = await studentsPermission.func(selectedCourse.id)
@@ -108,7 +126,7 @@ const DemoOstromPlugin = (props: any) => {
     }
 
     loadStudents()
-  }, [selectedCourse])
+  }, [selectedCourse, props.activePermissions]) // Dependencia en permisos activos
 
   // Verificar permisos requeridos - En demo, todos los permisos están disponibles
   const allPermissions = Allow.getAllPermissions()
@@ -224,25 +242,44 @@ const DemoOstromPlugin = (props: any) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Select onValueChange={handleCourseChange}>
-            <SelectTrigger className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
-              <SelectValue placeholder="Selecciona un curso..." />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
-              {courses.map((course: Course) => (
-                <SelectItem 
-                  key={course.id} 
-                  value={course.id.toString()}
-                  className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <div className="flex flex-col">
-                    <span className="font-medium">{course.name}</span>
-                    <span className="text-sm text-gray-500">{course.organizacion}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {!props.activePermissions || !props.activePermissions.has('getCourses') ? (
+            <div className="text-center py-8">
+              <CalendarDays size={48} className="mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-500 dark:text-gray-400 mb-2">
+                Necesita el permiso <strong>getCourses</strong> para ver los cursos disponibles
+              </p>
+              <p className="text-sm text-gray-400">
+                Habilite el permiso en la sección de gestión de permisos arriba
+              </p>
+            </div>
+          ) : courses.length === 0 ? (
+            <div className="text-center py-8">
+              <CalendarDays size={48} className="mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-500 dark:text-gray-400">
+                {loading ? 'Cargando cursos...' : 'No hay cursos disponibles'}
+              </p>
+            </div>
+          ) : (
+            <Select onValueChange={handleCourseChange}>
+              <SelectTrigger className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
+                <SelectValue placeholder="Selecciona un curso..." />
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
+                {courses.map((course: Course) => (
+                  <SelectItem 
+                    key={course.id} 
+                    value={course.id.toString()}
+                    className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-medium">{course.name}</span>
+                      <span className="text-sm text-gray-500">{course.organizacion}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </CardContent>
       </Card>
 
@@ -281,8 +318,8 @@ const DemoOstromPlugin = (props: any) => {
           </Card>
 
           {/* Lista de estudiantes */}
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-4">
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex flex-col h-full">
+            <div className="flex items-center justify-between mb-4 flex-shrink-0">
               <h4 className="font-semibold flex items-center gap-2">
                 <Users size={20} />
                 Estudiantes del curso ({students.length})
@@ -300,60 +337,72 @@ const DemoOstromPlugin = (props: any) => {
               </Button>
             </div>
             
-            {loading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-                <p className="text-gray-500">Cargando estudiantes...</p>
-              </div>
-            ) : students.length === 0 ? (
-              <div className="text-center py-8">
-                <Users size={48} className="mx-auto mb-4 text-gray-400" />
-                <p className="text-gray-500 dark:text-gray-400">
-                  {selectedCourse ? 'No hay estudiantes registrados en este curso' : 'Selecciona un curso para ver los estudiantes'}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {students.map((student: Student) => {
-                  const isPresent = attendanceList[student.id]
-                  return (
-                    <div 
-                      key={student.id}
-                      className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900 dark:text-gray-100">
-                          {student.name}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {student.email}
-                        </p>
+            <div className="flex-1 min-h-0">
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+                  <p className="text-gray-500">Cargando estudiantes...</p>
+                </div>
+              ) : !props.activePermissions || !props.activePermissions.has('getStudents') ? (
+                <div className="text-center py-8">
+                  <Users size={48} className="mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500 dark:text-gray-400 mb-2">
+                    Necesita el permiso <strong>getStudents</strong> para ver los estudiantes
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Habilite el permiso en la sección de gestión de permisos arriba
+                  </p>
+                </div>
+              ) : students.length === 0 ? (
+                <div className="text-center py-8">
+                  <Users size={48} className="mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500 dark:text-gray-400">
+                    {selectedCourse ? 'No hay estudiantes registrados en este curso' : 'Selecciona un curso para ver los estudiantes'}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3 overflow-y-auto h-full pr-2 max-h-96">
+                  {students.map((student: Student) => {
+                    const isPresent = attendanceList[student.id]
+                    return (
+                      <div 
+                        key={student.id}
+                        className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 min-h-[80px]"
+                      >
+                        <div className="flex-1 mr-3 min-w-0">
+                          <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                            {student.name}
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                            {student.email}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <Button
+                            size="sm"
+                            variant={isPresent === true ? 'default' : 'outline'}
+                            onClick={() => markAttendance(student.id, true)}
+                            className={isPresent === true ? 'bg-green-600 hover:bg-green-700' : ''}
+                          >
+                            <CheckCircle size={16} />
+                            <span className="hidden sm:inline ml-1">Presente</span>
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant={isPresent === false ? 'default' : 'outline'}
+                            onClick={() => markAttendance(student.id, false)}
+                            className={isPresent === false ? 'bg-red-600 hover:bg-red-700' : ''}
+                          >
+                            <XCircle size={16} />
+                            <span className="hidden sm:inline ml-1">Ausente</span>
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant={isPresent === true ? 'default' : 'outline'}
-                          onClick={() => markAttendance(student.id, true)}
-                          className={isPresent === true ? 'bg-green-600 hover:bg-green-700' : ''}
-                        >
-                          <CheckCircle size={16} />
-                          Presente
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={isPresent === false ? 'default' : 'outline'}
-                          onClick={() => markAttendance(student.id, false)}
-                          className={isPresent === false ? 'bg-red-600 hover:bg-red-700' : ''}
-                        >
-                          <XCircle size={16} />
-                          Ausente
-                        </Button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
