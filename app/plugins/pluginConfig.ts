@@ -148,19 +148,60 @@ Allow.registerPermission({
   name: 'camera',
   func: async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'environment' // Usar cámara trasera preferentemente
-        } 
-      })
+      // Verificar soporte de getUserMedia
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Tu navegador no soporta acceso a cámara')
+      }
+
+      // Configuración mejorada para móvil
+      const constraints = {
+        video: {
+          facingMode: 'environment', // Usar cámara trasera preferentemente
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 },
+          frameRate: { ideal: 30, max: 60 }
+        }
+      }
+
+      // Intentar primero con cámara trasera específica
+      let stream
+      try {
+        stream = await navigator.mediaDevices.getUserMedia(constraints)
+      } catch (backCameraError) {
+        console.warn('No se pudo acceder a cámara trasera, intentando con cualquier cámara:', backCameraError)
+        // Fallback: usar cualquier cámara disponible
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280, max: 1920 },
+            height: { ideal: 720, max: 1080 }
+          }
+        })
+      }
+
       return {
         stream,
         stopCamera: () => {
-          stream.getTracks().forEach(track => track.stop())
+          stream.getTracks().forEach(track => {
+            track.stop()
+          })
         }
       }
     } catch (error) {
       console.error('Error accessing camera:', error)
+      
+      // Mensajes de error más específicos
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          throw new Error('Acceso a cámara denegado. Por favor permite el acceso en tu navegador.')
+        } else if (error.name === 'NotFoundError') {
+          throw new Error('No se encontró ninguna cámara en tu dispositivo.')
+        } else if (error.name === 'NotSupportedError') {
+          throw new Error('Tu navegador no soporta acceso a cámara.')
+        } else if (error.name === 'SecurityError') {
+          throw new Error('Error de seguridad. Asegúrate de estar usando HTTPS.')
+        }
+      }
+      
       throw new Error('No se pudo acceder a la cámara')
     }
   },

@@ -168,6 +168,11 @@ const OstromAttendanceComponent = (props: any) => {
     setScannedData('')
     
     try {
+      // Verificar si estamos en HTTPS (requerido para cámara en móvil)
+      if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+        throw new Error('Se requiere HTTPS para usar la cámara en dispositivos móviles')
+      }
+
       // Obtener permiso de cámara a través del sistema de permisos
       const allPermissions = Allow.getAllPermissions()
       const cameraPermission = allPermissions.find(p => p.name === 'camera')
@@ -175,7 +180,7 @@ const OstromAttendanceComponent = (props: any) => {
       if (cameraPermission?.func) {
         const cameraAccess = await cameraPermission.func()
         
-        // Crear instancia del escáner QR
+        // Crear instancia del escáner QR con configuración mejorada para móvil
         qrScannerRef.current = new QrScanner(
           videoRef.current,
           (result) => {
@@ -186,7 +191,20 @@ const OstromAttendanceComponent = (props: any) => {
           {
             highlightScanRegion: true,
             highlightCodeOutline: true,
-            preferredCamera: 'environment' // Usar cámara trasera preferentemente
+            preferredCamera: 'environment', // Usar cámara trasera preferentemente
+            maxScansPerSecond: 5, // Limitar escaneos para mejor performance en móvil
+            calculateScanRegion: (video) => {
+              // Región de escaneo adaptativa para móvil
+              const smallerDimension = Math.min(video.videoWidth, video.videoHeight)
+              const regionSize = Math.round(0.7 * smallerDimension)
+              
+              return {
+                x: Math.round((video.videoWidth - regionSize) / 2),
+                y: Math.round((video.videoHeight - regionSize) / 2),
+                width: regionSize,
+                height: regionSize,
+              }
+            }
           }
         )
         
@@ -195,7 +213,23 @@ const OstromAttendanceComponent = (props: any) => {
       }
     } catch (error) {
       console.error('Error accessing camera:', error)
-      setCameraError(`Error al acceder a la cámara: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+      let errorMessage = 'Error desconocido'
+      
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          errorMessage = 'Acceso a cámara denegado. Por favor permite el acceso a la cámara en tu navegador.'
+        } else if (error.name === 'NotFoundError') {
+          errorMessage = 'No se encontró ninguna cámara en tu dispositivo.'
+        } else if (error.name === 'NotSupportedError') {
+          errorMessage = 'Tu navegador no soporta acceso a cámara.'
+        } else if (error.name === 'SecurityError') {
+          errorMessage = 'Error de seguridad. Asegúrate de estar usando HTTPS.'
+        } else {
+          errorMessage = error.message
+        }
+      }
+      
+      setCameraError(errorMessage)
       setScannerActive(false)
     }
   }
@@ -408,30 +442,83 @@ const OstromAttendanceComponent = (props: any) => {
               <div className="space-y-4">
                 {cameraError ? (
                   <div className="bg-red-100 dark:bg-red-950 p-4 rounded-lg text-center">
-                    <p className="text-red-800 dark:text-red-200 mb-2">❌ Error de cámara:</p>
-                    <p className="text-red-600 dark:text-red-400 text-sm">{cameraError}</p>
-                    <Button 
-                      onClick={() => {setCameraError(''); setScannerActive(false)}}
-                      size="sm"
-                      variant="outline"
-                      className="mt-2"
-                    >
-                      Cerrar
-                    </Button>
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="text-4xl">📷</div>
+                      <div>
+                        <p className="text-red-800 dark:text-red-200 font-medium mb-2">
+                          ❌ Error de cámara
+                        </p>
+                        <p className="text-red-600 dark:text-red-400 text-sm mb-3">
+                          {cameraError}
+                        </p>
+                        
+                        {/* Consejos específicos para móvil */}
+                        <div className="text-left bg-red-50 dark:bg-red-900 p-3 rounded text-xs">
+                          <p className="font-medium text-red-700 dark:text-red-300 mb-2">💡 Soluciones comunes:</p>
+                          <ul className="text-red-600 dark:text-red-400 space-y-1 list-disc list-inside">
+                            <li>Permite acceso a la cámara en tu navegador</li>
+                            <li>En móvil: usa Chrome, Firefox o Safari</li>
+                            <li>Verifica que tengas una cámara funcional</li>
+                            <li>En algunos casos, recarga la página</li>
+                          </ul>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2 flex-wrap justify-center">
+                        <Button 
+                          onClick={() => {setCameraError(''); setScannerActive(false)}}
+                          size="sm"
+                          variant="outline"
+                        >
+                          Cerrar
+                        </Button>
+                        <Button 
+                          onClick={() => {setCameraError(''); startScanner()}}
+                          size="sm"
+                          className="bg-emerald-600 hover:bg-emerald-700"
+                        >
+                          Reintentar
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="relative">
                     <video 
                       ref={videoRef}
-                      className="w-full max-w-md mx-auto rounded-lg bg-black"
+                      className="w-full max-w-md mx-auto rounded-lg bg-black aspect-square object-cover"
                       playsInline
                       muted
+                      autoPlay
+                      style={{ 
+                        maxHeight: '80vh', // Limitar altura en móvil
+                        minHeight: '250px' // Altura mínima para QR
+                      }}
                     />
+                    
+                    {/* Overlay de guía para QR */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="border-2 border-emerald-500 bg-emerald-500/20 rounded-lg w-48 h-48 flex items-center justify-center">
-                        <p className="text-white text-sm font-medium text-center px-2">
-                          Enfoca el código QR aquí
-                        </p>
+                      <div className="border-2 border-emerald-500 bg-emerald-500/10 rounded-lg w-3/4 max-w-[200px] aspect-square flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="w-8 h-8 mx-auto mb-2 border-2 border-emerald-400 rounded"></div>
+                          <p className="text-emerald-100 text-xs font-medium px-2">
+                            Enfoca el QR aquí
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Esquinas del marco de escaneo */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="relative w-3/4 max-w-[200px] aspect-square">
+                        {/* Esquina superior izquierda */}
+                        <div className="absolute top-0 left-0 w-6 h-6 border-l-3 border-t-3 border-emerald-400"></div>
+                        {/* Esquina superior derecha */}
+                        <div className="absolute top-0 right-0 w-6 h-6 border-r-3 border-t-3 border-emerald-400"></div>
+                        {/* Esquina inferior izquierda */}
+                        <div className="absolute bottom-0 left-0 w-6 h-6 border-l-3 border-b-3 border-emerald-400"></div>
+                        {/* Esquina inferior derecha */}
+                        <div className="absolute bottom-0 right-0 w-6 h-6 border-r-3 border-b-3 border-emerald-400"></div>
                       </div>
                     </div>
                   </div>
@@ -441,9 +528,18 @@ const OstromAttendanceComponent = (props: any) => {
                   <p className="text-gray-600 dark:text-gray-400 mb-2">
                     📱 Escáner QR activo con cámara real
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-500">
-                    Los estudiantes deben mostrar su QR con email institucional
-                  </p>
+                  <div className="text-sm text-gray-500 dark:text-gray-500 space-y-1">
+                    <p>Los estudiantes deben mostrar su QR con email institucional</p>
+                    <div className="bg-blue-50 dark:bg-blue-950 p-2 rounded text-xs">
+                      <p className="font-medium text-blue-700 dark:text-blue-300 mb-1">📋 Instrucciones móvil:</p>
+                      <ul className="text-blue-600 dark:text-blue-400 list-disc list-inside space-y-0.5">
+                        <li>Mantén el dispositivo estable</li>
+                        <li>Asegúrate de tener buena iluminación</li>
+                        <li>El QR debe ocupar el área marcada</li>
+                        <li>Espera a que se enfoque automáticamente</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Botón de simulación como fallback */}

@@ -89,3 +89,20 @@ input {
 .dark .scrollbar-thumb-emerald-400:hover::-webkit-scrollbar-thumb {
   background-color: rgb(16 185 129);
 }
+
+/* Bordes gruesos para el frame del QR scanner */
+.border-l-3 {
+  border-left-width: 3px;
+}
+
+.border-r-3 {
+  border-right-width: 3px;
+}
+
+.border-t-3 {
+  border-top-width: 3px;
+}
+
+.border-b-3 {
+  border-bottom-width: 3px;
+}
