@@ -143,6 +143,30 @@ Allow.registerPermission({
   description: 'Acceso a localStorage para operaciones de asistencia (modo desarrollo)'
 })
 
+// Registrar permiso de cámara para escáner QR
+Allow.registerPermission({
+  name: 'camera',
+  func: async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'environment' // Usar cámara trasera preferentemente
+        } 
+      })
+      return {
+        stream,
+        stopCamera: () => {
+          stream.getTracks().forEach(track => track.stop())
+        }
+      }
+    } catch (error) {
+      console.error('Error accessing camera:', error)
+      throw new Error('No se pudo acceder a la cámara')
+    }
+  },
+  description: 'Acceso a la cámara para escanear códigos QR'
+})
+
 // Crear microkernel y registrar solo el plugin de asistencia
 export const microkernel = new Microkernel()
 microkernel.registerPlugins([ostromPlugin])

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { usePermissions, PermissionError, Allow } from 'plugini'
 import { QrCode, Users, CheckCircle, XCircle, Camera, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import QrScanner from 'qr-scanner'
 
 // Interfaces para tipos
 interface Student {
@@ -26,11 +27,11 @@ interface AttendanceRecord {
 }
 
 export const id = 'ostrom-attendance'
-export const permissions = ['getStudents', 'getCourses', 'supabaseAccess']
+export const permissions = ['getStudents', 'getCourses', 'supabaseAccess', 'camera']
 export const metadata = {
   preferredWidth: 'large',
   name: 'Ostrom - Control de Asistencia QR',
-  description: 'Sistema completo de control de asistencia usando códigos QR con emails de estudiantes'
+  description: 'Sistema completo de control de asistencia usando códigos QR con cámara real'
 }
 
 // Componente principal del plugin
@@ -42,8 +43,9 @@ const OstromAttendanceComponent = (props: any) => {
   const [students, setStudents] = useState<Student[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(false)
+  const [cameraError, setCameraError] = useState<string>('')
   const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const qrScannerRef = useRef<QrScanner | null>(null)
 
   // Obtener datos de permisos usando useEffect
   useEffect(() => {
@@ -105,16 +107,28 @@ const OstromAttendanceComponent = (props: any) => {
     loadStudents()
   }, [selectedCourse, props.activePermissions]) // Dependencia en permisos activos
 
+  // Limpiar escáner al desmontar el componente
+  useEffect(() => {
+    return () => {
+      if (qrScannerRef.current) {
+        qrScannerRef.current.stop()
+        qrScannerRef.current.destroy()
+      }
+    }
+  }, [])
+
   // Verificar permisos
   const hasStudentsPermission = props.activePermissions?.has('getStudents')
   const hasCoursesPermission = props.activePermissions?.has('getCourses')
   const hasSupabasePermission = props.activePermissions?.has('supabaseAccess')
+  const hasCameraPermission = props.activePermissions?.has('camera')
 
-  if (!hasStudentsPermission || !hasCoursesPermission || !hasSupabasePermission) {
+  if (!hasStudentsPermission || !hasCoursesPermission || !hasSupabasePermission || !hasCameraPermission) {
     const missingPermissions = []
     if (!hasStudentsPermission) missingPermissions.push('getStudents')
     if (!hasCoursesPermission) missingPermissions.push('getCourses')
     if (!hasSupabasePermission) missingPermissions.push('supabaseAccess')
+    if (!hasCameraPermission) missingPermissions.push('camera')
     
     return (
       <div className="p-4 border-l-4 border-orange-500 bg-orange-50 dark:bg-orange-950">
@@ -131,6 +145,7 @@ const OstromAttendanceComponent = (props: any) => {
           <li><strong>getStudents:</strong> Ver lista de estudiantes del curso</li>
           <li><strong>getCourses:</strong> Acceder a los cursos disponibles</li>
           <li><strong>supabaseAccess:</strong> Guardar asistencia en localStorage (modo desarrollo)</li>
+          <li><strong>camera:</strong> Acceder a la cámara para escanear códigos QR</li>
         </ul>
         <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
           Permisos activos: {props.activePermissions ? Array.from(props.activePermissions).join(', ') : 'ninguno'}
@@ -146,25 +161,64 @@ const OstromAttendanceComponent = (props: any) => {
 
   // Funciones del escáner QR
   const startScanner = async () => {
+    if (!videoRef.current) return
+    
+    setCameraError('')
     setScannerActive(true)
     setScannedData('')
+    
+    try {
+      // Obtener permiso de cámara a través del sistema de permisos
+      const allPermissions = Allow.getAllPermissions()
+      const cameraPermission = allPermissions.find(p => p.name === 'camera')
+      
+      if (cameraPermission?.func) {
+        const cameraAccess = await cameraPermission.func()
+        
+        // Crear instancia del escáner QR
+        qrScannerRef.current = new QrScanner(
+          videoRef.current,
+          (result) => {
+            // Procesar resultado del escaneo
+            processScannedEmail(result.data)
+            stopScanner()
+          },
+          {
+            highlightScanRegion: true,
+            highlightCodeOutline: true,
+            preferredCamera: 'environment' // Usar cámara trasera preferentemente
+          }
+        )
+        
+        // Iniciar el escáner
+        await qrScannerRef.current.start()
+      }
+    } catch (error) {
+      console.error('Error accessing camera:', error)
+      setCameraError(`Error al acceder a la cámara: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+      setScannerActive(false)
+    }
   }
 
   const stopScanner = () => {
+    if (qrScannerRef.current) {
+      qrScannerRef.current.stop()
+      qrScannerRef.current.destroy()
+      qrScannerRef.current = null
+    }
     setScannerActive(false)
   }
 
-  // Simular escaneo de QR con email
+  // Simular escaneo de QR con email (para testing)
   const simulateQRScan = async () => {
-    if (!scannerActive || students.length === 0) return
+    if (students.length === 0) return
     
-    // Simular escaneo de un email aleatorio (en implementación real vendría del QR)
+    // Simular escaneo de un email aleatorio
     const randomStudent = students[Math.floor(Math.random() * students.length)]
     const scannedEmail = randomStudent.email
     
     setScannedData(scannedEmail)
     await processScannedEmail(scannedEmail)
-    setScannerActive(false)
   }
 
   // Procesar email escaneado y comparar con estudiantes
@@ -250,10 +304,10 @@ const OstromAttendanceComponent = (props: any) => {
         <QrCode className="text-emerald-600 dark:text-emerald-400" size={24} />
         <div>
           <h3 className="font-bold text-emerald-800 dark:text-emerald-200">
-            Ostrom - Control de Asistencia (LocalStorage)
+            Ostrom - Control de Asistencia QR (Producción)
           </h3>
           <p className="text-sm text-emerald-600 dark:text-emerald-400">
-            Sistema de asistencia con datos reales - Guardado en localStorage
+            Sistema de asistencia con cámara real y datos reales - Guardado en localStorage
           </p>
         </div>
         {loading && (
@@ -327,7 +381,7 @@ const OstromAttendanceComponent = (props: any) => {
             <div className="flex items-center justify-between mb-4">
               <h4 className="font-semibold flex items-center gap-2">
                 <Camera size={20} />
-                Escáner QR de Asistencia
+                Escáner QR con Cámara Real
               </h4>
               <div className="flex gap-2">
                 <Button 
@@ -351,27 +405,62 @@ const OstromAttendanceComponent = (props: any) => {
             </div>
             
             {scannerActive ? (
-              <div className="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg text-center space-y-4">
-                <div className="animate-pulse">
-                  <QrCode size={64} className="mx-auto mb-4 text-emerald-600" />
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    Escáner QR activo. Enfoca el código QR del estudiante.
+              <div className="space-y-4">
+                {cameraError ? (
+                  <div className="bg-red-100 dark:bg-red-950 p-4 rounded-lg text-center">
+                    <p className="text-red-800 dark:text-red-200 mb-2">❌ Error de cámara:</p>
+                    <p className="text-red-600 dark:text-red-400 text-sm">{cameraError}</p>
+                    <Button 
+                      onClick={() => {setCameraError(''); setScannerActive(false)}}
+                      size="sm"
+                      variant="outline"
+                      className="mt-2"
+                    >
+                      Cerrar
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <video 
+                      ref={videoRef}
+                      className="w-full max-w-md mx-auto rounded-lg bg-black"
+                      playsInline
+                      muted
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="border-2 border-emerald-500 bg-emerald-500/20 rounded-lg w-48 h-48 flex items-center justify-center">
+                        <p className="text-white text-sm font-medium text-center px-2">
+                          Enfoca el código QR aquí
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="text-center">
+                  <p className="text-gray-600 dark:text-gray-400 mb-2">
+                    📱 Escáner QR activo con cámara real
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-500">
+                    Los estudiantes deben mostrar su QR con email institucional
                   </p>
                 </div>
                 
-                {/* Simulador de escáner - En implementación real esto sería la cámara */}
-                <div className="space-y-2">
-                  <Button 
-                    onClick={simulateQRScan}
-                    size="sm"
-                    variant="outline"
-                    className="mx-auto"
-                  >
-                    🎯 Simular escaneo de QR
-                  </Button>
-                  <p className="text-xs text-gray-500">
-                    (Simulación para demo - en producción usaría la cámara)
-                  </p>
+                {/* Botón de simulación como fallback */}
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                  <div className="text-center space-y-2">
+                    <Button 
+                      onClick={simulateQRScan}
+                      size="sm"
+                      variant="outline"
+                      className="mx-auto"
+                    >
+                      🎯 Simular escaneo (para testing)
+                    </Button>
+                    <p className="text-xs text-gray-500">
+                      (Solo para pruebas - el escáner real funciona con la cámara)
+                    </p>
+                  </div>
                 </div>
               </div>
             ) : (
