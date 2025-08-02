@@ -164,7 +164,7 @@ Allow.registerPermission({
       }
 
       // Intentar primero con cámara trasera específica
-      let stream
+      let stream: MediaStream
       try {
         stream = await navigator.mediaDevices.getUserMedia(constraints)
       } catch (backCameraError) {

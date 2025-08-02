@@ -110,7 +110,7 @@ export function GenericTable<TData>({
 
   React.useEffect(() => {
     table.setPageSize(pageSize)
-  }, [pageSize])
+  }, [pageSize, table])
 
   return (
     <div className='w-full'>
