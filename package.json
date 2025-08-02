@@ -37,6 +37,7 @@
     "clsx": "^2.1.1",
     "cobe": "^0.6.4",
     "geist": "1.2.1",
+    "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "9.0.2",
     "lucide-react": "0.376.0",
     "motion": "^12.23.0",
