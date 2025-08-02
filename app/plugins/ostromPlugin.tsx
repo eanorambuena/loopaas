@@ -327,14 +327,6 @@ const OstromAttendanceComponent = (props: any) => {
     }
   }
 
-  // Simulate QR scan for testing
-  const simulateQRScan = async () => {
-    if (students.length === 0) return
-    
-    const randomStudent = students[Math.floor(Math.random() * students.length)]
-    await processScannedEmail(randomStudent.email)
-  }
-
   return (
     <div className="space-y-6">
       <div className="border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-950 p-4">
@@ -392,35 +384,65 @@ const OstromAttendanceComponent = (props: any) => {
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
             <h3 className="font-semibold mb-3">Scanner QR</h3>
             
-            {/* Method selector */}
-            <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950 p-3 rounded-lg mb-4">
+            {/* Method selector - Toggle Switch */}
+            <div className="flex items-center justify-between bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950 dark:to-blue-950 p-4 rounded-lg mb-4 border border-emerald-200 dark:border-emerald-800">
               <div>
-                <h4 className="font-medium text-blue-800 dark:text-blue-200">Método de escaneo</h4>
-                <p className="text-xs text-blue-600 dark:text-blue-400">Cambia si uno no funciona</p>
+                <h4 className="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                  <QrCode size={18} />
+                  Librería de Scanner
+                </h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  {useHtml5Scanner ? 'Html5Qrcode (Alternativa)' : 'QrScanner (Por defecto)'}
+                </p>
               </div>
-              <div className="flex gap-2">
-                                <Button
-                  size="sm"
-                  variant={!useHtml5Scanner ? 'default' : 'outline'}
-                  onClick={() => {
-                    setUseHtml5Scanner(false)
-                    addDebugMessage('📦 Cambiado a QrScanner')
-                  }}
-                  className="text-xs"
-                >
+              
+              {/* Toggle Switch */}
+              <div className="flex items-center gap-3">
+                <span className={`text-sm font-medium transition-colors ${!useHtml5Scanner ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500 dark:text-gray-400'}`}>
                   QrScanner
-                </Button>
-                <Button
-                  size="sm"
-                  variant={useHtml5Scanner ? 'default' : 'outline'}
+                </span>
+                
+                <button
                   onClick={() => {
-                    setUseHtml5Scanner(true)
-                    addDebugMessage('📦 Cambiado a Html5Qrcode')
+                    const newValue = !useHtml5Scanner
+                    setUseHtml5Scanner(newValue)
+                    addDebugMessage(`📦 Cambiado a ${newValue ? 'Html5Qrcode' : 'QrScanner'}`)
                   }}
-                  className="text-xs"
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
+                    useHtml5Scanner ? 'bg-blue-600' : 'bg-emerald-600'
+                  }`}
+                  role="switch"
+                  aria-checked={useHtml5Scanner}
                 >
+                  <span className="sr-only">Cambiar método de scanner</span>
+                  <span
+                    className={`${
+                      useHtml5Scanner ? 'translate-x-6' : 'translate-x-1'
+                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                  />
+                </button>
+                
+                <span className={`text-sm font-medium transition-colors ${useHtml5Scanner ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
                   Html5Qrcode
-                </Button>
+                </span>
+              </div>
+            </div>
+
+            {/* Info text about scanner methods */}
+            <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="flex items-start gap-2">
+                <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  {useHtml5Scanner ? (
+                    <>
+                      <strong className="text-blue-600 dark:text-blue-400">Html5Qrcode:</strong> Mayor compatibilidad con navegadores móviles y dispositivos más antiguos. Prueba esta opción si QrScanner no funciona.
+                    </>
+                  ) : (
+                    <>
+                      <strong className="text-emerald-600 dark:text-emerald-400">QrScanner:</strong> Opción por defecto con mejor rendimiento. Funciona bien en navegadores modernos y computadoras.
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -453,10 +475,6 @@ const OstromAttendanceComponent = (props: any) => {
                   )}
                 </>
               )}
-              
-              <Button onClick={simulateQRScan} variant="outline" size="sm">
-                Simular escaneo
-              </Button>
             </div>
 
             {/* Scanner area */}
