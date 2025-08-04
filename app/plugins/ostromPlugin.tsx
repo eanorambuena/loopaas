@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { usePermissions, PermissionError, Allow } from 'plugini'
-import { QrCode, Users, CheckCircle, XCircle, Camera, Download, Settings, Volume2, VolumeX } from 'lucide-react'
+import { QrCode, Users, CheckCircle, XCircle, Camera, Download, Settings, Volume2, VolumeX, UserCheck, UserX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import QrScanner from 'qr-scanner'
 import { Html5Qrcode } from 'html5-qrcode'
+import jsPDF from 'jspdf'
+import QRCodeGenerator from 'qrcode'
 
 // Interfaces para tipos
 interface Student {
@@ -50,6 +52,9 @@ const OstromAttendanceComponent = (props: any) => {
   const [lastScannedEmail, setLastScannedEmail] = useState<string>('')
   const [lastScanTime, setLastScanTime] = useState<number>(0)
   const [soundEnabled, setSoundEnabled] = useState(true)
+  const [markAsPresent, setMarkAsPresent] = useState(true) // true = presente, false = ausente
+  const [toastMessage, setToastMessage] = useState<string>('')
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success')
   
   const videoRef = useRef<HTMLVideoElement>(null)
   const qrScannerRef = useRef<QrScanner | null>(null)
@@ -61,6 +66,16 @@ const OstromAttendanceComponent = (props: any) => {
     const fullMessage = `[${timestamp}] ${message}`
     console.log(fullMessage)
     setDebugInfo(prev => [...prev.slice(-4), fullMessage])
+  }
+
+  // Función para mostrar toast no bloqueante
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToastMessage(message)
+    setToastType(type)
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      setToastMessage('')
+    }, 3000)
   }
 
   // Función para reproducir sonido de beep
@@ -92,6 +107,86 @@ const OstromAttendanceComponent = (props: any) => {
     } catch (error) {
       console.warn('No se pudo reproducir el sonido:', error)
       addDebugMessage('🔇 Error reproduciendo sonido')
+    }
+  }
+
+  // Función para generar credenciales en PDF
+  const generateCredentialsPDF = async () => {
+    if (students.length === 0) {
+      alert('No hay estudiantes en el curso seleccionado')
+      return
+    }
+
+    try {
+      addDebugMessage('📄 Generando credenciales PDF...')
+      const pdf = new jsPDF()
+      
+      for (let i = 0; i < students.length; i++) {
+        const student = students[i]
+        
+        if (i > 0) {
+          pdf.addPage()
+        }
+        
+        // Título
+        pdf.setFontSize(20)
+        pdf.setFont('helvetica', 'bold')
+        pdf.text('CREDENCIAL DE ESTUDIANTE', 105, 30, { align: 'center' })
+        
+        // Información del curso
+        pdf.setFontSize(12)
+        pdf.setFont('helvetica', 'normal')
+        pdf.text(`Curso: ${selectedCourse?.name}`, 20, 50)
+        pdf.text(`Organización: ${selectedCourse?.organizacion}`, 20, 60)
+        
+        // Línea separadora
+        pdf.setLineWidth(0.5)
+        pdf.line(20, 70, 190, 70)
+        
+        // Información del estudiante
+        pdf.setFontSize(16)
+        pdf.setFont('helvetica', 'bold')
+        pdf.text('DATOS DEL ESTUDIANTE', 20, 90)
+        
+        pdf.setFontSize(12)
+        pdf.setFont('helvetica', 'normal')
+        pdf.text(`Nombre: ${student.name}`, 20, 110)
+        pdf.text(`Email: ${student.email}`, 20, 125)
+        
+        // Generar código QR con el email
+        const qrCodeDataURL = await QRCodeGenerator.toDataURL(student.email, {
+          width: 150,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF'
+          }
+        })
+        
+        // Agregar QR al PDF
+        pdf.addImage(qrCodeDataURL, 'PNG', 80, 140, 50, 50)
+        
+        // Texto debajo del QR
+        pdf.setFontSize(10)
+        pdf.text('Código QR para asistencia', 105, 200, { align: 'center' })
+        pdf.text(student.email, 105, 210, { align: 'center' })
+        
+        // Footer
+        pdf.setFontSize(8)
+        pdf.text(`Generado el: ${new Date().toLocaleDateString()}`, 20, 280)
+      }
+      
+      // Descargar el PDF
+      const fileName = `credenciales_${selectedCourse?.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
+      pdf.save(fileName)
+      
+      addDebugMessage(`✅ PDF generado: ${fileName}`)
+      alert(`✅ Credenciales generadas exitosamente: ${fileName}`)
+      
+    } catch (error) {
+      console.error('Error generando PDF:', error)
+      addDebugMessage('❌ Error generando PDF')
+      alert('❌ Error al generar las credenciales')
     }
   }
 
@@ -343,17 +438,17 @@ const OstromAttendanceComponent = (props: any) => {
       if (attendanceList[student.id] === true) {
         addDebugMessage(`ℹ️ ${student.name} ya está marcado como presente`)
         playBeepSound() // Sonido incluso para duplicados
-        alert(`ℹ️ ${student.name} ya está presente`)
+        showToast(`ℹ️ ${student.name} ya está presente`, 'info')
         return
       }
       
       addDebugMessage(`✅ Estudiante encontrado: ${student.name}`)
       await markAttendance(student.id, true)
       playBeepSound() // Sonido de éxito
-      alert(`✅ Asistencia registrada para: ${student.name}`)
+      showToast(`✅ Asistencia registrada para: ${student.name}`, 'success')
     } else {
       addDebugMessage(`❌ Estudiante no encontrado: ${email}`)
-      alert(`❌ Email ${email} no encontrado en el curso`)
+      showToast(`❌ Email ${email} no encontrado en el curso`, 'error')
     }
   }
 
@@ -386,6 +481,22 @@ const OstromAttendanceComponent = (props: any) => {
 
   return (
     <div className="space-y-4 sm:space-y-6 w-full max-w-full overflow-hidden">
+      {/* Toast notification */}
+      {toastMessage && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg border max-w-sm transition-all duration-300 ${
+          toastType === 'success' ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-950 dark:border-green-800 dark:text-green-200' :
+          toastType === 'error' ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-950 dark:border-red-800 dark:text-red-200' :
+          'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200'
+        }`}>
+          <div className="flex items-center gap-2">
+            {toastType === 'success' && <CheckCircle size={20} />}
+            {toastType === 'error' && <XCircle size={20} />}
+            {toastType === 'info' && <QrCode size={20} />}
+            <p className="font-medium text-sm">{toastMessage}</p>
+          </div>
+        </div>
+      )}
+
       <div className="border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-950 p-3 sm:p-4">
         <h2 className="text-lg sm:text-xl font-bold text-emerald-800 dark:text-emerald-200 mb-2 flex items-center gap-2">
           <QrCode size={20} className="sm:w-6 sm:h-6" />
@@ -561,26 +672,40 @@ const OstromAttendanceComponent = (props: any) => {
               {!useHtml5Scanner ? (
                 <>
                   {!scannerActive ? (
-                    <Button onClick={startQrScanner} className="flex items-center justify-center gap-2 w-full sm:w-auto text-sm">
-                      <Camera size={16} />
-                      <span className="truncate">Iniciar cámara QR</span>
+                    <Button 
+                      onClick={startQrScanner} 
+                      className="flex items-center justify-center gap-2 w-full sm:w-auto text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 shadow-lg transition-all duration-200 hover:shadow-xl"
+                    >
+                      <Camera size={18} />
+                      <span className="truncate">🎥 Iniciar cámara QR</span>
                     </Button>
                   ) : (
-                    <Button onClick={stopQrScanner} variant="outline" className="w-full sm:w-auto text-sm">
-                      Detener cámara
+                    <Button 
+                      onClick={stopQrScanner} 
+                      variant="outline" 
+                      className="w-full sm:w-auto text-sm font-semibold border-2 border-red-500 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 transition-all duration-200"
+                    >
+                      🛑 Detener cámara
                     </Button>
                   )}
                 </>
               ) : (
                 <>
                   {!html5ScannerActive ? (
-                    <Button onClick={startHtml5Scanner} className="flex items-center justify-center gap-2 w-full sm:w-auto text-sm">
-                      <Camera size={16} />
-                      <span className="truncate">Iniciar Html5 Scanner</span>
+                    <Button 
+                      onClick={startHtml5Scanner} 
+                      className="flex items-center justify-center gap-2 w-full sm:w-auto text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-lg transition-all duration-200 hover:shadow-xl"
+                    >
+                      <Camera size={18} />
+                      <span className="truncate">🎥 Iniciar Html5 Scanner</span>
                     </Button>
                   ) : (
-                    <Button onClick={stopHtml5Scanner} variant="outline" className="w-full sm:w-auto text-sm">
-                      Detener Html5 Scanner
+                    <Button 
+                      onClick={stopHtml5Scanner} 
+                      variant="outline" 
+                      className="w-full sm:w-auto text-sm font-semibold border-2 border-red-500 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 transition-all duration-200"
+                    >
+                      🛑 Detener Html5 Scanner
                     </Button>
                   )}
                 </>
