@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { usePermissions, PermissionError, Allow } from 'plugini'
-import { QrCode, Users, CheckCircle, XCircle, Camera, Download, Settings, FileSpreadsheet, FileText } from 'lucide-react'
+import { QrCode, Users, CheckCircle, XCircle, Camera, Download, Settings, FileSpreadsheet, FileText, ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import QrScanner from 'qr-scanner'
 import { Html5Qrcode } from 'html5-qrcode'
@@ -48,6 +48,7 @@ const OstromAttendanceComponent = (props: any) => {
   const [debugInfo, setDebugInfo] = useState<string[]>([])
   const [useHtml5Scanner, setUseHtml5Scanner] = useState(false)
   const [html5ScannerActive, setHtml5ScannerActive] = useState(false)
+  const [showDebugInfo, setShowDebugInfo] = useState(false)
   
   const videoRef = useRef<HTMLVideoElement>(null)
   const qrScannerRef = useRef<QrScanner | null>(null)
@@ -581,16 +582,6 @@ const OstromAttendanceComponent = (props: any) => {
         </p>
       </div>
 
-      {/* Debug Panel */}
-      {debugInfo.length > 0 && (
-        <div className="bg-gray-900 text-green-400 p-3 rounded-lg font-mono text-xs">
-          <h4 className="text-white mb-2 font-bold">🔍 Debug Info:</h4>
-          {debugInfo.map((msg, idx) => (
-            <div key={idx}>{msg}</div>
-          ))}
-        </div>
-      )}
-
       {/* Course selection */}
       <div>
         <label className="block text-sm font-medium mb-2">Seleccionar Curso</label>
@@ -873,6 +864,41 @@ const OstromAttendanceComponent = (props: any) => {
             </div>
           </div>
         </>
+      )}
+
+      {/* Debug Panel - Collapsible at bottom */}
+      {debugInfo.length > 0 && (
+        <div className="border border-gray-300 dark:border-gray-600 rounded-lg">
+          <button
+            onClick={() => setShowDebugInfo(!showDebugInfo)}
+            className="w-full p-3 text-left bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-t-lg flex items-center justify-between transition-colors"
+          >
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              🔧 Información de Debug ({debugInfo.length})
+            </span>
+            {showDebugInfo ? (
+              <ChevronUp size={16} className="text-gray-500" />
+            ) : (
+              <ChevronDown size={16} className="text-gray-500" />
+            )}
+          </button>
+          
+          {showDebugInfo && (
+            <div className="bg-gray-900 text-green-400 p-3 rounded-b-lg font-mono text-xs border-t border-gray-300 dark:border-gray-600">
+              <div className="max-h-40 overflow-y-auto space-y-1">
+                {debugInfo.map((msg, idx) => (
+                  <div key={idx} className="text-green-300 leading-relaxed">{msg}</div>
+                ))}
+              </div>
+              <button
+                onClick={() => setDebugInfo([])}
+                className="mt-3 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+              >
+                Limpiar Debug
+              </button>
+            </div>
+          )}
+        </div>
       )}
     </div>
   )

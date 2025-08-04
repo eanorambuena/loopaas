@@ -4,6 +4,7 @@ import createGlobe from 'cobe'
 import { useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
 import { IconBrandYoutubeFilled } from '@tabler/icons-react'
+import { Button } from '@/components/ui/button'
 
 export function FeaturesSection() {
   const features = [
@@ -107,40 +108,80 @@ export const SkeletonOne = () => {
     <div className="relative flex py-8 px-2 gap-10 h-full">
       <div className="w-full p-5 mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
         <div className="flex flex-1 w-full h-full flex-col space-y-4">
-          {/* Plugin System Visual */}
+          {/* QR Scanner Interface */}
           <div className="bg-emerald-50 dark:bg-emerald-950 p-4 rounded-lg border border-emerald-200 dark:border-emerald-800">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                P
+                📱
               </div>
               <div className="flex-1">
-                <div className="h-3 bg-emerald-200 dark:bg-emerald-700 rounded w-3/4"></div>
-                <div className="h-2 bg-emerald-100 dark:bg-emerald-800 rounded w-1/2 mt-1"></div>
+                <div className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Escaner QR Activo</div>
+                <div className="text-xs text-emerald-600 dark:text-emerald-400">Matemáticas - Sección A</div>
               </div>
-              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="h-12 bg-emerald-100 dark:bg-emerald-800 rounded"></div>
-              <div className="h-12 bg-emerald-100 dark:bg-emerald-800 rounded"></div>
-              <div className="h-12 bg-emerald-100 dark:bg-emerald-800 rounded"></div>
+            
+            {/* QR Code Visual */}
+            <div className="bg-white dark:bg-gray-800 p-3 rounded-lg mb-3 flex justify-center">
+              <div className="grid grid-cols-8 gap-1 w-16 h-16">
+                {Array.from({ length: 64 }).map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: Math.random() > 0.5 ? 1 : 0.3 }}
+                    transition={{ delay: i * 0.02, duration: 0.3 }}
+                    className="bg-gray-900 dark:bg-white rounded-sm"
+                    style={{ 
+                      opacity: [0, 7, 14, 21, 28, 35, 42, 49, 56, 63].includes(i) ? 1 : Math.random() > 0.3 ? 1 : 0.3 
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            <div className="text-center text-xs text-emerald-600 dark:text-emerald-400">
+              ✓ Apunta la cámara al código QR del estudiante
             </div>
           </div>
           
+          {/* Attendance List */}
           <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                S
+                📋
               </div>
               <div className="flex-1">
-                <div className="h-3 bg-blue-200 dark:bg-blue-700 rounded w-2/3"></div>
-                <div className="h-2 bg-blue-100 dark:bg-blue-800 rounded w-1/3 mt-1"></div>
+                <div className="text-sm font-semibold text-blue-700 dark:text-blue-300">Lista de Asistencia</div>
+                <div className="text-xs text-blue-600 dark:text-blue-400">18/25 presentes</div>
               </div>
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="text-xs px-2 py-1 bg-blue-500 text-white rounded text-center">
+                📊 Excel
+              </div>
             </div>
+            
+            {/* Student List */}
             <div className="space-y-2">
-              <div className="h-3 bg-blue-100 dark:bg-blue-800 rounded w-full"></div>
-              <div className="h-3 bg-blue-100 dark:bg-blue-800 rounded w-4/5"></div>
-              <div className="h-3 bg-blue-100 dark:bg-blue-800 rounded w-3/5"></div>
+              {[
+                { name: 'Ana García', status: 'present', time: '08:45' },
+                { name: 'Carlos López', status: 'present', time: '08:47' },
+                { name: 'María Silva', status: 'late', time: '09:05' },
+                { name: 'Pedro Torres', status: 'absent', time: '' }
+              ].map((student, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="flex items-center gap-2 text-xs"
+                >
+                  <div className={`w-2 h-2 rounded-full ${
+                    student.status === 'present' ? 'bg-green-500' :
+                    student.status === 'late' ? 'bg-yellow-500' : 'bg-red-500'
+                  }`}></div>
+                  <span className="flex-1 text-gray-700 dark:text-gray-300">{student.name}</span>
+                  <span className="text-gray-500 text-xs">{student.time}</span>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
