@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { CodeBlock } from '@/components/ui/code-block'
 import { useToast } from '@/components/ui/use-toast'
+import EditableCodeBlock from '@/components/EditableCodeBlock'
 import { IconPlus, IconCode, IconTrash, IconEye, IconEyeOff, IconPlayerPlay, IconPlayerStop } from '@tabler/icons-react'
 
 interface CustomPlugin {
@@ -23,6 +24,8 @@ export function CustomPluginManager() {
   const [showCodeFor, setShowCodeFor] = useState<string | null>(null)
   const [renderPreview, setRenderPreview] = useState<{ [key: string]: boolean }>({})
   const [pluginComponents, setPluginComponents] = useState<{ [key: string]: React.ReactElement }>({})
+  const [showFormPreview, setShowFormPreview] = useState(false)
+  const [formPreviewComponent, setFormPreviewComponent] = useState<React.ReactElement | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -172,16 +175,22 @@ function Component() {
         ))
       }
       
+      // Asegurar que React esté disponible globalmente
+      if (typeof window !== 'undefined') {
+        (window as any).React = React
+      }
+      
       // Crear una función que evalúe el código transpilado
       const safeCode = `
-        (function(React) {
+        (function() {
           'use strict';
+          const React = arguments[0];
           ${codeToExecute}
           return Component;
         })
       `
       
-      // Evaluar el código de manera segura
+      // Evaluar el código de manera segura pasando React como parámetro
       const componentFactory = eval(safeCode)
       const PluginComponent = componentFactory(React)
       
@@ -237,6 +246,32 @@ function Component() {
     renderComponents()
   }, [renderPreview, plugins])
 
+  // Efecto para renderizar el preview del formulario
+  React.useEffect(() => {
+    const renderFormPreview = async () => {
+      if (showFormPreview && formData.code.trim()) {
+        try {
+          const tempPlugin: CustomPlugin = {
+            id: 'form-preview',
+            name: 'Preview',
+            description: 'Preview',
+            code: formData.code,
+            enabled: true
+          }
+          const component = await renderPluginComponent(tempPlugin)
+          setFormPreviewComponent(component)
+        } catch (error) {
+          console.error('Error rendering form preview:', error)
+          setFormPreviewComponent(null)
+        }
+      } else {
+        setFormPreviewComponent(null)
+      }
+    }
+    
+    renderFormPreview()
+  }, [showFormPreview, formData.code])
+
   return (
     <div className="space-y-6">
       {/* Header con botón de crear */}
@@ -256,8 +291,8 @@ function Component() {
 
       {/* Formulario de crear plugin */}
       {showForm && (
-        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
-          <div className="space-y-4">
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 lg:p-6 bg-gray-50 dark:bg-gray-800 w-full max-w-none">
+          <div className="space-y-4 lg:space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nombre del Plugin *
@@ -280,14 +315,37 @@ function Component() {
                 className="w-full"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Código del Componente *
-              </label>
-              <textarea
-                value={formData.code}
-                onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value }))}
-                placeholder={`// Plugin Hello World
+            <div className={`grid gap-6 ${showFormPreview ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1'}`}>
+              {/* Editor de código - se expande cuando no hay preview */}
+              <div className={showFormPreview ? 'lg:col-span-2' : 'col-span-1'}>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Código del Componente *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowFormPreview(!showFormPreview)}
+                    className="flex items-center gap-2 text-xs px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
+                  >
+                    {showFormPreview ? (
+                      <>
+                        <IconEyeOff className="w-3 h-3" />
+                        Ocultar Preview
+                      </>
+                    ) : (
+                      <>
+                        <IconEye className="w-3 h-3" />
+                        Ver Preview
+                      </>
+                    )}
+                  </button>
+                </div>
+                
+                {/* Editor usando EditableCodeBlock */}
+                <EditableCodeBlock
+                  code={formData.code}
+                  onChange={(code) => setFormData(prev => ({ ...prev, code }))}
+                  placeholder={`// Plugin Hello World
 function Component() {
   return (
     <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-lg border border-blue-200 dark:border-blue-700">
@@ -305,9 +363,27 @@ function Component() {
     </div>
   )
 }`}
-                className="w-full h-40 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-mono bg-white dark:bg-gray-900 text-gray-900 dark:text-white resize-y"
-                style={{ fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace' }}
-              />
+                  className="my-0"
+                />
+              </div>
+
+              {/* Preview en tiempo real */}
+              {showFormPreview && (
+                <div className="lg:col-span-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Preview en Tiempo Real
+                  </label>
+                  <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 min-h-[250px] sm:min-h-[300px] lg:min-h-[400px] overflow-auto min-w-[320px] max-w-full mx-auto">
+                    <div className="w-full min-w-[280px] max-w-md mx-auto">
+                      {formPreviewComponent || (
+                        <div className="flex items-center justify-center h-full text-gray-500">
+                          {formData.code.trim() ? 'Transpilando...' : 'Escribe código para ver el preview'}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex gap-2">
               <Button onClick={handleCreatePlugin} size="sm">
