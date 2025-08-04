@@ -8,32 +8,32 @@ import { IconBrandYoutubeFilled } from '@tabler/icons-react'
 export function FeaturesSection() {
   const features = [
     {
-      title: 'Sistema de Plugins Extensible',
+      title: 'Control de Asistencia Inteligente',
       description:
-        'Arquitectura modular con microkernel que permite agregar funcionalidades dinámicamente. Gestión de permisos granular y navegación fluida entre plugins.',
+        'Toma asistencia en segundos escaneando códigos QR. Los estudiantes solo muestran su código y quedan registrados automáticamente. Descarga reportes en Excel con un clic.',
       skeleton: <SkeletonOne />,
       className:
         'col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800',
     },
     {
-      title: 'Dashboard de Estadísticas',
+      title: 'Estadísticas en Tiempo Real',
       description:
-        'Visualiza métricas en tiempo real, estadísticas de estudiantes, promedios de calificaciones y análisis detallados de rendimiento.',
+        'Ve al instante quién está presente, ausente o llegó tarde. Gráficos sencillos que muestran patrones de asistencia y rendimiento de tus estudiantes.',
       skeleton: <SkeletonTwo />,
       className: 'border-b col-span-1 lg:col-span-2 dark:border-neutral-800',
     },
     {
-      title: 'Evaluaciones Peer-to-Peer',
+      title: 'Evaluaciones Entre Compañeros',
       description:
-        'Sistema completo de coevaluaciones entre estudiantes con escalas Likert, recopilación de respuestas y análisis automático de resultados.',
+        'Los estudiantes se evalúan entre sí de forma anónima. Descubre cómo trabajan en equipo y obtén una visión completa del desempeño grupal.',
       skeleton: <SkeletonThree />,
       className:
         'col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800',
     },
     {
-      title: 'Gestión Integral de Cursos',
+      title: 'Todo Organizado en un Lugar',
       description:
-        'Administra organizaciones educativas, cursos por semestre, estudiantes y profesores. Todo centralizado con interfaz moderna y responsiva.',
+        'Gestiona múltiples cursos, estudiantes y profesores desde una sola plataforma. Interfaz simple que cualquiera puede usar sin complicaciones.',
       skeleton: <SkeletonFour />,
       className: 'col-span-1 lg:col-span-3 border-b lg:border-none',
     },
@@ -42,13 +42,12 @@ export function FeaturesSection() {
     <div className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto">
       <div className="px-8">
         <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
-          Plataforma completa para coevaluaciones educativas
+          Haz que gestionar tu clase sea súper fácil
         </h4>
 
         <p className="text-sm lg:text-base  max-w-2xl  my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
-          Sistema modular con plugins extensibles, gestión de permisos granular, 
-          estadísticas en tiempo real y evaluaciones peer-to-peer. Todo lo que necesitas 
-          para gestionar tu organización educativa de forma eficiente.
+          Toma asistencia con un escaneo, ve estadísticas al instante y organiza 
+          todo tu curso desde un solo lugar. Simple, rápido y sin complicaciones.
         </p>
       </div>
 
