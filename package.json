@@ -36,6 +36,7 @@
     "class-variance-authority": "0.7.0",
     "clsx": "^2.1.1",
     "cobe": "^0.6.4",
+    "exceljs": "^4.4.0",
     "geist": "1.2.1",
     "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "9.0.2",
