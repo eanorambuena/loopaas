@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { usePluginManager } from 'plugini'
 import { microkernel } from './pluginConfig'
 import PermissionManager from '@/components/plugins/PermissionManager'
@@ -9,6 +9,7 @@ import ActivePluginsSidebar from '@/components/plugins/ActivePluginsSidebar'
 import { CustomPluginManager } from '@/components/CustomPluginManager'
 import { IconStore } from '@/components/icons/IconStore'
 import { IconPlus } from '@tabler/icons-react'
+import { initializeCustomPlugins } from '@/utils/customPlugins'
 
 export function PluginsMarketplace() {
   const [activeTab, setActiveTab] = useState<'marketplace' | 'custom'>('marketplace')
@@ -23,11 +24,17 @@ export function PluginsMarketplace() {
     getPluginPermissions
   } = usePluginManager(microkernel)
 
+  // Initialize custom plugins when component mounts
+  useEffect(() => {
+    initializeCustomPlugins()
+  }, [])
+
   // Debug: log what we're getting from usePluginManager
   React.useEffect(() => {
     console.log('PluginsMarketplace - Active permissions:', Array.from(activePermissions))
     console.log('PluginsMarketplace - Enabled plugins count:', enabledPlugins.length)
-  }, [enabledPlugins, activePermissions])
+    console.log('PluginsMarketplace - Available plugins:', availablePlugins.map(p => ({ name: p.name })))
+  }, [enabledPlugins, activePermissions, availablePlugins])
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center py-10">
@@ -55,7 +62,7 @@ export function PluginsMarketplace() {
           }`}
         >
           <IconPlus className="w-4 h-4" />
-          Crear Plugin
+          Mis Plugins
         </button>
       </div>
 
@@ -80,7 +87,7 @@ export function PluginsMarketplace() {
           <ActivePluginsSidebar enabledPlugins={enabledPlugins} activePermissions={activePermissions} />
         </div>
       ) : (
-        <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full max-w-6xl mx-auto px-4 mb-20">
           <CustomPluginManager />
         </div>
       )}

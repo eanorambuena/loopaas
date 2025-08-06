@@ -49,6 +49,8 @@ export default function Login() {
   const signUp = async (formData: FormData) => {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
+    const firstName = formData.get('firstName') as string || ''
+    const lastName = formData.get('lastName') as string || ''
 
     const isUC = email.endsWith('uc.cl')
     if (!isUC) {
@@ -59,12 +61,33 @@ export default function Login() {
     }
 
     try {
-      await Auth.SignUp(email, password)
+      const result = await Auth.SignUp(email, password, firstName, lastName)
       toast({
         title: 'Registro exitoso',
         description: 'Revisa tu correo para continuar con el proceso de inicio de sesión',
         variant: 'success'
       })
+      
+      // Si el usuario fue creado exitosamente, crear su userInfo
+      if (result.user) {
+        try {
+          await fetch('/api/create-user-info', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: result.user.id,
+              email: result.user.email,
+              firstName,
+              lastName,
+            }),
+          })
+        } catch (error) {
+          console.error('Error creating user info:', error)
+          // No mostrar error al usuario, se puede crear después
+        }
+      }
     }
     catch (error) {
       toastError(error as ErrorWithStatus)
@@ -83,10 +106,47 @@ export default function Login() {
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold text-foreground">
+          {action === 'signIn' ? 'Iniciar Sesión' : 'Registrarse'}
+        </h1>
+        <p className="text-foreground/60 mt-2">
+          {action === 'signIn' 
+            ? 'Ingresa a tu cuenta para continuar' 
+            : 'Crea una nueva cuenta para comenzar'
+          }
+        </p>
+      </div>
+
       <form
         className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
         onSubmit={handleSubmit}
       >
+        {action === 'signUp' && (
+          <>
+            <label className="text-md" htmlFor="firstName">
+              Nombre
+            </label>
+            <input
+              className="rounded-md px-4 py-2 bg-inherit border mb-4"
+              name="firstName"
+              placeholder="Tu nombre"
+              type="text"
+              required
+            />
+            <label className="text-md" htmlFor="lastName">
+              Apellido
+            </label>
+            <input
+              className="rounded-md px-4 py-2 bg-inherit border mb-4"
+              name="lastName"
+              placeholder="Tu apellido"
+              type="text"
+              required
+            />
+          </>
+        )}
+        
         <label className="text-md" htmlFor="email">
           Correo UC
         </label>
@@ -119,34 +179,45 @@ export default function Login() {
             { !showingPassword ? <EyeIcon /> : <EyeOffIcon /> }
           </button>
         </div>
-        <MainButton onClick={() => setAction('signIn')}>
-          Iniciar Sesión
+        <MainButton type="submit">
+          {action === 'signIn' ? 'Iniciar Sesión' : 'Registrarse'}
         </MainButton>
-        <div className="flex justify-between items-center mt-2 mb-4">
+        
+        <div className="flex justify-center mt-4">
+          <button
+            type="button"
+            onClick={() => setAction(action === 'signIn' ? 'signUp' : 'signIn')}
+            className="text-emerald-500 hover:underline"
+          >
+            {action === 'signIn' 
+              ? '¿No tienes cuenta? Regístrate aquí' 
+              : '¿Ya tienes cuenta? Inicia sesión aquí'
+            }
+          </button>
+        </div>
+        
+        <div className="flex justify-between items-center mt-6 mb-4">
           <hr className="flex-grow border-t border-foreground/20" />
           <span className="mx-2 text-foreground/60">o</span>
           <hr className="flex-grow border-t border-foreground/20" />
         </div>
-        <SecondaryButton onClick={() => router.push('/login/magic-link')}>
-          Iniciar Sesión con Enlace Mágico (Beta)
-        </SecondaryButton>
-        <a
-          className='border border-foreground/20 rounded-md px-4 py-2 text-center text-foreground hover:scale-105 transition-transform duration-300'
-          href="/auth/login"
-        >
-          Iniciar Sesión con{' '}
-          <MicrosoftIcon className="inline size-5 ml-1 mb-1" />
-          <GoogleIcon className="inline size-5 ml-1 mb-1" />
-          {' '}(Beta)
-        </a>
-        {/*
-        <SecondaryButton
-          onClick={() => {setAction('signUp')}}
-          type='submit'
-        >
-          Registrarse
-        </SecondaryButton>
-        */}
+        
+        {action === 'signIn' && (
+          <>
+            <SecondaryButton onClick={() => router.push('/login/magic-link')}>
+              Iniciar Sesión con Enlace Mágico (Beta)
+            </SecondaryButton>
+            <a
+              className='border border-foreground/20 rounded-md px-4 py-2 text-center text-foreground hover:scale-105 transition-transform duration-300'
+              href="/auth/login"
+            >
+              Iniciar Sesión con{' '}
+              <MicrosoftIcon className="inline size-5 ml-1 mb-1" />
+              <GoogleIcon className="inline size-5 ml-1 mb-1" />
+              {' '}(Beta)
+            </a>
+          </>
+        )}
       </form>
     </div>
   )

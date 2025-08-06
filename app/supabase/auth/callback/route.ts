@@ -11,9 +11,40 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = createClient()
-    await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    if (error) {
+      console.error('Error exchanging code for session:', error)
+      return NextResponse.redirect(`${origin}/login?error=auth_callback_error`)
+    }
+
+    // Si hay un usuario y es un nuevo registro, crear su userInfo
+    if (data.user && data.user.email) {
+      try {
+        // Extraer información del usuario
+        const firstName = data.user.user_metadata?.first_name || ''
+        const lastName = data.user.user_metadata?.last_name || ''
+        
+        // Crear userInfo automáticamente
+        await fetch(`${origin}/api/create-user-info`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: data.user.id,
+            email: data.user.email,
+            firstName,
+            lastName,
+          }),
+        })
+      } catch (error) {
+        console.error('Error creating user info:', error)
+        // No redirigir con error, el userInfo se puede crear después
+      }
+    }
   }
 
   // URL to redirect to after sign up process completes
-  return NextResponse.redirect(`${origin}/protected`)
+  return NextResponse.redirect(`${origin}/cursos`)
 }

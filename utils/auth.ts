@@ -11,6 +11,22 @@ export class Auth {
       password
     })
     if (error) throw error
+    
+    // Sincronizar userInfo después del login exitoso
+    if (user) {
+      try {
+        await fetch('/api/sync-user-info', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+      } catch (error) {
+        console.error('Error syncing user info:', error)
+        // No lanzar error, el usuario puede loguearse igual
+      }
+    }
+    
     return user
   }
   
@@ -40,15 +56,20 @@ export class Auth {
     }
   }
 
-  static async SignUp(email: string, password: string) {
+  static async SignUp(email: string, password: string, firstName?: string, lastName?: string) {
     const origin = window.location.origin
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${origin}/supabase/auth/callback`,
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+        }
       }
     })
     if (error) throw error
+    return data
   }
 }

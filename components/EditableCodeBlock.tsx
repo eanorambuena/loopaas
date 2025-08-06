@@ -12,7 +12,7 @@ const CopyCodeIcon = () => (
     height="20"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="currentColor"
+    stroke="#F3F4F6"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
@@ -28,7 +28,7 @@ const CheckCodeIcon = () => (
     height="20"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="currentColor"
+    stroke="#F3F4F6"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
@@ -128,9 +128,15 @@ export default function EditableCodeBlock({
     setTimeout(() => setIcon(CopyCodeIcon), 2000)
   }
 
+  // Check if this is being used in the plugin manager (no margins)
+  const isInPluginManager = className.includes('m-0')
+  const containerClasses = isInPluginManager 
+    ? 'bg-foreground/5 relative overflow-hidden h-full'
+    : 'bg-foreground/5 rounded-md my-4 sm:my-6 lg:my-8 relative overflow-hidden min-h-[250px] sm:min-h-[300px] lg:min-h-[400px] h-full'
+
   return (
     <div className={`relative ${className}`}>
-      <div className="bg-foreground/5 rounded-md my-4 sm:my-6 lg:my-8 relative overflow-hidden min-h-[250px] sm:min-h-[300px] lg:min-h-[400px] max-h-[600px]">
+      <div className={containerClasses}>
         <button
           onClick={copy}
           className="absolute top-2 right-2 sm:top-4 sm:right-4 p-2 rounded-md bg-foreground/5 hover:bg-foreground/10 z-30"
@@ -163,7 +169,7 @@ export default function EditableCodeBlock({
             fontSize: '14px',
             fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
           }}
-          className="overflow-auto max-h-[600px]"
+          className="h-full overflow-y-auto"
         />
       </div>
     </div>
