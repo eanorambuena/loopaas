@@ -35,8 +35,8 @@ export default async function Page({ params }: { params: { abbreviature: string,
   ]
 
   return (
-    <div className='animate-in flex flex-col gap-8 p-6 opacity-0 w-full max-w-8xl mx-auto'>
-      <div className="text-center space-y-4">
+    <div className='animate-in flex flex-col gap-4 p-6 opacity-0 w-full max-w-8xl mx-auto'>
+      <div className="text-center space-y-3">
         <div className="space-y-2">
           <h1 className='text-4xl font-bold tracking-tight'>{course.title ?? params.abbreviature}</h1>
           <div className="flex items-center justify-center gap-4 text-muted-foreground">
@@ -79,7 +79,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
         </div>
         
         {/* Información adicional del curso */}
-        <div className="mt-12 pt-8 border-t border-border/50">
+        <div className="mt-6 pt-6 border-t border-border/50">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div className="space-y-2">
               <div className="text-2xl font-bold text-primary">{allCards.length}</div>

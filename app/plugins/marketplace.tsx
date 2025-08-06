@@ -68,7 +68,7 @@ export function PluginsMarketplace() {
 
       {/* Contenido según la pestaña activa */}
       {activeTab === 'marketplace' ? (
-        <div className="w-full flex flex-col gap-8">
+        <div className="w-full flex flex-col gap-4">
           <div className="max-w-4xl mx-auto">
             <PermissionManager 
               activePermissions={activePermissions}

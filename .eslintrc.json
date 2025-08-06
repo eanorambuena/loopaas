@@ -3,6 +3,11 @@
   "rules": {
     "quotes": ["error", "single"],
     "semi": ["error", "never"],
-    "@next/next/no-img-element": "off"
+    "@next/next/no-img-element": "off",
+    "max-lines": ["error", {
+      "max": 800,
+      "skipBlankLines": true,
+      "skipComments": true
+    }]
   }
 }

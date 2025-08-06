@@ -14,11 +14,11 @@ export default function Card({ icon, path, title, className, children } : CardPr
   if (!path) {
     return (
       <CardContainer>
-        <CardBody className={`w-fit h-fit max-w-xl bg-gray-50 flex flex-col gap-4 justify-center items-center relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] rounded-xl p-6 border ${className}`}>
+        <CardBody className={`bg-gray-50 flex flex-col gap-4 justify-center items-center relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] rounded-xl p-6 border ${className || 'w-fit h-fit max-w-xl'}`}>
           {(icon || title) &&(
             <CardItem className='flex flex-col justify-center items-center'>
               {icon && icon({ size: 48 })}
-              {title && <h3 className="text-xl font-bold">{title}</h3>}
+              {title && <h3 className="text-xl font-bold text-center">{title}</h3>}
             </CardItem>
           )}
           {children}
