@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Users, TrendingUp, MessageCircle, HelpCircle, CheckCircle, Award, BarChart3, Download, Play, Pause, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import * as ExcelJS from 'exceljs'
@@ -54,18 +54,18 @@ const ParticipationTrackerPlugin: React.FC<any> = (props) => {
   const [isSessionActive, setIsSessionActive] = useState(false)
 
   // Cargar cursos
-  useEffect(() => {
-    loadCourses()
-  }, [])
-
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async () => {
     try {
       const coursesData = await getCourses()
       setCourses(coursesData)
     } catch (error) {
       console.error('Error loading courses:', error)
     }
-  }
+  }, [getCourses])
+
+  useEffect(() => {
+    loadCourses()
+  }, [loadCourses])
 
   const loadStudents = async (courseId: string) => {
     try {

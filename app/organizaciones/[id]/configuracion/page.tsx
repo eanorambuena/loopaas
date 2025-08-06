@@ -92,7 +92,7 @@ export default function OrganizacionSettingsPage() {
     }
 
     loadOrganization()
-  }, [params.id])
+  }, [params.id, router, supabase, toast])
 
   const handleSaveSettings = async () => {
     setSaving(true)

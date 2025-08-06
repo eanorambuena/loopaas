@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -105,7 +105,7 @@ function PluginEditor({ plugin, onSave, onCancel }: PluginEditorProps) {
   }
 
   // Función para renderizar el componente de manera segura
-  const renderPluginComponent = async (code: string): Promise<React.ReactElement> => {
+  const renderPluginComponent = useCallback(async (code: string): Promise<React.ReactElement> => {
     try {
       const codeToExecute = await transpileCode(code)
       
@@ -189,27 +189,9 @@ function PluginEditor({ plugin, onSave, onCancel }: PluginEditorProps) {
         ))
       ])
     }
-  }
+  }, [])
 
-  // Efecto para renderizar el preview cuando cambia el código
-  useEffect(() => {
-    const renderPreview = async () => {
-      if (formData.code.trim()) {
-        try {
-          const component = await renderPluginComponent(formData.code)
-          setPreviewComponent(component)
-        } catch (error) {
-          console.error('Error rendering preview:', error)
-          setPreviewComponent(null)
-        }
-      } else {
-        setPreviewComponent(null)
-      }
-    }
-    
-    const debounceTimer = setTimeout(renderPreview, 500)
-    return () => clearTimeout(debounceTimer)
-  }, [formData.code, renderPluginComponent])
+  // Efecto para renderizar componentes cuando cambia renderPreview
 
   // Guardar el tamaño del split en localStorage (opcional)
   const handleSplitResize = (sizes: number[]) => {
@@ -564,7 +546,7 @@ export function CustomPluginManager() {
   }
 
   // Función para renderizar el componente de manera segura
-  const renderPluginComponent = async (plugin: CustomPlugin): Promise<React.ReactElement> => {
+  const renderPluginComponent = useCallback(async (plugin: CustomPlugin): Promise<React.ReactElement> => {
     try {
       let codeToExecute = plugin.transpiledCode
       
@@ -616,6 +598,14 @@ export function CustomPluginManager() {
       return React.createElement(PluginComponent)
     } catch (error) {
       console.error('Error rendering plugin:', error)
+      
+      // Definir hints por defecto para el error
+      const hints = [
+        '💡 Usa JSX normal: <div className="...">contenido</div>',
+        '💡 Define una función llamada "Component" que retorne JSX',
+        '💡 Verifica que no uses código no permitido por seguridad'
+      ]
+      
       return React.createElement('div', {
         className: 'p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg'
       }, [
@@ -630,14 +620,12 @@ export function CustomPluginManager() {
         React.createElement('div', {
           key: 'hints',
           className: 'text-red-500 dark:text-red-400 text-xs mt-3 space-y-1'
-        }, [
-          React.createElement('p', { key: 'hint1' }, '💡 Usa JSX normal: <div className="...">contenido</div>'),
-          React.createElement('p', { key: 'hint2' }, '💡 Define una función llamada "Component" que retorne JSX'),
-          React.createElement('p', { key: 'hint3' }, '💡 Verifica que no uses código no permitido por seguridad')
-        ])
+        }, hints.map((hint, index) => 
+          React.createElement('p', { key: `hint${index}` }, hint)
+        ))
       ])
     }
-  }
+  }, [setPlugins])
 
   // Efecto para renderizar componentes cuando cambia renderPreview
   useEffect(() => {
@@ -658,7 +646,7 @@ export function CustomPluginManager() {
     }
     
     renderComponents()
-  }, [renderPreview, plugins])
+  }, [renderPreview, plugins, renderPluginComponent])
 
   // Si está creando o editando, mostrar el editor
   if (isCreating || editingPlugin) {

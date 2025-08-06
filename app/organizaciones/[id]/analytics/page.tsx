@@ -98,7 +98,7 @@ export default function OrganizacionAnalyticsPage() {
     }
 
     loadData()
-  }, [params.id])
+  }, [params.id, router, supabase, toast])
 
   if (loading) {
     return (

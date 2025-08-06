@@ -128,7 +128,7 @@ export default function AdminOrganizacionPage() {
     }
 
     loadOrganization()
-  }, [params.id])
+  }, [params.id, router, supabase, toast])
 
   const handleSaveName = async () => {
     try {

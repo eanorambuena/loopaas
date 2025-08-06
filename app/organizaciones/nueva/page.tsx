@@ -114,7 +114,7 @@ function NuevaOrganizacionContent() {
     }
     
     checkAuth()
-  }, [])
+  }, [router, searchParams, supabase.auth])
 
   const handlePlanSelect = (planName: string) => {
     setSelectedPlan(planName)

@@ -110,7 +110,7 @@ export default function OrganizacionesPage() {
     }
 
     loadOrganizations()
-  }, [])
+  }, [router, supabase, toast])
 
   if (loading) {
     return (
