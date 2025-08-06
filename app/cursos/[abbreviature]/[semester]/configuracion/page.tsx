@@ -201,6 +201,7 @@ export default function ConfiguracionCursoPage() {
                   style={{ borderColor: (course.color && course.color !== DEFAULT_COLOR) ? course.color : undefined }}
                 >
                   <svg 
+                    xmlns="http://www.w3.org/2000/svg"
                     width="24" 
                     height="24" 
                     viewBox="0 0 24 24" 
@@ -212,14 +213,10 @@ export default function ConfiguracionCursoPage() {
                     className="transition-colors"
                     style={{ color: (course.color && course.color !== DEFAULT_COLOR) ? course.color : 'currentColor' }}
                   >
-                    {/* Paleta de pintor */}
-                    <path d="M12 2C6.48 2 2 6.48 2 12c0 1.19.21 2.34.6 3.41l1.4-1.4c-.26-.64-.4-1.32-.4-2.01 0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8c-.69 0-1.37-.14-2.01-.4l-1.4 1.4c1.07.39 2.22.6 3.41.6 5.52 0 10-4.48 10-10S17.52 2 12 2z"/>
-                    {/* Pincel */}
-                    <path d="M8 16l2-6 6 2-2 6-6-2z"/>
-                    <circle cx="12" cy="12" r="2"/>
-                    <circle cx="8" cy="8" r="1"/>
-                    <circle cx="16" cy="8" r="1"/>
-                    <circle cx="8" cy="16" r="1"/>
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" />
+                    <path d="M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2" />
+                    <path d="M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
                   </svg>
                 </div>
               </div>
