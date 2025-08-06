@@ -5,6 +5,7 @@ import MainButton from '@/components/MainButton'
 import { useToast } from '@/components/ui/use-toast'
 import { createClient } from '@/utils/supabase/client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 const DEFAULT_COLOR = '#eeeeee'
 const DEFAULT_PROFESSOR_GROUP = 1000
@@ -15,9 +16,14 @@ interface Props {
 
 export default function NewCourseForm({ userInfoId }: Props) {
   const { toast } = useToast()
+  const router = useRouter()
   const supabase = createClient()
   const [pending, setPending] = useState(false)
   const [canvasLoading, setCanvasLoading] = useState(false)
+  const [canvasTokenStatus, setCanvasTokenStatus] = useState<{
+    hasAnyToken: boolean
+    tokenSource: string
+  } | null>(null)
   const [formData, setFormData] = useState({
     canvasId: '',
     title: '',
@@ -27,10 +33,38 @@ export default function NewCourseForm({ userInfoId }: Props) {
     img: ''
   })
 
+  // Verificar el estado del token de Canvas al montar el componente
+  useEffect(() => {
+    const checkTokenStatus = async () => {
+      try {
+        const response = await fetch('/api/canvas/token-status')
+        if (response.ok) {
+          const status = await response.json()
+          setCanvasTokenStatus(status)
+          console.log('Canvas token status:', status)
+        }
+      } catch (error) {
+        console.error('Error checking Canvas token status:', error)
+      }
+    }
+
+    checkTokenStatus()
+  }, [])
+
   // Effect para fetchear datos cuando cambia el Canvas ID
   useEffect(() => {
     const fetchCanvasData = async (canvasId: string) => {
       if (!canvasId.trim()) return
+      
+      // Verificar si tenemos token disponible
+      if (canvasTokenStatus && !canvasTokenStatus.hasAnyToken) {
+        toast({
+          title: 'Token de Canvas requerido',
+          description: 'Para obtener datos de Canvas, necesitas configurar un token de Canvas en tu perfil o contactar al administrador.',
+          variant: 'destructive'
+        })
+        return
+      }
       
       setCanvasLoading(true)
       try {
@@ -39,9 +73,20 @@ export default function NewCourseForm({ userInfoId }: Props) {
         if (!response.ok) {
           const errorData = await response.json()
           console.error('API error:', errorData)
+          
+          let errorMessage = 'No se pudo obtener la información del curso desde Canvas'
+          
+          if (response.status === 401) {
+            errorMessage = 'Error de autenticación con Canvas. Por favor verifica tu token de Canvas en tu perfil.'
+          } else if (response.status === 404) {
+            errorMessage = 'No se encontró el curso con ese ID en Canvas.'
+          } else if (errorData.error) {
+            errorMessage = errorData.error
+          }
+          
           toast({
             title: 'Error',
-            description: 'No se pudo obtener la información del curso desde Canvas',
+            description: errorMessage,
             variant: 'destructive'
           })
           return
@@ -117,7 +162,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
 
       return () => clearTimeout(timer)
     }
-  }, [formData.canvasId, toast])
+  }, [formData.canvasId, toast, canvasTokenStatus])
 
   // Early return después de todos los hooks
   if (!userInfoId) return null
@@ -216,15 +261,10 @@ export default function NewCourseForm({ userInfoId }: Props) {
         variant: 'success'
       })
 
-      // Limpiar formulario
-      setFormData({
-        canvasId: '',
-        title: '',
-        abbreviature: '',
-        semester: '',
-        color: DEFAULT_COLOR,
-        img: ''
-      })
+      // Redirigir a la página del curso creado
+      setTimeout(() => {
+        router.push(`/cursos/${data.abbreviature}/${data.semester}`)
+      }, 1000) // Esperar 1 segundo para mostrar el toast
 
     } catch (error) {
       console.error('Error creating course:', error)
@@ -235,12 +275,12 @@ export default function NewCourseForm({ userInfoId }: Props) {
   }
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-2xl">
       <form
         className='animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground'
         onSubmit={handleSubmit}
       >
-        <fieldset className='flex flex-col gap-6 max-w-md w-full' disabled={pending}>
+        <fieldset className='flex flex-col gap-6 max-w-2xl w-full' disabled={pending}>
           {/* Canvas ID - Opcional */}
           <div className="space-y-2">
             <Input 
@@ -250,6 +290,16 @@ export default function NewCourseForm({ userInfoId }: Props) {
               onChange={(e) => handleInputChange('canvasId', e.target.value)}
               placeholder="Ingresa el ID del curso en Canvas para autocompletar"
             />
+            {canvasTokenStatus && !canvasTokenStatus.hasAnyToken && (
+              <p className="text-sm text-amber-600 dark:text-amber-400">
+                ⚠️ Sin token de Canvas configurado. La integración con Canvas no estará disponible.
+              </p>
+            )}
+            {canvasTokenStatus && canvasTokenStatus.hasAnyToken && (
+              <p className="text-sm text-green-600 dark:text-green-400">
+                ✅ Token de Canvas disponible ({canvasTokenStatus.tokenSource})
+              </p>
+            )}
             {canvasLoading && (
               <p className="text-sm text-blue-600 dark:text-blue-400">
                 🔄 Obteniendo datos de Canvas...
@@ -257,49 +307,62 @@ export default function NewCourseForm({ userInfoId }: Props) {
             )}
           </div>
 
-          {/* Campos principales */}
-          <Input 
-            label='Nombre del curso' 
-            name='title' 
-            required
-            value={formData.title}
-            onChange={(e) => handleInputChange('title', e.target.value)}
-            placeholder="Ej: Introducción a la Programación"
-          />
-          
-          <Input 
-            label='Abreviatura' 
-            name='abbreviature' 
-            required
-            value={formData.abbreviature}
-            onChange={(e) => handleInputChange('abbreviature', e.target.value)}
-            placeholder="Ej: IIC1103"
-          />
-          
-          <Input 
-            label='Semestre (ej: 2024-1)' 
-            name='semester' 
-            required
-            value={formData.semester}
-            onChange={(e) => handleInputChange('semester', e.target.value)}
-            placeholder="2024-1"
-          />
-          
-          <Input 
-            label='Color' 
-            name='color' 
-            type='color' 
-            value={formData.color}
-            onChange={(e) => handleInputChange('color', e.target.value)}
-          />
-          
-          <Input 
-            label='URL de imagen (opcional)' 
-            name='img'
-            value={formData.img}
-            onChange={(e) => handleInputChange('img', e.target.value)}
-            placeholder="https://ejemplo.com/imagen.jpg"
-          />
+          {/* Grid de campos principales */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Nombre del curso - Span completo */}
+            <div className="md:col-span-2">
+              <Input 
+                label='Nombre del curso' 
+                name='title' 
+                required
+                value={formData.title}
+                onChange={(e) => handleInputChange('title', e.target.value)}
+                placeholder="Ej: Introducción a la Programación"
+              />
+            </div>
+            
+            {/* Abreviatura y Semestre en la misma fila */}
+            <Input 
+              label='Abreviatura' 
+              name='abbreviature' 
+              required
+              value={formData.abbreviature}
+              onChange={(e) => handleInputChange('abbreviature', e.target.value)}
+              placeholder="Ej: IIC1103"
+            />
+            
+            <Input 
+              label='Semestre (ej: 2024-1)' 
+              name='semester' 
+              required
+              value={formData.semester}
+              onChange={(e) => handleInputChange('semester', e.target.value)}
+              placeholder="2024-1"
+            />
+          </div>
+
+          {/* Color e Imagen en la misma fila */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div className="md:col-span-1">
+              <Input 
+                label='Color' 
+                name='color' 
+                type='color' 
+                value={formData.color}
+                onChange={(e) => handleInputChange('color', e.target.value)}
+              />
+            </div>
+            
+            <div className="md:col-span-3">
+              <Input 
+                label='URL de imagen (opcional)' 
+                name='img'
+                value={formData.img}
+                onChange={(e) => handleInputChange('img', e.target.value)}
+                placeholder="https://ejemplo.com/imagen.jpg"
+              />
+            </div>
+          </div>
           
           <MainButton 
             type="submit" 
