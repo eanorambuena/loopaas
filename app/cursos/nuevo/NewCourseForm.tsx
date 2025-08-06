@@ -3,7 +3,6 @@
 import Input from '@/components/Input'
 import MainButton from '@/components/MainButton'
 import { useToast } from '@/components/ui/use-toast'
-import { fetchCourse } from '@/utils/canvas'
 import { createClient } from '@/utils/supabase/client'
 import { useState, useEffect } from 'react'
 
@@ -35,8 +34,22 @@ export default function NewCourseForm({ userInfoId }: Props) {
       
       setCanvasLoading(true)
       try {
-        const response = await fetchCourse(canvasId)
-        if (!response) {
+        const response = await fetch(`/api/canvas/course/${canvasId}`)
+        
+        if (!response.ok) {
+          const errorData = await response.json()
+          console.error('API error:', errorData)
+          toast({
+            title: 'Error',
+            description: 'No se pudo obtener la información del curso desde Canvas',
+            variant: 'destructive'
+          })
+          return
+        }
+
+        const data = await response.json()
+        
+        if (!data) {
           toast({
             title: 'Advertencia',
             description: 'No se encontró el curso en Canvas con ese ID',
@@ -46,25 +59,25 @@ export default function NewCourseForm({ userInfoId }: Props) {
         }
 
         // Debug logging
-        console.log('Canvas course response:', response)
-        console.log('Available fields:', Object.keys(response))
-        console.log('course_code:', response.course_code)
-        console.log('name:', response.name)
-        console.log('start_at:', response.start_at)
-        console.log('image_download_url:', response.image_download_url)
+        console.log('Canvas course response:', data)
+        console.log('Available fields:', Object.keys(data))
+        console.log('course_code:', data.course_code)
+        console.log('name:', data.name)
+        console.log('start_at:', data.start_at)
+        console.log('image_download_url:', data.image_download_url)
         
         // Obtener datos automáticamente
-        const year = response.start_at?.split('-')[0] ?? new Date().getFullYear()
-        const month = parseInt(response.start_at?.split('-')[1]) ?? new Date().getMonth()
+        const year = data.start_at?.split('-')[0] ?? new Date().getFullYear()
+        const month = parseInt(data.start_at?.split('-')[1]) ?? new Date().getMonth()
         const semester = month < 7 ? 1 : 2
         
         // Obtener abreviatura de manera más robusta
         let abbreviature = ''
-        if (response.course_code && typeof response.course_code === 'string') {
-          abbreviature = response.course_code.split('-')[0].trim()
+        if (data.course_code && typeof data.course_code === 'string') {
+          abbreviature = data.course_code.split('-')[0].trim()
         }
-        if (!abbreviature && response.name && typeof response.name === 'string') {
-          abbreviature = response.name.substring(0, 8).trim()
+        if (!abbreviature && data.name && typeof data.name === 'string') {
+          abbreviature = data.name.substring(0, 8).trim()
         }
         if (!abbreviature) {
           abbreviature = 'CURSO'
@@ -73,10 +86,10 @@ export default function NewCourseForm({ userInfoId }: Props) {
         // Autocompletar formulario
         setFormData(prev => ({
           ...prev,
-          title: response.name || prev.title,
+          title: data.name || prev.title,
           abbreviature: abbreviature || prev.abbreviature,
           semester: `${year}-${semester}` || prev.semester,
-          img: response.image_download_url || prev.img
+          img: data.image_download_url || prev.img
         }))
 
         toast({
