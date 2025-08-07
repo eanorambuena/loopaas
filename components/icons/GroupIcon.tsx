@@ -1,9 +1,9 @@
-export default function GroupIcon({ className }: { className?: string }) {
+export default function GroupIcon({ className, size = 24 }: { className?: string, size?: number }) {
   return (
     <svg  
       xmlns="http://www.w3.org/2000/svg"  
-      width={24}  
-      height={24}  
+      width={size}  
+      height={size}  
       viewBox="0 0 24 24"  
       fill="none"  
       stroke="currentColor"  
