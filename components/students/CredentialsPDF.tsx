@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
     lineHeight: 1.0,
     marginBottom: 2,
+    marginTop: 4, // Espacio pequeño entre nombres y apellidos
     flexWrap: 'wrap',
     textTransform: 'uppercase', // Todas las letras en mayúsculas
   },
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
     fontSize: 14, // Más grande
     color: '#424141', // Color de texto solicitado
     letterSpacing: 0.3,
+    marginTop: 8, // Agregar margen superior para separar del nombre/apellido
   },
   qrSection: {
     alignItems: 'center',
