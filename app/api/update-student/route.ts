@@ -32,9 +32,21 @@ export async function POST(req: Request) {
       Console.Error(`No se encontró el estudiante con userInfoId: ${userInfoId}`)
       return NextResponse.json({ ok: false, error: 'Estudiante no encontrado' }, { status: 404 })
     }
-    if (Number(studentData[0].group) !== Number(group)) {
-      Console.Error(`El grupo del estudiante no se actualizó correctamente: ${studentData[0].group} != ${group}`)
-      return NextResponse.json({ ok: false, error: 'El grupo del estudiante no se actualizó correctamente' }, { status: 500 })
+    
+    // Verificar actualización del grupo (manejar null para desasignación)
+    const updatedGroup = studentData[0].group
+    if (group === null || group === '' || group === undefined) {
+      // Para desasignación, verificar que el grupo sea null, undefined o cadena vacía
+      if (updatedGroup !== null && updatedGroup !== '' && updatedGroup !== undefined) {
+        Console.Error(`El grupo del estudiante no se desasignó correctamente: ${updatedGroup}`)
+        return NextResponse.json({ ok: false, error: 'El grupo del estudiante no se desasignó correctamente' }, { status: 500 })
+      }
+    } else {
+      // Para asignación normal, verificar que coincida
+      if (String(updatedGroup) !== String(group)) {
+        Console.Error(`El grupo del estudiante no se actualizó correctamente: ${updatedGroup} != ${group}`)
+        return NextResponse.json({ ok: false, error: 'El grupo del estudiante no se actualizó correctamente' }, { status: 500 })
+      }
     }
 
     if (infoError || groupError) {

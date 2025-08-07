@@ -2,6 +2,7 @@
 
 import Input from '@/components/Input'
 import MainButton from '@/components/MainButton'
+import OrganizationSelector from '@/components/OrganizationSelector'
 import { useToast } from '@/components/ui/use-toast'
 import { LinkPreview } from '@/components/ui/link-preview'
 import { createClient } from '@/utils/supabase/client'
@@ -31,7 +32,8 @@ export default function NewCourseForm({ userInfoId }: Props) {
     abbreviature: '',
     semester: '',
     color: DEFAULT_COLOR,
-    img: ''
+    img: '',
+    organizationId: ''
   })
 
   // Verificar el estado del token de Canvas al montar el componente
@@ -295,6 +297,15 @@ export default function NewCourseForm({ userInfoId }: Props) {
       })
     }
 
+    if (!formData.organizationId.trim()) {
+      setPending(false)
+      return toast({
+        title: 'Error',
+        description: 'La organización es requerida',
+        variant: 'destructive'
+      })
+    }
+
     try {
       const courseData = {
         title: formData.title.trim(),
@@ -302,6 +313,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
         semester: formData.semester.trim(),
         color: formData.color || DEFAULT_COLOR,
         img: formData.img.trim() || 'https://bit.ly/2k1H1t6',
+        organizationId: formData.organizationId.trim(),
         teacherInfoId: userInfoId,
         ...(formData.canvasId.trim() && { canvasId: formData.canvasId.trim() })
       }
@@ -405,6 +417,15 @@ export default function NewCourseForm({ userInfoId }: Props) {
               placeholder="2024-1"
             />
           </div>
+
+          {/* Selector de Organización */}
+          <OrganizationSelector
+            value={formData.organizationId}
+            onChange={(organizationId) => handleInputChange('organizationId', organizationId)}
+            label="Organización"
+            placeholder="Selecciona una organización"
+            required
+          />
 
           {/* Color e Imagen en la misma fila */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">

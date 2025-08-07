@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Input from '@/components/Input'
+import OrganizationSelector from '@/components/OrganizationSelector'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { LinkPreview } from '@/components/ui/link-preview'
@@ -182,6 +183,15 @@ export default function ConfiguracionCursoPage() {
               placeholder="2024-1"
             />
           </div>
+
+          {/* Selector de Organización */}
+          <OrganizationSelector
+            value={course.organizationId || ''}
+            onChange={(organizationId) => handleInputChange('organizationId', organizationId)}
+            label="Organización"
+            placeholder="Selecciona una organización"
+            required
+          />
 
           {/* Color e Imagen en la misma fila */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">

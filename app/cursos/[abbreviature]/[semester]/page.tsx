@@ -2,6 +2,7 @@ import Card from '@/components/Card'
 import Fallback from '@/components/Fallback'
 import EvaluationIcon from '@/components/icons/EvaluationIcon'
 import UsersIcon from '@/components/icons/UsersIcon'
+import GroupIcon from '@/components/icons/GroupIcon'
 import AcademicIcon from '@/components/icons/AcademicIcon'
 import SettingsIcon from '@/components/icons/SettingsIcon'
 import { isProfessorServer } from '@/utils/isProfessorServer'
@@ -25,6 +26,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
 
   const professorCards = [
     { icon: UsersIcon, title: 'Estudiantes', path: studentsPath(params), description: 'Gestiona estudiantes del curso' },
+    { icon: GroupIcon, title: 'Grupos', path: `/cursos/${params.abbreviature}/${params.semester}/grupos`, description: 'Organiza grupos de estudiantes' },
     { icon: AcademicIcon, title: 'Profesores', path: `/cursos/${params.abbreviature}/${params.semester}/profesores`, description: 'Administra profesores del curso' },
     { icon: SettingsIcon, title: 'Configuración', path: `/cursos/${params.abbreviature}/${params.semester}/configuracion`, description: 'Configuración del curso' }
   ]
