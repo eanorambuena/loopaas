@@ -49,10 +49,6 @@ export default function GenerateCredentialsPDF({
           <ul className='text-sm text-green-800 dark:text-green-200 space-y-1'>
             <li className='flex items-center gap-2'>
               <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
-              <strong>Fondo verde degradado</strong> - idéntico al diseño de Canva
-            </li>
-            <li className='flex items-center gap-2'>
-              <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
               <strong>Nombre prominente</strong> - tipografía grande y en mayúsculas
             </li>
             <li className='flex items-center gap-2'>
