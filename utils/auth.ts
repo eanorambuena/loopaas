@@ -57,19 +57,31 @@ export class Auth {
   }
 
   static async SignUp(email: string, password: string, firstName?: string, lastName?: string) {
-    const origin = window.location.origin
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/supabase/auth/callback`,
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-        }
+    // Usar admin.createUser para crear usuarios autoconfirmados
+    // similar a como se hace en la creación de estudiantes
+    try {
+      const response = await fetch('/api/signup-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          firstName,
+          lastName
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Error en el registro')
       }
-    })
-    if (error) throw error
-    return data
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      throw error
+    }
   }
 }

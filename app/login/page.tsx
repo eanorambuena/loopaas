@@ -62,30 +62,28 @@ export default function Login() {
 
     try {
       const result = await Auth.SignUp(email, password, firstName, lastName)
-      toast({
-        title: 'Registro exitoso',
-        description: 'Revisa tu correo para continuar con el proceso de inicio de sesión',
-        variant: 'success'
-      })
       
-      // Si el usuario fue creado exitosamente, crear su userInfo
       if (result.user) {
+        toast({
+          title: 'Registro exitoso',
+          description: 'Usuario creado correctamente. Iniciando sesión automáticamente...',
+          variant: 'success'
+        })
+
+        // Iniciar sesión automáticamente después del registro exitoso
         try {
-          await fetch('/api/create-user-info', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              userId: result.user.id,
-              email: result.user.email,
-              firstName,
-              lastName,
-            }),
+          const user = await Auth.SignIn(email, password)
+          mutate({ user })
+          refetch()
+          router.push('/cursos')
+        } catch (signInError) {
+          console.error('Error en login automático:', signInError)
+          toast({
+            title: 'Registro exitoso',
+            description: 'Por favor inicia sesión con tus credenciales',
+            variant: 'success'
           })
-        } catch (error) {
-          console.error('Error creating user info:', error)
-          // No mostrar error al usuario, se puede crear después
+          setAction('signIn')
         }
       }
     }

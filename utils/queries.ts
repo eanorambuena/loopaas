@@ -424,7 +424,7 @@ export async function isStudentInCourse(courseId: string, userInfoId: string) {
   }
 }
 
-export async function createAutoConfirmUsers(csv: string) {
+export async function createAutoConfirmUsers(csv: string, courseAbbreviation?: string, courseSemester?: string) {
   Console.Success('Creating auto confirm users...')
 
   // asign each user to course with students table
@@ -441,12 +441,25 @@ export async function createAutoConfirmUsers(csv: string) {
     return { lastName, firstName, password, email, group }
   })
 
-  const { data: courses, error: coursesError } = await supabase
-    .from('courses')
-    .select('*')
-  if (coursesError) throw coursesError
-
-  const course = courses[0]
+  let course
+  if (courseAbbreviation && courseSemester) {
+    // Buscar el curso específico
+    const { data: courses, error: coursesError } = await supabase
+      .from('courses')
+      .select('*')
+      .eq('abbreviature', courseAbbreviation)
+      .eq('semester', courseSemester)
+    if (coursesError) throw coursesError
+    if (!courses || courses.length === 0) throw new Error(`Course not found: ${courseAbbreviation} ${courseSemester}`)
+    course = courses[0]
+  } else {
+    // Comportamiento original - usar el primer curso
+    const { data: courses, error: coursesError } = await supabase
+      .from('courses')
+      .select('*')
+    if (coursesError) throw coursesError
+    course = courses[0]
+  }
 
   const promises = students.map(async (student) => {
     const { email, password, group } = student
