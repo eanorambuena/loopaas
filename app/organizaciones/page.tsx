@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import ProBadge from '@/components/ProBadge'
 import { createClient } from '@/utils/supabase/client'
 import { useToast } from '@/components/ui/use-toast'
 import { Building2, Crown, Calendar, Users, Plus, ArrowRight } from 'lucide-react'
@@ -145,10 +146,11 @@ export default function OrganizacionesPage() {
               </div>
               <Button 
                 onClick={() => router.push('/organizaciones/nueva')}
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="relative bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:via-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-0 overflow-hidden group"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Nueva Organización
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Plus className="w-4 h-4 mr-2 relative z-10" />
+                <span className="relative z-10 font-semibold">Nueva Organización</span>
               </Button>
             </div>
           </div>
@@ -165,11 +167,12 @@ export default function OrganizacionesPage() {
               </p>
               <Button 
                 onClick={() => router.push('/organizaciones/nueva')}
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="relative bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:via-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-0 overflow-hidden group"
                 size="lg"
               >
-                <Plus className="w-5 h-5 mr-2" />
-                Crear mi primera organización
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Plus className="w-5 h-5 mr-2 relative z-10" />
+                <span className="relative z-10 font-semibold">Crear mi primera organización</span>
               </Button>
             </div>
           ) : (
@@ -193,12 +196,13 @@ export default function OrganizacionesPage() {
                           </h3>
                         </div>
                       </div>
-                      <Badge 
-                        variant={org.plan === 'Pro' ? 'default' : 'secondary'}
-                        className={`${org.plan === 'Pro' ? 'bg-emerald-600' : ''} flex-shrink-0 ml-2`}
-                      >
-                        {org.plan}
-                      </Badge>
+                      {org.plan === 'Pro' ? (
+                        <ProBadge size="sm" className="flex-shrink-0 ml-2" />
+                      ) : (
+                        <Badge variant="secondary" className="flex-shrink-0 ml-2">
+                          {org.plan}
+                        </Badge>
+                      )}
                     </div>
 
                     {/* Organization Stats */}

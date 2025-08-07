@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import ProBadge from '@/components/ProBadge'
 import Link from 'next/link'
 import { motion } from 'motion/react'
 import { Check, X, Zap, Users, BarChart3, Shield, Clock, Crown, Building2 } from 'lucide-react'
@@ -27,7 +28,7 @@ const pricingPlans = [
       { name: 'Estadísticas avanzadas', included: false },
       { name: 'Plugins premium', included: false },
       { name: 'Soporte prioritario', included: false },
-      { name: 'API access', included: false },
+      { name: 'API access (próximamente)', included: false },
     ],
     buttonText: 'Comenzar gratis',
     buttonVariant: 'outline' as const,
@@ -39,8 +40,8 @@ const pricingPlans = [
     price: '$29',
     period: '/mes',
     description: 'Para organizaciones que necesitan funcionalidades avanzadas',
-    badge: 'Más popular',
-    badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
+    badge: <ProBadge size="md" className="animate-pulse" />,
+    badgeColor: '', // No se usa ya que usamos el componente
     features: [
       { name: 'Estudiantes ilimitados', included: true },
       { name: 'Cursos ilimitados', included: true },
@@ -48,10 +49,10 @@ const pricingPlans = [
       { name: 'Todos los plugins', included: true },
       { name: 'Estadísticas avanzadas', included: true },
       { name: 'Soporte prioritario', included: true },
-      { name: 'API access', included: true },
-      { name: 'Integración con LMS', included: true },
-      { name: 'Reportes personalizados', included: true },
-      { name: 'Backup automático', included: true },
+      { name: 'API access (próximamente)', included: true },
+      { name: 'Integración con LMS (próximamente)', included: true },
+      { name: 'Reportes personalizados (próximamente)', included: true },
+      { name: 'Backup automático (próximamente)', included: true },
     ],
     buttonText: 'Comenzar prueba Pro',
     buttonVariant: 'default' as const,
@@ -74,7 +75,7 @@ const features = [
   {
     icon: Zap,
     title: 'Integración Rápida',
-    description: 'Conecta con tu LMS existente en minutos. Compatible con Canvas, Moodle, Blackboard y más.',
+    description: 'Conecta con tu LMS existente en minutos. Compatible con Canvas, Moodle, Blackboard y más (próximamente).',
   },
   {
     icon: Clock,
@@ -146,9 +147,13 @@ export default function PricingPage() {
                 <Card className={`h-full ${plan.popular ? 'border-emerald-200 dark:border-emerald-800 shadow-xl' : 'border-gray-200 dark:border-gray-700'}`}>
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <Badge className={plan.badgeColor}>
-                        {plan.badge}
-                      </Badge>
+                      {typeof plan.badge === 'string' ? (
+                        <Badge className={plan.badgeColor}>
+                          {plan.badge}
+                        </Badge>
+                      ) : (
+                        plan.badge
+                      )}
                     </div>
                   )}
                   
@@ -199,13 +204,16 @@ export default function PricingPage() {
                     <Button
                       onClick={() => handlePlanSelect(plan.name)}
                       variant={plan.buttonVariant}
-                      className={`w-full py-3 text-lg font-medium ${
+                      className={`w-full py-3 text-lg font-medium relative overflow-hidden group transition-all duration-300 ${
                         plan.popular 
-                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
-                          : 'border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950'
+                          ? 'bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-700 text-white border-0 shadow-lg hover:shadow-xl transform hover:scale-105' 
+                          : 'border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950 bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 dark:from-emerald-950 dark:to-teal-950'
                       }`}
                     >
-                      {plan.buttonText}
+                      {plan.popular && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      )}
+                      <span className="relative z-10">{plan.buttonText}</span>
                     </Button>
                   </CardContent>
                 </Card>
@@ -319,15 +327,16 @@ export default function PricingPage() {
               <Button
                 onClick={() => router.push('/organizaciones/nueva')}
                 size="lg"
-                className="bg-white text-emerald-600 hover:bg-gray-100 text-lg px-8"
+                className="relative bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:via-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-0 overflow-hidden group text-lg px-8"
               >
-                Comenzar gratis
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span className="relative z-10 font-semibold">Comenzar gratis</span>
               </Button>
               <Button
                 onClick={() => router.push('/login')}
                 size="lg"
                 variant="outline"
-                className="border-white/80 text-white hover:bg-white hover:text-emerald-600 bg-transparent backdrop-blur-sm text-lg px-8 transition-all duration-200"
+                className="border-white/80 text-white hover:bg-white hover:text-purple-600 bg-transparent backdrop-blur-sm text-lg px-8 transition-all duration-300 hover:scale-105 hover:shadow-lg"
               >
                 Iniciar sesión
               </Button>
