@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     // Verificar si ya existe un userInfo para este usuario
     const { data: existingUserInfo, error: fetchError } = await supabase
-      .from('user_info')
+      .from('userInfo')
       .select('*')
       .eq('userId', user.id)
       .single()
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { data, error: insertError } = await supabase
-      .from('user_info')
+      .from('userInfo')
       .insert([userInfo])
       .select()
       .single()

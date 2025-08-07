@@ -470,6 +470,10 @@ export async function createAutoConfirmUsers(csv: string, courseAbbreviation?: s
       Console.Warn(`Skipping student due to missing data: ${JSON.stringify(student)}`)
       return
     }
+    if (!course) {
+      Console.Error('No course available for student creation')
+      return
+    }
     Console.Success(`Creating user: ${email} with group ${group}`)
     try {
       const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({

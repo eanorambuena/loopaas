@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Verificar si ya existe un userInfo para este usuario
-    const { data: existingUserInfo } = await supabase
-      .from('user_info')
+    const { data: existingUserInfo, error: fetchError } = await supabase
+      .from('userInfo')
       .select('*')
       .eq('userId', userId)
       .single()
@@ -32,18 +32,18 @@ export async function POST(req: NextRequest) {
       email,
     }
 
-    const { data, error } = await supabase
-      .from('user_info')
+    const { data: newUserInfo, error: insertError } = await supabase
+      .from('userInfo')
       .insert([userInfo])
       .select()
       .single()
 
-    if (error) {
-      console.error('Error creating user info:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    if (insertError) {
+      console.error('Error creating user info:', insertError)
+      return NextResponse.json({ error: insertError.message }, { status: 500 })
     }
 
-    return NextResponse.json({ userInfo: data })
+    return NextResponse.json({ userInfo: newUserInfo })
   } catch (error) {
     console.error('Error in create-user-info API:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
