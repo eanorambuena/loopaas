@@ -35,9 +35,9 @@ export default async function Page({ params }: { params: { abbreviature: string,
   ]
 
   return (
-    <div className='animate-in flex flex-col gap-4 p-6 opacity-0 w-full max-w-8xl mx-auto'>
-      <div className="text-center space-y-3">
-        <div className="space-y-2">
+    <div className='animate-in flex flex-col gap-8 py-8 px-6 opacity-0 w-full max-w-8xl mx-auto'>
+      <div className="text-center space-y-4">
+        <div className="space-y-3">
           <h1 className='text-4xl font-bold tracking-tight'>{course.title ?? params.abbreviature}</h1>
           <div className="flex items-center justify-center gap-4 text-muted-foreground">
             <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
@@ -56,19 +56,19 @@ export default async function Page({ params }: { params: { abbreviature: string,
         </p>
       </div>
       
-      <main className='w-full'>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-max">
+      <main className='w-full mt-4'>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 auto-rows-max">
           {allCards.map((card, index) => (
             <div 
               key={card.title}
-              className="group animate-in fade-in duration-500"
+              className="group animate-in fade-in duration-500 w-full"
               style={{ animationDelay: `${index * 150}ms` }}
             >
               <Card 
                 icon={card.icon} 
                 title={card.title} 
                 path={card.path}
-                className="h-full transition-all duration-300 hover:scale-105 hover:shadow-xl bg-gradient-to-br from-card to-card/50 hover:from-primary/5 hover:to-primary/10 border hover:border-primary/30"
+                className="h-48 w-full transition-all duration-300 hover:scale-105 hover:shadow-xl bg-gradient-to-br from-card to-card/50 hover:from-primary/5 hover:to-primary/10 border hover:border-primary/30"
               >
                 <p className="text-sm text-muted-foreground text-center mt-2">
                   {card.description}
@@ -79,19 +79,19 @@ export default async function Page({ params }: { params: { abbreviature: string,
         </div>
         
         {/* Información adicional del curso */}
-        <div className="mt-6 pt-6 border-t border-border/50">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div className="space-y-2">
+        <div className="mt-10 pt-8 border-t border-border/50">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="space-y-3">
               <div className="text-2xl font-bold text-primary">{allCards.length}</div>
               <div className="text-sm text-muted-foreground">Herramienta{allCards.length !== 1 ? 's' : ''} Disponible{allCards.length !== 1 ? 's' : ''}</div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="text-2xl font-bold text-primary">
                 {isCourseProfessor ? 'Profesor' : 'Estudiante'}
               </div>
               <div className="text-sm text-muted-foreground">Tu Rol en el Curso</div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="text-2xl font-bold text-primary">
                 {params.semester.split('-')[0]}
               </div>

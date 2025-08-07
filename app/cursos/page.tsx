@@ -24,17 +24,17 @@ export default async function CursosPage() {
   const uniqueSemesters = courses ? new Set(courses.map(course => course.semester)).size : 0
 
   return (
-    <div className="animate-in flex flex-col gap-2 p-4 opacity-0 w-full max-w-8xl mx-auto min-h-screen">
-      <div className="text-center space-y-1">
+    <div className="animate-in flex flex-col gap-6 py-8 px-4 opacity-0 w-full max-w-8xl mx-auto">
+      <div className="text-center space-y-3">
         <h1 className='text-3xl font-bold tracking-tight'>Cursos</h1>
         <p className="text-muted-foreground">
           {coursesCount > 0 ? `${coursesCount} curso${coursesCount !== 1 ? 's' : ''} disponible${coursesCount !== 1 ? 's' : ''}` : 'Explora y accede a tus cursos'}
         </p>
       </div>
       
-      <main className="w-full flex-1">
+      <main className="w-full flex-1 mt-6">
         {coursesCount === 0 && !isProfessor ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-3">
+          <div className="flex flex-col items-center justify-center py-16 space-y-4">
             <div className="text-5xl opacity-20">📚</div>
             <Fallback>No se encontraron cursos</Fallback>
             <p className="text-sm text-muted-foreground max-w-md text-center">
@@ -42,7 +42,7 @@ export default async function CursosPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-3 auto-rows-max">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-6 auto-rows-max">
             {isProfessor && (
               <div className="group">
                 <AddCard 
@@ -66,19 +66,19 @@ export default async function CursosPage() {
         
         {/* Estadísticas adicionales */}
         {coursesCount > 0 && (
-          <div className="mt-6 pt-4 border-t border-border/50">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="space-y-1">
+          <div className="mt-12 pt-8 border-t border-border/50">
+            <div className="grid grid-cols-3 gap-6 text-center">
+              <div className="space-y-2">
                 <div className="text-xl font-bold text-primary">{coursesCount}</div>
                 <div className="text-xs text-muted-foreground">Curso{coursesCount !== 1 ? 's' : ''}</div>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <div className="text-xl font-bold text-primary">
                   {uniqueSemesters}
                 </div>
                 <div className="text-xs text-muted-foreground">Semestre{uniqueSemesters !== 1 ? 's' : ''}</div>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <div className="text-xl font-bold text-primary">
                   {isProfessor ? 'Profesor' : 'Estudiante'}
                 </div>

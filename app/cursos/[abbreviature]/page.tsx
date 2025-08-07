@@ -17,9 +17,14 @@ export default async function Page({ params }: { params: { abbreviature: string 
     return <Fallback>No se encontraron cursos</Fallback>
 
   return (
-    <div className="animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 max-w-4xl px-3">
-      <h1 className='text-3xl font-bold'>Cursos</h1>
-      <main className="animate-in grid gap-20 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 p-4">
+    <div className="animate-in flex-1 flex flex-col gap-8 py-8 px-6 opacity-0 max-w-4xl mx-auto">
+      <div className="text-center space-y-2">
+        <h1 className='text-3xl font-bold'>Cursos</h1>
+        <p className="text-muted-foreground">
+          Cursos disponibles para {params.abbreviature}
+        </p>
+      </div>
+      <main className="animate-in grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {courses?.map((course) => (
           <CourseCard key={course.id} course={course} />
         ))}
