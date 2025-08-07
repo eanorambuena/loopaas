@@ -72,7 +72,7 @@ export default function GenerateCredentialsPDF({
         
         <CredentialsPDF 
           students={mappedStudents}
-          courseCode={courseTitle.substring(0, 8).toUpperCase()}
+          courseCode={courseTitle}
           semester={courseSemester}
         />
       </div>

@@ -6,132 +6,137 @@ import QRCode from 'qrcode'
 // No registrar fuentes externas para evitar errores de codificación
 // React-PDF usará las fuentes por defecto que son más estables
 
-// Estilos para el PDF
+// Estilos para el PDF - Diseño simple y limpio con verde
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f8fffe',
     padding: 20,
     fontFamily: 'Helvetica',
   },
   credentialContainer: {
-    width: 340, // 90mm en pts
-    height: 227, // 60mm en pts
-    marginBottom: 20,
+    width: 420, // Más ancho para evitar cortes de texto
+    height: 240,
+    marginBottom: 25,
     marginRight: 20,
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: '#00FF66', // Verde brillante como en Canva
-  },
-  darkStripe: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: 25,
-    height: '100%',
-    backgroundColor: '#146233', // Verde oscuro como en Canva
+    backgroundColor: '#16a34a', // Verde más bonito (green-600)
+    border: '3px solid #15803d', // Borde verde más oscuro (green-700)
   },
   credentialContent: {
-    padding: 16,
+    position: 'relative',
+    padding: 25,
     height: '100%',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    zIndex: 1,
+  },
+  headerSection: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'stretch',
+    justifyContent: 'flex-start', // Alineado a la izquierda para más espacio
+    alignItems: 'flex-start',
+    marginBottom: 20,
+    width: '100%', // Usar todo el ancho disponible
   },
-  leftSection: {
-    flex: 2,
+  courseInfo: {
     flexDirection: 'column',
-    justifyContent: 'space-between',
-    paddingLeft: 20, // Espacio para la franja verde
-    paddingRight: 12,
+    flex: 1, // Tomar todo el espacio disponible
+    maxWidth: '100%', // Asegurar que use todo el ancho
   },
-  rightSection: {
-    flex: 1,
-    flexDirection: 'column',
+  sustainableHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingLeft: 12,
-    paddingTop: 10,
+    gap: 8,
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-  },
-  courseCodeContainer: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+  leafIcon: {
+    fontSize: 20,
+    color: '#ffffff',
+    marginRight: 5,
   },
   courseCode: {
-    fontSize: 12,
+    fontSize: 18, // Reducido para nombres completos de curso
     fontWeight: 'bold',
-    color: '#424141', // Gris oscuro como en Canva
+    color: '#ffffff',
     textTransform: 'uppercase',
-    marginBottom: 2,
+    letterSpacing: 0.5, // Reducido para mejor ajuste
+    flexWrap: 'wrap', // Permitir salto de línea si es necesario
   },
   semester: {
-    fontSize: 12,
-    color: '#424141',
-    fontWeight: 'normal',
+    fontSize: 16,
+    color: '#ffffff',
     textTransform: 'uppercase',
+    marginTop: 2,
+    flexWrap: 'wrap', // Permitir salto de línea si es necesario
   },
-  sectionContainer: {
-    flexDirection: 'column',
+  logoSection: {
+    alignItems: 'center',
+  },
+  logoText: {
+    fontSize: 28,
+    color: '#ffffff',
+  },
+  logoSubtext: {
+    fontSize: 12,
+    color: '#ffffff',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginTop: 2,
+  },
+  studentSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'flex-end',
   },
-  sectionLabel: {
-    fontSize: 10,
-    color: '#424141',
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    textAlign: 'right',
-  },
-  sectionNumber: {
-    fontSize: 10,
-    color: '#424141',
-    fontWeight: 'normal',
-    textAlign: 'right',
-  },
-  studentNameContainer: {
-    marginTop: 20,
+  studentInfo: {
+    flex: 1,
+    paddingRight: 25, // Más espacio entre texto y QR
+    maxWidth: 240, // Límite para evitar que se estire demasiado
   },
   studentName: {
-    fontSize: 20,
-    fontWeight: 'normal',
-    color: '#424141', // Gris oscuro como en Canva
+    fontSize: 16, // Reducido de 20px a 16px
+    fontWeight: 'bold',
+    color: '#ffffff',
     textTransform: 'uppercase',
-    lineHeight: 1.3,
+    letterSpacing: 0.3,
+    lineHeight: 1.1,
+    marginBottom: 4,
+    flexWrap: 'wrap',
   },
-  lightbulbContainer: {
-    width: 35,
-    height: 50,
-    marginBottom: 15,
+  studentEmail: {
+    fontSize: 16,
+    color: '#ffffff',
+    letterSpacing: 0.3,
+  },
+  qrSection: {
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  lightbulbText: {
-    fontSize: 30,
-    color: '#424141',
   },
   qrContainer: {
-    backgroundColor: 'white',
-    padding: 8,
+    backgroundColor: '#ffffff',
+    padding: 25,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 120,
-    height: 120,
+    width: 160,
+    height: 160,
   },
   qrCode: {
-    width: 100,
-    height: 100,
+    width: 110,
+    height: 110,
+  },
+  qrLabel: {
+    fontSize: 12,
+    color: '#ffffff',
+    textAlign: 'center',
+    marginTop: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   flexRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 20,
+    gap: 25,
   },
 })
 
@@ -223,17 +228,17 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
       <PDFDownloadLink
         document={<CredentialDocumentWithQR students={studentsWithQR} courseCode={courseCode || 'SUS1000'} semester={semester || '2025-1'} />}
         fileName={`credenciales_${courseCode || 'SUS1000'}_${semester || '2025-1'}.pdf`}
-        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
       >
         {({ blob, url, loading, error }) => {
-          if (loading) return '🔄 Generando PDF...'
+          if (loading) return '� Generando credenciales verdes...'
           if (error) return '❌ Error al generar PDF'
           return (
             <>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Descargar Credenciales PDF Profesionales ({students.length} credenciales)
+              🌿 Descargar Credenciales Verdes ({students.length} credenciales)
             </>
           )
         }}
@@ -266,7 +271,7 @@ const CredentialDocumentWithQR: React.FC<{
   )
 }
 
-// Componente de credencial que ya tiene QR
+// Componente de credencial simple y limpio
 const CredentialCardWithQR: React.FC<{ 
   student: StudentData & { qrCode: string }, 
   courseCode: string, 
@@ -274,44 +279,35 @@ const CredentialCardWithQR: React.FC<{
 }> = ({ student, courseCode, semester }) => {
   return (
     <View style={styles.credentialContainer}>
-      {/* Franja verde oscura lateral */}
-      <View style={styles.darkStripe} />
-      
       {/* Contenido de la credencial */}
       <View style={styles.credentialContent}>
-        {/* Sección izquierda */}
-        <View style={styles.leftSection}>
-          {/* Header con código de curso y semestre */}
-          <View style={styles.headerRow}>
-            <View style={styles.courseCodeContainer}>
-              <Text style={styles.courseCode}>{courseCode}</Text>
-              <Text style={styles.semester}>{semester}</Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionLabel}>SECCIÓN</Text>
-              <Text style={styles.sectionNumber}>8</Text>
-            </View>
-          </View>
-          
-          {/* Nombre del estudiante */}
-          <View style={styles.studentNameContainer}>
-            <Text style={styles.studentName}>
-              {student.userInfo.firstName.toUpperCase()} {student.userInfo.lastName.toUpperCase()}
-            </Text>
+        {/* Header con código de curso */}
+        <View style={styles.headerSection}>
+          <View style={styles.courseInfo}>
+            <Text style={styles.courseCode}>{courseCode}</Text>
+            <Text style={styles.semester}>{semester}</Text>
           </View>
         </View>
-
-        {/* Sección derecha con icono y QR */}
-        <View style={styles.rightSection}>
-          {/* Icono de bombilla */}
-          <View style={styles.lightbulbContainer}>
-            <Text style={styles.lightbulbText}>💡</Text>
+        
+        {/* Sección principal con estudiante y QR */}
+        <View style={styles.studentSection}>
+          <View style={styles.studentInfo}>
+            <Text style={styles.studentName}>
+              {student.userInfo.firstName}
+            </Text>
+            <Text style={styles.studentName}>
+              {student.userInfo.lastName}
+            </Text>
+            <Text style={styles.studentEmail}>
+              {student.userInfo.email}
+            </Text>
           </View>
           
-          {/* Código QR */}
-          <View style={styles.qrContainer}>
-            {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            <Image src={student.qrCode} style={styles.qrCode} />
+          <View style={styles.qrSection}>
+            <View style={styles.qrContainer}>
+              {/* eslint-disable-next-line jsx-a11y/alt-text */}
+              <Image src={student.qrCode} style={styles.qrCode} />
+            </View>
           </View>
         </View>
       </View>

@@ -108,45 +108,131 @@ export default function UploadStudentsForm() {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Verificar tipo de archivo
+    const allowedTypes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+      'application/vnd.ms-excel', // .xls
+      'text/csv' // .csv por si acaso
+    ]
+    
+    const allowedExtensions = ['.xlsx', '.xls', '.csv']
+    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'))
+    
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+      toast({
+        title: 'Error',
+        description: 'Por favor selecciona un archivo Excel válido (.xlsx o .xls)',
+        variant: 'destructive'
+      })
+      return
+    }
+
+    console.log('Archivo seleccionado:', {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      extension: fileExtension
+    })
+
     setExcelLoading(true)
     try {
       const workbook = new ExcelJS.Workbook()
       const arrayBuffer = await file.arrayBuffer()
+      
+      console.log('Intentando cargar archivo Excel...')
+      console.log('Tamaño del archivo:', arrayBuffer.byteLength, 'bytes')
+      
+      // Verificar que el archivo no esté vacío
+      if (arrayBuffer.byteLength === 0) {
+        throw new Error('El archivo está vacío')
+      }
+      
       await workbook.xlsx.load(arrayBuffer)
       
-      const worksheet = workbook.getWorksheet(1)
-      if (!worksheet) throw new Error('No se encontró la hoja de trabajo')
+      console.log('Workbook cargado exitosamente')
+      console.log('Número de hojas:', workbook.worksheets.length)
+      console.log('Nombres de hojas:', workbook.worksheets.map(ws => ws.name))
+      
+      // Intentar obtener la primera hoja disponible
+      let worksheet = workbook.getWorksheet(1)
+      
+      // Si no funciona con índice, intentar por nombre o cualquier hoja disponible
+      if (!worksheet && workbook.worksheets.length > 0) {
+        worksheet = workbook.worksheets[0]
+      }
+      
+      if (!worksheet) {
+        throw new Error('No se pudo acceder a ninguna hoja de trabajo en el archivo Excel')
+      }
+      
+      console.log(`Usando hoja: "${worksheet.name}" con ${worksheet.rowCount} filas`)
+      
+      // Verificar que la hoja tenga contenido
+      if (worksheet.rowCount === 0) {
+        throw new Error('La hoja de Excel está vacía')
+      }
 
       const students: string[] = []
       let headerRowNumber = 0
-      let dataStartRow = 5 // Empezar desde la fila 5 según tu estructura
+      let dataStartRow = 0
 
-      // Buscar la fila de headers que contiene "Rut", "Apellido Paterno", etc.
+      // Buscar la fila que contiene los headers "N°", "Rut", "Apellido Paterno", etc.
       worksheet.eachRow((row, rowNumber) => {
         const values = row.values as any[]
         if (values && values.length > 0) {
-          const rowText = values.join('').toLowerCase()
-          if (rowText.includes('rut') && rowText.includes('apellido') && rowText.includes('nombres')) {
+          // Convertir todos los valores a string y revisar el contenido
+          const cellTexts = values.map(val => val?.toString().toLowerCase().trim() || '')
+          
+          // Buscar la fila que contiene los headers específicos
+          if (cellTexts.some(text => text.includes('apellido paterno')) || 
+              cellTexts.some(text => text.includes('apellido') && text.includes('paterno')) ||
+              (cellTexts.some(text => text.includes('rut')) && 
+               cellTexts.some(text => text.includes('nombres')) && 
+               cellTexts.some(text => text.includes('correo')))) {
             headerRowNumber = rowNumber
             dataStartRow = rowNumber + 1
+            console.log(`Headers encontrados en fila ${rowNumber}:`, cellTexts)
             return false // Salir del loop
           }
         }
       })
 
-      // Si no encontramos headers típicos, asumir que los datos empiezan desde la fila especificada
+      // Si no encontramos headers específicos, buscar por patrón de contenido
       if (headerRowNumber === 0) {
-        console.log('No se encontraron headers típicos, usando estructura estándar')
-        dataStartRow = 5 // Tu estructura parece empezar en la fila 5
+        console.log('Buscando headers por patrón alternativo...')
+        worksheet.eachRow((row, rowNumber) => {
+          const values = row.values as any[]
+          if (values && values.length >= 7) { // Al menos 7 columnas esperadas
+            const cellTexts = values.map(val => val?.toString().trim() || '')
+            // Buscar una fila que tenga al menos N°, algo parecido a RUT, apellidos, nombres, correo
+            if ((cellTexts[0]?.toLowerCase().includes('n°') || cellTexts[0]?.toLowerCase().includes('no')) &&
+                (cellTexts[1]?.toLowerCase().includes('rut')) &&
+                (cellTexts[6]?.toLowerCase().includes('correo') || cellTexts[6]?.toLowerCase().includes('email'))) {
+              headerRowNumber = rowNumber
+              dataStartRow = rowNumber + 1
+              console.log(`Headers alternativos encontrados en fila ${rowNumber}:`, cellTexts)
+              return false
+            }
+          }
+        })
       }
 
+      if (headerRowNumber === 0) {
+        throw new Error(`No se encontraron los headers esperados. 
+        Verifica que tu archivo Excel contenga una fila con las columnas:
+        N° | Rut | Apellido Paterno | Apellido Materno | Nombres | Cod. Curriculum | Correo`)
+      }
+
+      console.log(`Procesando datos desde la fila ${dataStartRow}...`)
+
       worksheet.eachRow((row, rowNumber) => {
-        if (rowNumber < dataStartRow) return // Saltar headers y filas de metadatos
+        if (rowNumber < dataStartRow) return // Saltar headers y filas anteriores
 
         const values = row.values as any[]
-        if (!values || values.length < 6) return // Necesitamos al menos 6 columnas según tu estructura
+        if (!values || values.length < 7) return // Necesitamos al menos 7 columnas
         
-        // Según tu imagen: N°, Rut, Apellido Paterno, Apellido Materno, Nombres, Cod. Curriculum, Correo
+        // Mapear según tu estructura: N°, Rut, Apellido Paterno, Apellido Materno, Nombres, Cod. Curriculum, Correo
+        // Los índices pueden empezar desde 1 debido a como ExcelJS maneja las columnas
         const numero = values[1]?.toString().trim() || ''
         const rut = values[2]?.toString().trim() || ''
         const apellidoPaterno = values[3]?.toString().trim() || ''
@@ -155,46 +241,49 @@ export default function UploadStudentsForm() {
         const codCurriculum = values[6]?.toString().trim() || ''
         const correo = values[7]?.toString().trim() || ''
         
+        console.log(`Fila ${rowNumber}:`, { numero, rut, apellidoPaterno, apellidoMaterno, nombres, correo })
+        
         // Validaciones básicas - requerimos al menos apellido paterno, nombres y correo
-        if (!apellidoPaterno || !nombres) {
-          console.warn(`Fila ${rowNumber} omitida: faltan apellido paterno o nombres`)
+        if (!apellidoPaterno || !nombres || !correo) {
+          console.warn(`Fila ${rowNumber} omitida: faltan datos obligatorios (apellidoPaterno: "${apellidoPaterno}", nombres: "${nombres}", correo: "${correo}")`)
           return
         }
 
-        // Si no hay correo, intentar usar el RUT como base para generar uno (opcional)
-        let emailFinal = correo
-        if (!correo && rut) {
-          // Puedes ajustar esta lógica según tus necesidades
-          console.warn(`Fila ${rowNumber}: sin correo, usando RUT: ${rut}`)
-          // Podrías generar un email temporal o dejarlo vacío
-        }
-
-        if (!emailFinal) {
-          console.warn(`Fila ${rowNumber} omitida: no hay correo válido`)
+        // Verificar que el correo tenga formato válido básico
+        if (!correo.includes('@') || !correo.includes('.')) {
+          console.warn(`Fila ${rowNumber} omitida: correo inválido "${correo}"`)
           return
         }
 
         // Combinar apellidos
         const apellidos = `${apellidoPaterno} ${apellidoMaterno}`.trim()
         
-        // Generar contraseña simple basada en el nombre y año
-        const password = `${nombres.split(' ')[0].toLowerCase()}${new Date().getFullYear()}`
+        // Generar contraseña simple basada en el primer nombre y año
+        const primerNombre = nombres.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '')
+        const password = `${primerNombre}${new Date().getFullYear()}`
         
         // Usar el código de curriculum como grupo, o '1' por defecto
         const group = codCurriculum || '1'
         
         // Formato: APELLIDOS;NOMBRES;PASSWORD;CORREO;GRUPO
-        students.push(`${apellidos};${nombres};${password};${emailFinal};${group}`)
+        students.push(`${apellidos};${nombres};${password};${correo};${group}`)
         
-        console.log(`Estudiante procesado: ${apellidos}, ${nombres} - ${emailFinal}`)
+        console.log(`✓ Estudiante procesado: ${apellidos}, ${nombres} - ${correo}`)
       })
 
       if (students.length === 0) {
         throw new Error(`No se encontraron estudiantes válidos en el archivo. 
-        Verifica que:
-        • El archivo tenga datos a partir de la fila 5
-        • Las columnas contengan: Nº, Rut, Apellido Paterno, Apellido Materno, Nombres, Cod. Curriculum, Correo
-        • Los campos Apellido Paterno, Nombres y Correo no estén vacíos`)
+        
+Detalles de depuración:
+• Headers encontrados en fila: ${headerRowNumber}
+• Datos procesados desde fila: ${dataStartRow}
+• Total de filas en el archivo: ${worksheet.rowCount}
+
+Verifica que:
+• El archivo tenga la estructura: N° | Rut | Apellido Paterno | Apellido Materno | Nombres | Cod. Curriculum | Correo
+• Los campos Apellido Paterno, Nombres y Correo no estén vacíos
+• El correo tenga formato válido (contiene @ y .)
+• Hay datos después de la fila de headers`)
       }
 
       console.log(`Total de estudiantes procesados: ${students.length}`)
@@ -234,10 +323,30 @@ export default function UploadStudentsForm() {
       
       setTimeout(() => window.location.reload(), 1200)
     } catch (error: any) {
-      console.error(error)
+      console.error('Error detallado:', error)
+      let errorMessage = 'Error al procesar el archivo Excel'
+      
+      if (error.message?.includes('Zip')) {
+        errorMessage = 'El archivo parece estar corrupto o no es un Excel válido. Intenta guardarlo nuevamente desde Excel.'
+      } else if (error.message?.includes('hoja de trabajo') || error.message?.includes('worksheet')) {
+        errorMessage = `No se pudo acceder a las hojas del archivo Excel. 
+        
+Posibles soluciones:
+• El archivo puede estar protegido con contraseña - remuévela
+• Abre el archivo en Excel y guárdalo como "Libro de Excel (.xlsx)" sin protección
+• Verifica que el archivo no esté dañado
+• Intenta con un archivo Excel más simple para probar`
+      } else if (error.message?.includes('headers')) {
+        errorMessage = error.message
+      } else if (error.message?.includes('estudiantes válidos')) {
+        errorMessage = error.message
+      } else {
+        errorMessage = `Error inesperado: ${error.message}`
+      }
+      
       toast({
         title: 'Error',
-        description: error.message || 'Error al procesar el archivo Excel',
+        description: errorMessage,
         variant: 'destructive'
       })
     } finally {
@@ -360,6 +469,14 @@ export default function UploadStudentsForm() {
               <li className='flex items-center gap-2'>
                 <span className='w-1.5 h-1.5 bg-blue-500 rounded-full'></span>
                 Grupo asignado automáticamente como &quot;1&quot;
+              </li>
+              <li className='flex items-center gap-2'>
+                <span className='w-1.5 h-1.5 bg-red-500 rounded-full'></span>
+                <strong>El archivo NO debe estar protegido con contraseña</strong>
+              </li>
+              <li className='flex items-center gap-2'>
+                <span className='w-1.5 h-1.5 bg-red-500 rounded-full'></span>
+                <strong>Guarda como .xlsx desde Excel si hay problemas</strong>
               </li>
             </ul>
           </div>
