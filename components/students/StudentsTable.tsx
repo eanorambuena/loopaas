@@ -145,6 +145,11 @@ export default function StudentsTable({ students }: StudentsTableProps) {
     deleteToastId.current = toastObj.id
   }
 
+  const handleChangeGroup = (student: CourseStudentWithUserInfo) => {
+    // TODO: Implementar modal para cambiar grupo
+    console.log('Cambiar grupo para:', student.userInfo.firstName, student.userInfo.lastName)
+  }
+
   return (
     <GenericTable
       data={studentList}
@@ -155,7 +160,8 @@ export default function StudentsTable({ students }: StudentsTableProps) {
         onChange: handleChange,
         onSave: saveEdit,
         onCancel: () => setEditingId(null),
-        onDelete: handleDelete
+        onDelete: handleDelete,
+        onChangeGroup: handleChangeGroup
       })}
       filterColumnIds={['email', 'group']}
       emptyMessage='No hay estudiantes en este curso o filtro aplicado.'
