@@ -11,14 +11,14 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#f8fffe',
-    padding: 15, // Menos padding para más espacio
+    padding: 10, // Menos padding para más espacio
     fontFamily: 'Helvetica',
   },
   credentialContainer: {
-    width: 260, // Más pequeño para 4 por hoja
-    height: 160, // Más compacto
-    marginBottom: 15,
-    marginRight: 15,
+    width: 380, // Más grande para ocupar toda la página
+    height: 250, // Más alto también
+    marginBottom: 10,
+    marginRight: 10,
     borderRadius: 8,
     overflow: 'hidden',
     position: 'relative',
@@ -29,24 +29,24 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    width: 20, // Más estrecha para el nuevo tamaño
+    width: 25, // Un poco más ancha para el nuevo tamaño
     height: '100%',
     backgroundColor: '#146233', // Franja decorativa con el color solicitado
   },
   credentialContent: {
     position: 'relative',
-    padding: 15, // Menos padding para el formato más pequeño
+    padding: 20, // Más padding para el formato más grande
     height: '100%',
     flexDirection: 'column',
     justifyContent: 'space-between',
     zIndex: 1,
-    marginLeft: 20, // Espacio para la franja decorativa
+    marginLeft: 25, // Espacio para la franja decorativa
   },
   headerSection: {
     flexDirection: 'row',
     justifyContent: 'flex-start', // Alineado a la izquierda para más espacio
     alignItems: 'flex-start',
-    marginBottom: 10, // Menos margen
+    marginBottom: 15, // Más margen para el formato más grande
     width: '100%', // Usar todo el ancho disponible
   },
   courseInfo: {
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   courseCode: {
-    fontSize: 11, // Más pequeño para el nuevo formato
+    fontSize: 16, // Más grande para el nuevo formato
     fontWeight: 'bold',
     color: '#424141', // Color de texto solicitado
     textTransform: 'uppercase',
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 10, // Menos espacio entre elementos
+    gap: 15, // Más espacio entre elementos
   },
   studentInfo: {
     flexDirection: 'column',
@@ -105,16 +105,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   studentName: {
-    fontSize: 12, // Más pequeño como solicitaste
+    fontSize: 14, // Reducido de 16 a 14
     fontWeight: 'bold',
-    color: '#424141', // Color de texto solicitado
+    color: '#424141', // Color base para nombres
     letterSpacing: 0.3,
-    lineHeight: 1.1,
-    marginBottom: 2, // Menos margen
+    lineHeight: 1.0, // Líneas más compactas para cuando se separen apellidos
+    marginBottom: 2, // Menos margen entre líneas
     flexWrap: 'wrap',
+    textTransform: 'uppercase', // Todas las letras en mayúsculas
+  },
+  studentLastName: {
+    fontSize: 14, // Reducido de 16 a 14
+    fontWeight: 'bold',
+    color: '#2d5016', // Color ligeramente más oscuro/verdoso para apellidos
+    letterSpacing: 0.3,
+    lineHeight: 1.0,
+    marginBottom: 2,
+    flexWrap: 'wrap',
+    textTransform: 'uppercase', // Todas las letras en mayúsculas
   },
   studentEmail: {
-    fontSize: 10, // Más pequeño
+    fontSize: 14, // Más grande
     color: '#424141', // Color de texto solicitado
     letterSpacing: 0.3,
   },
@@ -123,16 +134,16 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     backgroundColor: '#ffffff',
-    padding: 8, // Menos padding
-    borderRadius: 4,
+    padding: 15, // Más padding
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 80, // Más pequeño
-    height: 80, // Más pequeño
+    width: 120, // Más grande
+    height: 120, // Más grande
   },
   qrCode: {
-    width: 64, // Más pequeño
-    height: 64, // Más pequeño
+    width: 90, // Más grande
+    height: 90, // Más grande
   },
   qrLabel: {
     fontSize: 12,
@@ -146,8 +157,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Layout horizontal para 2x2
     flexWrap: 'wrap',
     alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    gap: 10,
+    justifyContent: 'space-between', // Distribuir uniformemente
+    gap: 5, // Menos gap para que quepan mejor
     height: '100%',
     width: '100%',
   },
@@ -300,6 +311,16 @@ const CredentialCardWithQR: React.FC<{
   courseCode: string, 
   semester: string 
 }> = ({ student, courseCode, semester }) => {
+  // Separar nombres si son muy largos
+  const firstName = student.userInfo.firstName
+  const firstNameParts = firstName.split(' ')
+  const shouldSeparateFirstNames = firstName.length > 15 && firstNameParts.length > 1
+  
+  // Separar apellidos si son muy largos
+  const lastName = student.userInfo.lastName
+  const lastNameParts = lastName.split(' ')
+  const shouldSeparateLastNames = lastName.length > 15 && lastNameParts.length > 1
+  
   return (
     <View style={styles.credentialContainer}>
       {/* Franja decorativa con color #146233 */}
@@ -318,12 +339,34 @@ const CredentialCardWithQR: React.FC<{
         {/* Sección principal con estudiante y QR */}
         <View style={styles.studentSection}>
           <View style={styles.studentInfo}>
-            <Text style={styles.studentName}>
-              {student.userInfo.firstName}
-            </Text>
-            <Text style={styles.studentName}>
-              {student.userInfo.lastName}
-            </Text>
+            {shouldSeparateFirstNames ? (
+              <>
+                <Text style={styles.studentName}>
+                  {firstNameParts[0]}
+                </Text>
+                <Text style={styles.studentName}>
+                  {firstNameParts.slice(1).join(' ')}
+                </Text>
+              </>
+            ) : (
+              <Text style={styles.studentName}>
+                {firstName}
+              </Text>
+            )}
+            {shouldSeparateLastNames ? (
+              <>
+                <Text style={styles.studentLastName}>
+                  {lastNameParts[0]}
+                </Text>
+                <Text style={styles.studentLastName}>
+                  {lastNameParts.slice(1).join(' ')}
+                </Text>
+              </>
+            ) : (
+              <Text style={styles.studentLastName}>
+                {lastName}
+              </Text>
+            )}
             <Text style={styles.studentEmail}>
               {student.userInfo.email}
             </Text>
