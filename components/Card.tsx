@@ -3,7 +3,7 @@ import React from 'react'
 import { CardBody, CardContainer, CardItem } from '@/components/ui/3d-card'
 
 export interface CardProps {
-  icon?: React.FunctionComponent<{ size: number }>
+  icon?: (props: { size: number }) => React.ReactElement
   title?: string
   path?: string
   className?: string

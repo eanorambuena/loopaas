@@ -33,16 +33,15 @@ export default function GenerateCredentialsPDF({ students, courseTitle, courseSe
       const pageWidth = doc.internal.pageSize.getWidth()
       const pageHeight = doc.internal.pageSize.getHeight()
       
-      // Configuración de la credencial
-      const cardWidth = 85 // mm
-      const cardHeight = 54 // mm (tamaño estándar de tarjeta de crédito)
+      // Configuración de la credencial - tamaño más grande para mejor diseño
+      const cardWidth = 90 // mm
+      const cardHeight = 60 // mm 
       const cardsPerRow = 2
-      const cardsPerColumn = 4
+      const cardsPerColumn = 3
       const marginX = (pageWidth - (cardsPerRow * cardWidth)) / (cardsPerRow + 1)
-      const marginY = 20
-      const spacing = 10
+      const marginY = 15
+      const spacing = 15
       
-      let currentPage = 0
       let cardIndex = 0
       
       for (const student of students) {
@@ -53,70 +52,94 @@ export default function GenerateCredentialsPDF({ students, courseTitle, courseSe
         // Si necesitamos una nueva página
         if (cardIndex > 0 && cardIndex % (cardsPerRow * cardsPerColumn) === 0) {
           doc.addPage()
-          currentPage++
           cardIndex = 0
         }
         
         const x = marginX + col * (cardWidth + marginX)
         const y = marginY + row * (cardHeight + spacing)
         
-        // Dibujar borde de la credencial
-        doc.setDrawColor(200, 200, 200)
-        doc.setLineWidth(0.5)
+        // Fondo principal - Degradado verde (simulado con múltiples rectángulos)
+        const greenDark = [34, 139, 34]   // Verde oscuro
+        const greenLight = [50, 205, 50]  // Verde claro
+        const greenBright = [0, 255, 127] // Verde brillante
+        
+        // Crear efecto degradado con múltiples rectángulos
+        for (let i = 0; i < cardWidth; i += 2) {
+          const ratio = i / cardWidth
+          const r = Math.round(greenDark[0] + (greenBright[0] - greenDark[0]) * ratio)
+          const g = Math.round(greenDark[1] + (greenBright[1] - greenDark[1]) * ratio)
+          const b = Math.round(greenDark[2] + (greenBright[2] - greenDark[2]) * ratio)
+          
+          doc.setFillColor(r, g, b)
+          doc.rect(x + i, y, 2, cardHeight, 'F')
+        }
+        
+        // Borde sutil
+        doc.setDrawColor(0, 100, 0)
+        doc.setLineWidth(0.3)
         doc.rect(x, y, cardWidth, cardHeight)
         
-        // Fondo degradado simulado con rectángulos
-        doc.setFillColor(240, 248, 255) // Azul muy claro
-        doc.rect(x, y, cardWidth, 15, 'F')
+        // Franja superior izquierda verde oscuro
+        doc.setFillColor(25, 100, 25)
+        doc.rect(x, y, 25, cardHeight, 'F')
         
-        // Header con título del curso
-        doc.setFillColor(59, 130, 246) // Azul
-        doc.rect(x, y, cardWidth, 12, 'F')
-        
-        // Título del curso
+        // Ícono de bombilla con planta (simulado con texto)
         doc.setTextColor(255, 255, 255)
-        doc.setFontSize(8)
+        doc.setFontSize(16)
         doc.setFont('helvetica', 'bold')
-        doc.text(String(courseTitle), x + cardWidth/2, y + 8, { align: 'center' })
+        doc.text('💡', x + 12.5, y + 20, { align: 'center' })
         
-        // Semestre
-        doc.setFontSize(6)
-        doc.setFont('helvetica', 'normal')
-        doc.text(`Semestre: ${String(courseSemester)}`, x + cardWidth/2, y + 11, { align: 'center' })
+        // Pequeña planta debajo de la bombilla
+        doc.setFontSize(12)
+        doc.text('🌱', x + 12.5, y + 30, { align: 'center' })
         
-        // Información del estudiante (lado izquierdo)
-        doc.setTextColor(0, 0, 0)
+        // Información del curso - parte superior derecha
+        doc.setTextColor(255, 255, 255)
+        doc.setFont('helvetica', 'bold')
         doc.setFontSize(10)
-        doc.setFont('helvetica', 'bold')
         
-        // Nombre completo
+        const courseCode = String(courseTitle).substring(0, 8).toUpperCase()
+        doc.text(courseCode, x + 30, y + 8)
+        
+        doc.setFontSize(8)
+        doc.setFont('helvetica', 'normal')
+        doc.text('SECCIÓN', x + 30, y + 14)
+        
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'bold')
+        doc.text(String(courseSemester), x + 30, y + 20)
+        
+        // Nombre del estudiante - grande y prominente
         const fullName = `${String(student.userInfo.firstName || '')} ${String(student.userInfo.lastName || '')}`
-        const maxNameLength = 20 // Reducido para dar espacio al QR
-        const displayName = fullName.length > maxNameLength 
-          ? fullName.substring(0, maxNameLength) + '...' 
-          : fullName
         
-        doc.text('Estudiante:', x + 3, y + 20)
-        doc.setFont('helvetica', 'normal')
-        doc.setFontSize(8)
-        doc.text(String(displayName), x + 3, y + 25)
-        
-        // Email
+        doc.setTextColor(40, 40, 40)
         doc.setFont('helvetica', 'bold')
-        doc.setFontSize(8)
-        doc.text('Email:', x + 3, y + 32)
-        doc.setFont('helvetica', 'normal')
-        doc.setFontSize(6)
+        doc.setFontSize(14)
         
+        // Dividir el nombre si es muy largo
+        const maxNameWidth = 45
+        const nameLines = doc.splitTextToSize(fullName.toUpperCase(), maxNameWidth)
+        
+        let nameY = y + 35
+        nameLines.forEach((line: string, index: number) => {
+          doc.text(line, x + 30, nameY + (index * 6))
+        })
+        
+        // Email con estilo más sutil
         const email = String(student.userInfo.email || 'No especificado')
-        const maxEmailLength = 20 // Reducido para dar espacio al QR
+        doc.setTextColor(80, 80, 80)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(8)
+        
+        // Truncar email si es muy largo
+        const maxEmailLength = 25
         const displayEmail = email.length > maxEmailLength 
           ? email.substring(0, maxEmailLength) + '...' 
           : email
         
-        doc.text(String(displayEmail), x + 3, y + 36)
+        doc.text(displayEmail, x + 30, y + nameY + (nameLines.length * 6) + 3)
         
-        // Generar QR Code con el email (lado derecho)
+        // Generar QR Code con el email - lado derecho
         try {
           const qrDataURL = await QRCode.toDataURL(email, {
             errorCorrectionLevel: 'H',
@@ -126,41 +149,37 @@ export default function GenerateCredentialsPDF({ students, courseTitle, courseSe
               dark: '#000000',
               light: '#FFFFFF'
             },
-            width: 200 // Alta resolución para buena calidad
+            width: 300 // Alta resolución
           })
           
-          // Posición del QR: lado derecho de la tarjeta
-          const qrSize = 30 // mm (tamaño grande para escanear de lejos)
-          const qrX = x + cardWidth - qrSize - 3 // 3mm de margen desde el borde derecho
-          const qrY = y + 15 // Debajo del header
+          // QR más grande y mejor posicionado
+          const qrSize = 20 // mm
+          const qrX = x + cardWidth - qrSize - 5
+          const qrY = y + cardHeight - qrSize - 5
+          
+          // Fondo blanco para el QR
+          doc.setFillColor(255, 255, 255)
+          doc.rect(qrX - 1, qrY - 1, qrSize + 2, qrSize + 2, 'F')
           
           // Agregar el QR al PDF
           doc.addImage(qrDataURL, 'PNG', qrX, qrY, qrSize, qrSize)
           
-          // Texto debajo del QR
-          doc.setFontSize(5)
-          doc.setFont('helvetica', 'normal')
-          doc.setTextColor(100, 100, 100)
-          doc.text('Escanear para email', qrX + qrSize/2, qrY + qrSize + 3, { align: 'center' })
-          
         } catch (qrError) {
           console.error('Error generando QR code:', qrError)
-          // Si falla el QR, mostrar texto alternativo
-          doc.setFontSize(6)
+          // Si falla el QR, mostrar rectángulo con texto
+          doc.setFillColor(255, 255, 255)
+          doc.rect(x + cardWidth - 25, y + cardHeight - 25, 20, 20, 'F')
           doc.setTextColor(200, 0, 0)
-          doc.text('QR Error', x + cardWidth - 15, y + 30)
+          doc.setFontSize(6)
+          doc.text('QR Error', x + cardWidth - 15, y + cardHeight - 15, { align: 'center' })
         }
-        
-        // Decoración lateral izquierda
-        doc.setFillColor(16, 185, 129) // Verde
-        doc.rect(x, y, 3, cardHeight, 'F')
         
         // Línea de corte punteada
         doc.setDrawColor(150, 150, 150)
         doc.setLineDashPattern([1, 1], 0)
         doc.setLineWidth(0.2)
         doc.line(x, y + cardHeight + 2, x + cardWidth, y + cardHeight + 2)
-        doc.setLineDashPattern([], 0) // Reset dash pattern
+        doc.setLineDashPattern([], 0)
         
         cardIndex++
       }
@@ -189,42 +208,42 @@ export default function GenerateCredentialsPDF({ students, courseTitle, courseSe
 
   return (
     <div className='bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden'>
-      <div className='bg-gradient-to-r from-red-50 to-pink-50 dark:from-gray-800 dark:to-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600'>
+      <div className='bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600'>
         <h3 className='text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2'>
-          <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
           Generar Credenciales PDF
         </h3>
         <p className='text-sm text-gray-600 dark:text-gray-300 mt-1'>
-          Crear un PDF imprimible con las credenciales de todos los estudiantes
+          Crear credenciales profesionales con diseño moderno y código QR
         </p>
       </div>
       
       <div className='p-6 space-y-4'>
-        <div className='bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4'>
-          <h4 className='font-medium text-red-900 dark:text-red-100 mb-3 flex items-center gap-2'>
+        <div className='bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4'>
+          <h4 className='font-medium text-green-900 dark:text-green-100 mb-3 flex items-center gap-2'>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Contenido del PDF
+            Diseño Profesional
           </h4>
-          <ul className='text-sm text-red-800 dark:text-red-200 space-y-1'>
+          <ul className='text-sm text-green-800 dark:text-green-200 space-y-1'>
             <li className='flex items-center gap-2'>
-              <span className='w-1.5 h-1.5 bg-red-500 rounded-full'></span>
-              Tarjetas de credenciales en formato imprimible
+              <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
+              Diseño moderno con fondo verde degradado profesional
             </li>
             <li className='flex items-center gap-2'>
-              <span className='w-1.5 h-1.5 bg-red-500 rounded-full'></span>
-              Información: nombre completo y email del estudiante
+              <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
+              Tipografía jerarquizada con nombre del estudiante prominente
             </li>
             <li className='flex items-center gap-2'>
-              <span className='w-1.5 h-1.5 bg-red-500 rounded-full'></span>
-              Código QR grande con el email para escaneo rápido
+              <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
+              Código QR de alta resolución para escaneado fácil
             </li>
             <li className='flex items-center gap-2'>
-              <span className='w-1.5 h-1.5 bg-red-500 rounded-full'></span>
-              {students.length} estudiantes incluidos en el PDF
+              <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
+              {students.length} credenciales profesionales incluidas
             </li>
           </ul>
         </div>
@@ -232,7 +251,7 @@ export default function GenerateCredentialsPDF({ students, courseTitle, courseSe
         <button
           onClick={generatePDF}
           disabled={isGenerating || students.length === 0}
-          className='w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+          className='w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed flex items-center justify-center gap-2'
         >
           {isGenerating ? (
             <>

@@ -118,54 +118,86 @@ export default function UploadStudentsForm() {
       if (!worksheet) throw new Error('No se encontró la hoja de trabajo')
 
       const students: string[] = []
-      let headerRow: any = null
+      let headerRowNumber = 0
+      let dataStartRow = 5 // Empezar desde la fila 5 según tu estructura
+
+      // Buscar la fila de headers que contiene "Rut", "Apellido Paterno", etc.
+      worksheet.eachRow((row, rowNumber) => {
+        const values = row.values as any[]
+        if (values && values.length > 0) {
+          const rowText = values.join('').toLowerCase()
+          if (rowText.includes('rut') && rowText.includes('apellido') && rowText.includes('nombres')) {
+            headerRowNumber = rowNumber
+            dataStartRow = rowNumber + 1
+            return false // Salir del loop
+          }
+        }
+      })
+
+      // Si no encontramos headers típicos, asumir que los datos empiezan desde la fila especificada
+      if (headerRowNumber === 0) {
+        console.log('No se encontraron headers típicos, usando estructura estándar')
+        dataStartRow = 5 // Tu estructura parece empezar en la fila 5
+      }
 
       worksheet.eachRow((row, rowNumber) => {
-        if (rowNumber === 1) {
-          // Validar headers
-          headerRow = row.values
-          const expectedHeaders = ['Apellido Paterno', 'Apellido Materno', 'Nombres', 'Correo']
-          const actualHeaders = (headerRow as any[]).slice(1) // Remover el primer elemento que es undefined
-          
-          const hasValidHeaders = expectedHeaders.every((header, index) => 
-            actualHeaders[index]?.toString().toLowerCase().includes(header.toLowerCase().split(' ')[0])
-          )
-          
-          if (!hasValidHeaders) {
-            throw new Error(`Headers inválidos. Se esperaban: ${expectedHeaders.join(', ')}`)
-          }
+        if (rowNumber < dataStartRow) return // Saltar headers y filas de metadatos
+
+        const values = row.values as any[]
+        if (!values || values.length < 6) return // Necesitamos al menos 6 columnas según tu estructura
+        
+        // Según tu imagen: N°, Rut, Apellido Paterno, Apellido Materno, Nombres, Cod. Curriculum, Correo
+        const numero = values[1]?.toString().trim() || ''
+        const rut = values[2]?.toString().trim() || ''
+        const apellidoPaterno = values[3]?.toString().trim() || ''
+        const apellidoMaterno = values[4]?.toString().trim() || ''
+        const nombres = values[5]?.toString().trim() || ''
+        const codCurriculum = values[6]?.toString().trim() || ''
+        const correo = values[7]?.toString().trim() || ''
+        
+        // Validaciones básicas - requerimos al menos apellido paterno, nombres y correo
+        if (!apellidoPaterno || !nombres) {
+          console.warn(`Fila ${rowNumber} omitida: faltan apellido paterno o nombres`)
           return
         }
 
-        const values = row.values as any[]
-        if (values.length < 5) return // Saltar filas vacías
-        
-        const apellidoPaterno = values[1]?.toString().trim() || ''
-        const apellidoMaterno = values[2]?.toString().trim() || ''
-        const nombres = values[3]?.toString().trim() || ''
-        const correo = values[4]?.toString().trim() || ''
-        
-        if (!apellidoPaterno || !nombres || !correo) {
-          console.warn(`Fila ${rowNumber} omitida por datos incompletos`)
+        // Si no hay correo, intentar usar el RUT como base para generar uno (opcional)
+        let emailFinal = correo
+        if (!correo && rut) {
+          // Puedes ajustar esta lógica según tus necesidades
+          console.warn(`Fila ${rowNumber}: sin correo, usando RUT: ${rut}`)
+          // Podrías generar un email temporal o dejarlo vacío
+        }
+
+        if (!emailFinal) {
+          console.warn(`Fila ${rowNumber} omitida: no hay correo válido`)
           return
         }
 
         // Combinar apellidos
         const apellidos = `${apellidoPaterno} ${apellidoMaterno}`.trim()
         
-        // Generar contraseña simple basada en el nombre
+        // Generar contraseña simple basada en el nombre y año
         const password = `${nombres.split(' ')[0].toLowerCase()}${new Date().getFullYear()}`
         
-        // Generar grupo por defecto (puedes ajustar esta lógica)
-        const group = '1'
+        // Usar el código de curriculum como grupo, o '1' por defecto
+        const group = codCurriculum || '1'
         
         // Formato: APELLIDOS;NOMBRES;PASSWORD;CORREO;GRUPO
-        students.push(`${apellidos};${nombres};${password};${correo};${group}`)
+        students.push(`${apellidos};${nombres};${password};${emailFinal};${group}`)
+        
+        console.log(`Estudiante procesado: ${apellidos}, ${nombres} - ${emailFinal}`)
       })
 
       if (students.length === 0) {
-        throw new Error('No se encontraron estudiantes válidos en el archivo')
+        throw new Error(`No se encontraron estudiantes válidos en el archivo. 
+        Verifica que:
+        • El archivo tenga datos a partir de la fila 5
+        • Las columnas contengan: Nº, Rut, Apellido Paterno, Apellido Materno, Nombres, Cod. Curriculum, Correo
+        • Los campos Apellido Paterno, Nombres y Correo no estén vacíos`)
       }
+
+      console.log(`Total de estudiantes procesados: ${students.length}`)
 
       const csvData = students.join('\n')
       

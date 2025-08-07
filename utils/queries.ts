@@ -441,7 +441,7 @@ export async function createAutoConfirmUsers(csv: string, courseAbbreviation?: s
     return { lastName, firstName, password, email, group }
   })
 
-  let course
+  let course: Course | null = null
   if (courseAbbreviation && courseSemester) {
     // Buscar el curso específico
     const { data: courses, error: coursesError } = await supabase
@@ -458,8 +458,11 @@ export async function createAutoConfirmUsers(csv: string, courseAbbreviation?: s
       .from('courses')
       .select('*')
     if (coursesError) throw coursesError
+    if (!courses || courses.length === 0) throw new Error('No courses found')
     course = courses[0]
   }
+
+  if (!course) throw new Error('No course available')
 
   const promises = students.map(async (student) => {
     const { email, password, group } = student
