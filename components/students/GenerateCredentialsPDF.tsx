@@ -61,10 +61,6 @@ export default function GenerateCredentialsPDF({
             </li>
             <li className='flex items-center gap-2'>
               <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
-              <strong>Icono de bombilla</strong> - elemento visual profesional
-            </li>
-            <li className='flex items-center gap-2'>
-              <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
               <strong>{students.length} credenciales</strong> - usando react-pdf
             </li>
           </ul>

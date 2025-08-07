@@ -1,170 +1,11 @@
 'use client'
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet, PDFDownloadLink, Image } from '@react-pdf/renderer'
+import { Document, Page, Text, View, PDFDownloadLink, Image } from '@react-pdf/renderer'
 import QRCode from 'qrcode'
+import { styles } from './CredentialsPDF.styles'
 
 // No registrar fuentes externas para evitar errores de codificación
 // React-PDF usará las fuentes por defecto que son más estables
-
-// Estilos para el PDF - Diseño simple y limpio con verde
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: 'column',
-    backgroundColor: '#f8fffe',
-    padding: 10, // Menos padding para más espacio
-    fontFamily: 'Helvetica',
-  },
-  credentialContainer: {
-    width: 380, // Más grande para ocupar toda la página
-    height: 250, // Más alto también
-    marginBottom: 10,
-    marginRight: 10,
-    borderRadius: 8,
-    overflow: 'hidden',
-    position: 'relative',
-    backgroundColor: '#00ff66', // Verde más intenso como solicitaste
-    border: '2px solid #146233', // Borde más delgado
-  },
-  decorativeStripe: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: 25, // Un poco más ancha para el nuevo tamaño
-    height: '100%',
-    backgroundColor: '#146233', // Franja decorativa con el color solicitado
-  },
-  credentialContent: {
-    position: 'relative',
-    padding: 20, // Más padding para el formato más grande
-    height: '100%',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    zIndex: 1,
-    marginLeft: 25, // Espacio para la franja decorativa
-  },
-  headerSection: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start', // Alineado a la izquierda para más espacio
-    alignItems: 'flex-start',
-    marginBottom: 15, // Más margen para el formato más grande
-    width: '100%', // Usar todo el ancho disponible
-  },
-  courseInfo: {
-    flexDirection: 'column',
-    flex: 1, // Tomar todo el espacio disponible
-    maxWidth: '100%', // Asegurar que use todo el ancho
-  },
-  sustainableHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  leafIcon: {
-    fontSize: 20,
-    color: '#ffffff',
-    marginRight: 5,
-  },
-  courseCode: {
-    fontSize: 16, // Más grande para el nuevo formato
-    fontWeight: 'bold',
-    color: '#424141', // Color de texto solicitado
-    textTransform: 'uppercase',
-    letterSpacing: 0.5, // Reducido para mejor ajuste
-    flexWrap: 'wrap', // Permitir salto de línea si es necesario
-  },
-  semester: {
-    fontSize: 16,
-    color: '#424141', // Color de texto solicitado
-    textTransform: 'uppercase',
-    marginTop: 2,
-    flexWrap: 'wrap', // Permitir salto de línea si es necesario
-  },
-  logoSection: {
-    alignItems: 'center',
-  },
-  logoText: {
-    fontSize: 28,
-    color: '#ffffff',
-  },
-  logoSubtext: {
-    fontSize: 12,
-    color: '#ffffff',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginTop: 2,
-  },
-  studentSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 15, // Más espacio entre elementos
-  },
-  studentInfo: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  studentName: {
-    fontSize: 14, // Reducido de 16 a 14
-    fontWeight: 'bold',
-    color: '#424141', // Color base para nombres
-    letterSpacing: 0.3,
-    lineHeight: 1.0, // Líneas más compactas para cuando se separen apellidos
-    marginBottom: 2, // Menos margen entre líneas
-    flexWrap: 'wrap',
-    textTransform: 'uppercase', // Todas las letras en mayúsculas
-  },
-  studentLastName: {
-    fontSize: 14, // Reducido de 16 a 14
-    fontWeight: 'bold',
-    color: '#2d5016', // Color ligeramente más oscuro/verdoso para apellidos
-    letterSpacing: 0.3,
-    lineHeight: 1.0,
-    marginBottom: 2,
-    marginTop: 4, // Espacio pequeño entre nombres y apellidos
-    flexWrap: 'wrap',
-    textTransform: 'uppercase', // Todas las letras en mayúsculas
-  },
-  studentEmail: {
-    fontSize: 14, // Más grande
-    color: '#424141', // Color de texto solicitado
-    letterSpacing: 0.3,
-    marginTop: 8, // Agregar margen superior para separar del nombre/apellido
-  },
-  qrSection: {
-    alignItems: 'center',
-  },
-  qrContainer: {
-    backgroundColor: '#ffffff',
-    padding: 15, // Más padding
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 120, // Más grande
-    height: 120, // Más grande
-  },
-  qrCode: {
-    width: 90, // Más grande
-    height: 90, // Más grande
-  },
-  qrLabel: {
-    fontSize: 12,
-    color: '#ffffff',
-    textAlign: 'center',
-    marginTop: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  flexRow: {
-    flexDirection: 'row', // Layout horizontal para 2x2
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between', // Distribuir uniformemente
-    gap: 5, // Menos gap para que quepan mejor
-    height: '100%',
-    width: '100%',
-  },
-})
 
 interface StudentData {
   id: string
@@ -185,6 +26,8 @@ interface CredentialsPDFProps {
 const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, semester }) => {
   const [studentsWithQR, setStudentsWithQR] = React.useState<(StudentData & { qrCode: string })[]>([])
   const [isGenerating, setIsGenerating] = React.useState(false)
+  const [credentialsPerPage, setCredentialsPerPage] = React.useState<1 | 4>(4) // Estado para controlar cuántas por página
+  const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('portrait') // Estado para orientación
 
   // Pre-generar todos los QR codes
   React.useEffect(() => {
@@ -250,10 +93,61 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4">
+      {/* Controles de formato */}
+      <div className="flex flex-col sm:flex-row gap-4 p-4 bg-gray-50 rounded-lg border">
+        {/* Selector de credenciales por página */}
+        <div className="flex items-center gap-3">
+          <label htmlFor="format-select" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            Formato:
+          </label>
+          <select
+            id="format-select"
+            value={credentialsPerPage}
+            onChange={(e) => setCredentialsPerPage(Number(e.target.value) as 1 | 4)}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          >
+            <option value={4}>4 credenciales por página</option>
+            <option value={1}>1 credencial por página</option>
+          </select>
+        </div>
+
+        {/* Toggle de orientación (solo para 1 credencial por página) */}
+        {credentialsPerPage === 1 && (
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+              Orientación:
+            </label>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setOrientation('portrait')}
+                className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                  orientation === 'portrait'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                📄 Vertical
+              </button>
+              <button
+                onClick={() => setOrientation('landscape')}
+                className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                  orientation === 'landscape'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                📋 Horizontal
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Botón de descarga */}
       <PDFDownloadLink
-        document={<CredentialDocumentWithQR students={studentsWithQR} courseCode={courseCode || 'SUS1000'} semester={semester || '2025-1'} />}
-        fileName={`credenciales_${courseCode || 'SUS1000'}_${semester || '2025-1'}.pdf`}
+        document={<CredentialDocumentWithQR students={studentsWithQR} courseCode={courseCode || 'SUS1000'} semester={semester || '2025-1'} credentialsPerPage={credentialsPerPage} orientation={orientation} />}
+        fileName={`credenciales_${courseCode || 'SUS1000'}_${semester || '2025-1'}_${credentialsPerPage}pp_${credentialsPerPage === 1 ? orientation : 'landscape'}.pdf`}
         className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
       >
         {({ blob, url, loading, error }) => {
@@ -264,7 +158,7 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              🌿 Descargar Credenciales Verdes ({students.length} credenciales)
+              🌿 Descargar Credenciales ({students.length} credenciales - {credentialsPerPage}/página{credentialsPerPage === 1 ? ` ${orientation === 'portrait' ? 'vertical' : 'horizontal'}` : ''})
             </>
           )
         }}
@@ -273,31 +167,43 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
   )
 }
 
-// Nuevo componente para documentos con QR pre-generados - 4 credenciales por página
+// Nuevo componente para documentos con QR pre-generados - credenciales configurables por página
 const CredentialDocumentWithQR: React.FC<{
   students: (StudentData & { qrCode: string })[]
   courseCode: string
   semester: string
-}> = ({ students, courseCode, semester }) => {
-  // Dividir estudiantes en grupos de 4 por página
-  const studentsPerPage = 4
+  credentialsPerPage: 1 | 4
+  orientation: 'portrait' | 'landscape'
+}> = ({ students, courseCode, semester, credentialsPerPage, orientation }) => {
+  // Dividir estudiantes en grupos según la configuración
+  const studentsPerPage = credentialsPerPage
   const pages = []
   
   for (let i = 0; i < students.length; i += studentsPerPage) {
     pages.push(students.slice(i, i + studentsPerPage))
   }
 
+  // Determinar orientación final: 4 por página siempre landscape, 1 por página según selección
+  const finalOrientation = credentialsPerPage === 4 ? 'landscape' : orientation
+
   return (
     <Document>
       {pages.map((pageStudents, pageIndex) => (
-        <Page key={pageIndex} size="A4" orientation="landscape" style={styles.page}>
-          <View style={styles.flexRow}>
+        <Page 
+          key={pageIndex} 
+          size="A4" 
+          orientation={finalOrientation} 
+          style={finalOrientation === 'landscape' ? styles.page : styles.pagePortrait}
+        >
+          <View style={credentialsPerPage === 4 ? styles.flexRow : styles.flexColumn}>
             {pageStudents.map((student) => (
               <CredentialCardWithQR 
                 key={student.id} 
                 student={student} 
                 courseCode={courseCode}
                 semester={semester}
+                isLargeFormat={credentialsPerPage === 1}
+                orientation={finalOrientation}
               />
             ))}
           </View>
@@ -311,8 +217,10 @@ const CredentialDocumentWithQR: React.FC<{
 const CredentialCardWithQR: React.FC<{ 
   student: StudentData & { qrCode: string }, 
   courseCode: string, 
-  semester: string 
-}> = ({ student, courseCode, semester }) => {
+  semester: string,
+  isLargeFormat?: boolean,
+  orientation?: 'portrait' | 'landscape'
+}> = ({ student, courseCode, semester, isLargeFormat = false, orientation = 'portrait' }) => {
   // Separar nombres si son muy largos
   const firstName = student.userInfo.firstName
   const firstNameParts = firstName.split(' ')
@@ -323,61 +231,127 @@ const CredentialCardWithQR: React.FC<{
   const lastNameParts = lastName.split(' ')
   const shouldSeparateLastNames = lastName.length > 15 && lastNameParts.length > 1
   
+  // Determinar qué estilos usar según formato y orientación
+  const getContainerStyle = () => {
+    if (!isLargeFormat) return styles.credentialContainer
+    return orientation === 'landscape' ? styles.credentialContainerLandscape : styles.credentialContainerLarge
+  }
+
+  const getDecorativeStripeStyle = () => {
+    if (!isLargeFormat) return styles.decorativeStripe
+    return orientation === 'landscape' ? styles.decorativeStripeLandscape : styles.decorativeStripeLarge
+  }
+
+  const getContentStyle = () => {
+    if (!isLargeFormat) return styles.credentialContent
+    return orientation === 'landscape' ? styles.credentialContentLandscape : styles.credentialContentLarge
+  }
+
+  const getStudentInfoStyle = () => {
+    if (!isLargeFormat) return styles.studentInfo
+    return orientation === 'landscape' ? styles.studentInfoLandscape : styles.studentInfo
+  }
+
+  const getHeaderSectionStyle = () => {
+    if (!isLargeFormat) return styles.headerSection
+    return orientation === 'landscape' ? styles.headerSectionLandscape : styles.headerSection
+  }
+
+  const getNameStyle = () => {
+    if (!isLargeFormat) return styles.studentName
+    return orientation === 'landscape' ? styles.studentNameLandscape : styles.studentNameLarge
+  }
+
+  const getLastNameStyle = () => {
+    if (!isLargeFormat) return styles.studentLastName
+    return orientation === 'landscape' ? styles.studentLastNameLandscape : styles.studentLastNameLarge
+  }
+
+  const getEmailStyle = () => {
+    if (!isLargeFormat) return styles.studentEmail
+    return orientation === 'landscape' ? styles.studentEmailLandscape : styles.studentEmailLarge
+  }
+
+  const getQRContainerStyle = () => {
+    if (!isLargeFormat) return styles.qrContainer
+    return orientation === 'landscape' ? styles.qrContainerLandscape : styles.qrContainerLarge
+  }
+
+  const getQRCodeStyle = () => {
+    if (!isLargeFormat) return styles.qrCode
+    return orientation === 'landscape' ? styles.qrCodeLandscape : styles.qrCodeLarge
+  }
+
+  const getCourseCodeStyle = () => {
+    if (!isLargeFormat) return styles.courseCode
+    return orientation === 'landscape' ? styles.courseCodeLandscape : styles.courseCode
+  }
+
+  const getSemesterStyle = () => {
+    if (!isLargeFormat) return styles.semester
+    return orientation === 'landscape' ? styles.semesterLandscape : styles.semester
+  }
+
+  const getCourseInfoStyle = () => {
+    if (!isLargeFormat) return styles.courseInfo
+    return orientation === 'landscape' ? styles.courseInfoLandscape : styles.courseInfo
+  }
+
   return (
-    <View style={styles.credentialContainer}>
+    <View style={getContainerStyle()}>
       {/* Franja decorativa con color #146233 */}
-      <View style={styles.decorativeStripe} />
+      <View style={getDecorativeStripeStyle()} />
       
       {/* Contenido de la credencial */}
-      <View style={styles.credentialContent}>
+      <View style={getContentStyle()}>
         {/* Header con código de curso */}
-        <View style={styles.headerSection}>
-          <View style={styles.courseInfo}>
-            <Text style={styles.courseCode}>{courseCode}</Text>
-            <Text style={styles.semester}>{semester}</Text>
+        <View style={getHeaderSectionStyle()}>
+          <View style={getCourseInfoStyle()}>
+            <Text style={getCourseCodeStyle()}>{courseCode}</Text>
+            <Text style={getSemesterStyle()}>{semester}</Text>
           </View>
         </View>
         
         {/* Sección principal con estudiante y QR */}
         <View style={styles.studentSection}>
-          <View style={styles.studentInfo}>
+          <View style={getStudentInfoStyle()}>
             {shouldSeparateFirstNames ? (
               <>
-                <Text style={styles.studentName}>
+                <Text style={getNameStyle()}>
                   {firstNameParts[0]}
                 </Text>
-                <Text style={styles.studentName}>
+                <Text style={getNameStyle()}>
                   {firstNameParts.slice(1).join(' ')}
                 </Text>
               </>
             ) : (
-              <Text style={styles.studentName}>
+              <Text style={getNameStyle()}>
                 {firstName}
               </Text>
             )}
             {shouldSeparateLastNames ? (
               <>
-                <Text style={styles.studentLastName}>
+                <Text style={getLastNameStyle()}>
                   {lastNameParts[0]}
                 </Text>
-                <Text style={styles.studentLastName}>
+                <Text style={getLastNameStyle()}>
                   {lastNameParts.slice(1).join(' ')}
                 </Text>
               </>
             ) : (
-              <Text style={styles.studentLastName}>
+              <Text style={getLastNameStyle()}>
                 {lastName}
               </Text>
             )}
-            <Text style={styles.studentEmail}>
+            <Text style={getEmailStyle()}>
               {student.userInfo.email}
             </Text>
           </View>
           
           <View style={styles.qrSection}>
-            <View style={styles.qrContainer}>
+            <View style={getQRContainerStyle()}>
               {/* eslint-disable-next-line jsx-a11y/alt-text */}
-              <Image src={student.qrCode} style={styles.qrCode} />
+              <Image src={student.qrCode} style={getQRCodeStyle()} />
             </View>
           </View>
         </View>
