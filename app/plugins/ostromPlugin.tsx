@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { usePermissions, PermissionError, Allow } from 'plugini'
 import { QrCode, Users, CheckCircle, XCircle, Camera, Download, Settings, Volume2, VolumeX, UserCheck, UserX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import DownloadAttendanceButton from './DownloadAttendanceButton'
 import QrScanner from 'qr-scanner'
 import { Html5Qrcode } from 'html5-qrcode'
 import jsPDF from 'jspdf'
@@ -493,6 +494,9 @@ const OstromAttendanceComponent = (props: any) => {
             {toastType === 'error' && <XCircle size={20} />}
             {toastType === 'info' && <QrCode size={20} />}
             <p className="font-medium text-sm">{toastMessage}</p>
+          </div>
+          <div className="my-4 flex justify-end">
+            <DownloadAttendanceButton />
           </div>
         </div>
       )}
