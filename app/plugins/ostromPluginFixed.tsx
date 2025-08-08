@@ -342,31 +342,46 @@ const OstromAttendanceComponent = (props: any) => {
       ...prev,
       [studentId]: present
     }))
-    
-    // Guardar solo IDs hasheados y datos mínimos (no emails/nombres)
+
+    // Guardar en Supabase vía API y también respaldo local
     try {
       const today = new Date().toISOString().split('T')[0]
+      // Llamada a la API Next para guardar asistencia en Supabase
+      if (selectedCourse?.id && studentId) {
+        const response = await fetch('/api/plugins/attendance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            courseId: selectedCourse.id,
+            studentId,
+            present,
+            date: today
+          })
+        })
+        const result = await response.json()
+        if (!response.ok) {
+          addDebugMessage('❌ Error guardando en Supabase: ' + (result.error || response.status))
+        } else {
+          addDebugMessage('✅ Asistencia guardada en Supabase')
+        }
+      }
+      // Guardar respaldo local
       const records = JSON.parse(localStorage.getItem('attendance_records') || '[]')
-      
-      // Solo guardar datos no sensibles
       records.push({
         courseId: selectedCourse?.id,
-        studentHash: btoa(studentId), // Hash básico del ID
+        studentHash: btoa(studentId),
         present,
         date: today,
         timestamp: new Date().toISOString()
       })
-      
-      // Limitar tamaño del localStorage (máximo 100 registros)
       if (records.length > 100) {
         records.splice(0, records.length - 100)
       }
-      
       localStorage.setItem('attendance_records', JSON.stringify(records))
-      addDebugMessage('💾 Asistencia guardada de forma segura')
+      addDebugMessage('💾 Asistencia guardada de forma segura (respaldo local)')
     } catch (error) {
       addDebugMessage('❌ Error guardando asistencia')
-      console.error('Error saving to localStorage:', error)
+      console.error('Error saving attendance:', error)
     }
   }
 
