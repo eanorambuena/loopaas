@@ -8,6 +8,7 @@ import { isProfessorServer } from '@/utils/isProfessorServer'
 import { redirect } from 'next/navigation'
 import StudentsTable from '@/components/students/StudentsTable'
 import GenerateCredentialsPDF from '@/components/students/GenerateCredentialsPDF'
+import DownloadAttendanceButton from '@/components/students/DownloadAttendanceButton'
 
 export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
   const user = await getCurrentUser()
@@ -47,6 +48,9 @@ export default async function Page({ params }: { params: { abbreviature: string,
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-6 opacity-0 px-3'>
       <h1 className='text-3xl font-bold'>Estudiantes {course?.title ?? params.abbreviature} {params.semester}</h1>
+      <div className="flex flex-row gap-4 items-center">
+        <DownloadAttendanceButton />
+      </div>
       <StudentsTable students={students} />
       <GenerateCredentialsPDF 
         students={students} 
