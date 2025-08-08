@@ -55,69 +55,6 @@ input {
   display: none;
 }
 
-/* Animaciones para badges Pro premium */
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@keyframes twinkle {
-  0%, 100% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes twinkle-delayed {
-  0%, 100% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  60% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-}
-
-@keyframes twinkle-slow {
-  0%, 100% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  40% {
-    opacity: 0.8;
-    transform: scale(1.1);
-  }
-}
-
-.animate-shimmer {
-  animation: shimmer 2s infinite;
-}
-
-.animate-twinkle {
-  animation: twinkle 1.5s infinite;
-}
-
-.animate-twinkle-delayed {
-  animation: twinkle-delayed 2s infinite 0.5s;
-}
-
-.animate-twinkle-slow {
-  animation: twinkle-slow 3s infinite 1s;
-}
-
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
 /* Estilos mejorados para scrollbars verticales */
 .scrollbar-thin {
   scrollbar-width: thin;
@@ -168,11 +105,4 @@ input {
 
 .border-b-3 {
   border-bottom-width: 3px;
-}
-
-/* Estilos para campos requeridos */
-.required-asterisk {
-  color: rgb(239 68 68); /* text-red-500 */
-  font-weight: bold;
-  margin-left: 2px;
 }

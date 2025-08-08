@@ -266,7 +266,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
               <div className="border rounded-lg p-4 h-64 overflow-y-auto bg-gray-50">
                 <div className="space-y-2">
                   {studentList
-                    .filter(student => String(student.group) === String(selectedStudent?.group || ''))
+                    .filter(student => student.group === selectedStudent?.group)
                     .map(student => (
                       <div 
                         key={student.id} 
@@ -309,7 +309,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
                 <div className="space-y-2">
                   {newGroup.trim() ? (
                     studentList
-                      .filter(student => String(student.group) === newGroup.trim() && student.id !== selectedStudent?.id)
+                      .filter(student => student.group === newGroup && student.id !== selectedStudent?.id)
                       .map(student => (
                         <div key={student.id} className="p-2 bg-white rounded">
                           <div className="font-medium">{student.userInfo.firstName} {student.userInfo.lastName}</div>
@@ -319,7 +319,7 @@ export default function StudentsTable({ students }: StudentsTableProps) {
                   ) : (
                     <div className="text-gray-500 text-center">Ingresa un número de grupo</div>
                   )}
-                  {newGroup.trim() && studentList.filter(student => String(student.group) === newGroup.trim() && student.id !== selectedStudent?.id).length === 0 && (
+                  {newGroup.trim() && studentList.filter(student => student.group === newGroup && student.id !== selectedStudent?.id).length === 0 && (
                     <div className="text-gray-500 text-center">Grupo vacío</div>
                   )}
                 </div>

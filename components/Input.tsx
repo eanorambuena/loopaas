@@ -1,3 +1,4 @@
+import React from 'react'
 import { QuestionType } from '@/utils/schema'
 import { input } from '@nextui-org/react'
 

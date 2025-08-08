@@ -16,8 +16,7 @@ import {
 } from '@/components/ui/dialog'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Users, UserPlus, Shuffle, Move, UserMinus } from 'lucide-react'
-import GroupIcon from '@/components/icons/GroupIcon'
+import { Users, UserPlus, Shuffle, Move } from 'lucide-react'
 
 interface GroupsManagerProps {
   students: CourseStudentWithUserInfo[]
@@ -43,12 +42,11 @@ export default function GroupsManager({ students }: GroupsManagerProps) {
     const unassigned: CourseStudentWithUserInfo[] = []
 
     studentList.forEach(student => {
-      if (student.group && String(student.group).trim()) {
-        const groupKey = String(student.group)
-        if (!groups[groupKey]) {
-          groups[groupKey] = []
+      if (student.group && student.group.trim()) {
+        if (!groups[student.group]) {
+          groups[student.group] = []
         }
-        groups[groupKey].push(student)
+        groups[student.group].push(student)
       } else {
         unassigned.push(student)
       }
@@ -255,65 +253,6 @@ export default function GroupsManager({ students }: GroupsManagerProps) {
     }
   }
 
-  const unassignStudents = async () => {
-    if (selectedStudents.length === 0) {
-      toast({
-        title: 'Error',
-        description: 'Selecciona estudiantes para desasignar',
-        variant: 'destructive'
-      })
-      return
-    }
-
-    setIsMovingStudents(true)
-    try {
-      const updatePromises = selectedStudents.map(async (studentId) => {
-        const student = studentList.find(s => s.id === studentId)
-        if (!student) return
-
-        const res = await fetch('/api/update-student', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userInfoId: student.userInfo.id,
-            firstName: student.userInfo.firstName,
-            lastName: student.userInfo.lastName,
-            group: null // Desasignar del grupo (null)
-          })
-        })
-
-        if (!res.ok) throw new Error(`Error al desasignar estudiante ${student.userInfo.firstName}`)
-      })
-
-      await Promise.all(updatePromises)
-
-      setStudentList(prev =>
-        prev.map(student =>
-          selectedStudents.includes(student.id)
-            ? { ...student, group: null as any } // Usamos 'as any' para evitar el error de tipos
-            : student
-        )
-      )
-
-      toast({
-        title: 'Éxito',
-        description: `${selectedStudents.length} estudiantes desasignados de sus grupos`,
-        variant: 'success'
-      })
-
-      setSelectedStudents([])
-    } catch (error) {
-      console.error(error)
-      toast({
-        title: 'Error',
-        description: 'Ocurrió un error al desasignar estudiantes',
-        variant: 'destructive'
-      })
-    } finally {
-      setIsMovingStudents(false)
-    }
-  }
-
   return (
     <div className="space-y-6">
       {/* Controles principales */}
@@ -323,25 +262,9 @@ export default function GroupsManager({ students }: GroupsManagerProps) {
           <Badge variant="outline" className="text-sm">
             {studentList.length} estudiantes total
           </Badge>
-          <Badge variant="secondary" className="text-sm">
-            {groupedStudents.unassigned.length} sin asignar
-          </Badge>
-          <Badge variant="default" className="text-sm">
-            {groupedStudents.groups.length} grupos
-          </Badge>
         </div>
         
         <div className="flex gap-2">
-          <Button
-            onClick={unassignStudents}
-            disabled={isMovingStudents || selectedStudents.length === 0}
-            variant="outline"
-            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-          >
-            <UserMinus className="w-4 h-4 mr-2" />
-            Desasignar
-          </Button>
-          
           <Button
             onClick={autoAssignGroups}
             disabled={isMovingStudents || groupedStudents.unassigned.length === 0}
@@ -353,10 +276,7 @@ export default function GroupsManager({ students }: GroupsManagerProps) {
           
           <Dialog>
             <DialogTrigger asChild>
-              <Button 
-                disabled={selectedStudents.length === 0}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
+              <Button disabled={selectedStudents.length === 0}>
                 <UserPlus className="w-4 h-4 mr-2" />
                 Crear Grupo
               </Button>
@@ -415,18 +335,7 @@ export default function GroupsManager({ students }: GroupsManagerProps) {
             </div>
             
             <div className="flex gap-2 flex-wrap">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={unassignStudents}
-                disabled={isMovingStudents}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <UserMinus className="w-3 h-3 mr-1" />
-                Desasignar
-              </Button>
-              
-              <span className="text-sm text-gray-600 self-center">Mover a grupo:</span>
+              <span className="text-sm text-gray-600">Mover a grupo:</span>
               {groupedStudents.groups.map(group => (
                 <Button
                   key={group.groupNumber}
@@ -486,7 +395,7 @@ export default function GroupsManager({ students }: GroupsManagerProps) {
           <Card key={group.groupNumber}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <GroupIcon className="w-4 h-4" />
+                <Users className="w-4 h-4" />
                 Grupo {group.groupNumber}
                 <Badge variant="default">{group.students.length}</Badge>
               </CardTitle>

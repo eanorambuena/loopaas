@@ -1,12 +1,12 @@
+
 'use client'
+import React from 'react'
 
 import Input from '@/components/Input'
 import MainButton from '@/components/MainButton'
 import OrganizationSelector from '@/components/OrganizationSelector'
-import UpgradeModal from '@/components/UpgradeModal'
 import { useToast } from '@/components/ui/use-toast'
 import { LinkPreview } from '@/components/ui/link-preview'
-import { useUpgradeModal } from '@/hooks/useUpgradeModal'
 import { createClient } from '@/utils/supabase/client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -37,17 +37,6 @@ export default function NewCourseForm({ userInfoId }: Props) {
     img: '',
     organizationId: ''
   })
-
-  // Hook del modal de upgrade
-  const { 
-    isOpen: isUpgradeModalOpen, 
-    triggerAction, 
-    currentCount, 
-    limit, 
-    openModal,
-    closeModal: closeUpgradeModal, 
-    checkLimitAndOpenModal 
-  } = useUpgradeModal()
 
   // Verificar el estado del token de Canvas al montar el componente
   useEffect(() => {
@@ -247,17 +236,19 @@ export default function NewCourseForm({ userInfoId }: Props) {
   // Early return después de todos los hooks
   if (!userInfoId) return null
 
+  const addProfessorToCourse = async (courseId: string) => {
+    await supabase.from('professors').insert({ teacherInfoId: userInfoId, courseId })
+
+    await supabase.from('students').insert({ 
+      userInfoId: userInfoId, 
+      courseId, 
+      group: DEFAULT_PROFESSOR_GROUP 
+    })
+  }
+
   // Función para manejar cambios en el formulario
-  const handleInputChange = async (name: string, value: string) => {
+  const handleInputChange = (name: string, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }))
-    
-    // Validar límites inmediatamente cuando cambia la organización
-    if (name === 'organizationId' && value) {
-      // Pequeño delay para permitir que se actualice el estado
-      setTimeout(async () => {
-        await checkLimitAndOpenModal('cursos', value)
-      }, 100)
-    }
   }
 
   const handleCourseCreationError = (error: any) => {
@@ -278,13 +269,6 @@ export default function NewCourseForm({ userInfoId }: Props) {
   // Función unificada para manejar el submit del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Verificar límites del plan antes de proceder
-    const limitReached = await checkLimitAndOpenModal('cursos', formData.organizationId)
-    if (limitReached) {
-      return // El modal se abrirá automáticamente
-    }
-
     setPending(true)
 
     // Validar campos requeridos
@@ -332,30 +316,22 @@ export default function NewCourseForm({ userInfoId }: Props) {
         color: formData.color || DEFAULT_COLOR,
         img: formData.img.trim() || 'https://bit.ly/2k1H1t6',
         organizationId: formData.organizationId.trim(),
+        teacherInfoId: userInfoId,
         ...(formData.canvasId.trim() && { canvasId: formData.canvasId.trim() })
       }
 
-      // Usar la API del servidor para crear el curso con validación de límites
-      const response = await fetch('/api/courses/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(courseData)
-      })
+      const { error, data } = await supabase
+        .from('courses')
+        .insert([courseData])
+        .select()
+        .single()
 
-      const result = await response.json()
+      if (error) {
+        throw error
+      }
 
-      if (!response.ok) {
-        // Si es un error de límite de plan, mostrar el modal
-        if (result.code === 'PLAN_LIMIT_EXCEEDED') {
-          openModal('cursos', result.current, result.limit)
-          setPending(false)
-          return
-        }
-        
-        // Otros errores
-        throw new Error(result.error || 'Error al crear el curso')
+      if (data && data.id) {
+        await addProfessorToCourse(data.id)
       }
 
       toast({
@@ -366,16 +342,12 @@ export default function NewCourseForm({ userInfoId }: Props) {
 
       // Redirigir a la página del curso creado
       setTimeout(() => {
-        router.push(`/cursos/${result.course.abbreviature}/${result.course.semester}`)
+        router.push(`/cursos/${data.abbreviature}/${data.semester}`)
       }, 1000) // Esperar 1 segundo para mostrar el toast
 
     } catch (error) {
       console.error('Error creating course:', error)
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Hubo un error al crear el curso',
-        variant: 'destructive'
-      })
+      handleCourseCreationError(error)
     } finally {
       setPending(false)
     }
@@ -388,15 +360,6 @@ export default function NewCourseForm({ userInfoId }: Props) {
         onSubmit={handleSubmit}
       >
         <fieldset className='flex flex-col gap-6 max-w-2xl w-full' disabled={pending}>
-          {/* Selector de Organización - PRIMERO */}
-          <OrganizationSelector
-            value={formData.organizationId}
-            onChange={(organizationId) => handleInputChange('organizationId', organizationId)}
-            label="Organización *"
-            placeholder="Selecciona una organización"
-            required
-          />
-
           {/* Canvas ID - Opcional */}
           <div className="space-y-2">
             <Input 
@@ -428,7 +391,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
             {/* Nombre del curso - Span completo */}
             <div className="md:col-span-2">
               <Input 
-                label='Nombre del curso *' 
+                label='Nombre del curso' 
                 name='title' 
                 required
                 value={formData.title}
@@ -439,7 +402,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
             
             {/* Abreviatura y Semestre en la misma fila */}
             <Input 
-              label='Abreviatura *' 
+              label='Abreviatura' 
               name='abbreviature' 
               required
               value={formData.abbreviature}
@@ -448,7 +411,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
             />
             
             <Input 
-              label='Semestre * (ej: 2024-1)' 
+              label='Semestre (ej: 2024-1)' 
               name='semester' 
               required
               value={formData.semester}
@@ -457,8 +420,15 @@ export default function NewCourseForm({ userInfoId }: Props) {
             />
           </div>
 
-          {/* Selector de Organización - Ya movido arriba */}
-          
+          {/* Selector de Organización */}
+          <OrganizationSelector
+            value={formData.organizationId}
+            onChange={(organizationId) => handleInputChange('organizationId', organizationId)}
+            label="Organización"
+            placeholder="Selecciona una organización"
+            required
+          />
+
           {/* Color e Imagen en la misma fila */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <div className="md:col-span-1">
@@ -556,15 +526,6 @@ export default function NewCourseForm({ userInfoId }: Props) {
           </MainButton>
         </fieldset>
       </form>
-
-      {/* Modal de upgrade */}
-      <UpgradeModal
-        isOpen={isUpgradeModalOpen}
-        onClose={closeUpgradeModal}
-        triggerAction={triggerAction}
-        currentCount={currentCount}
-        limit={limit}
-      />
     </div>
   )
 }
