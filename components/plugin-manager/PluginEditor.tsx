@@ -51,7 +51,7 @@ export function PluginEditor({ plugin, onSave, onCancel }: PluginEditorProps) {
     description: plugin?.description || '',
     code: plugin?.code || ''
   })
-  const [previewComponent, setPreviewComponent] = useState<React.ReactElement | null>(null)
+  const [previewComponent, setPreviewComponent] = useState<React.ReactElement<any> | null>(null)
   const [splitSize, setSplitSize] = useState<number>(50)
 
   // Inicializar con template si está vacío y no es edición

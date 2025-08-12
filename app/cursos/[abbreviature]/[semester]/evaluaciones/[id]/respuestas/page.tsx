@@ -8,14 +8,15 @@ import { Console } from '@/utils/console'
 import SecondaryLink from '@/components/SecondaryLink'
 
 interface RespuestasPageProps {
-  params: {
+  params: Promise<{
     abbreviature: string
     semester: string
     id: string
-  }
+  }>
 }
 
-export default async function Page({ params }: RespuestasPageProps) {
+export default async function Page(props: RespuestasPageProps) {
+  const params = await props.params
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id, false)
 
@@ -30,7 +31,7 @@ export default async function Page({ params }: RespuestasPageProps) {
     userInfoId: userInfo.id,
     courseId: course.id
   })
-  
+
   let responses
   try {
     if (!isCourseProfessor){

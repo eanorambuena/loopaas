@@ -5,7 +5,8 @@ import { createClient } from '@/utils/supabase/server'
 import { AddCard } from '@/components/AddCard'
 import { isProfessorServer } from '@/utils/isProfessorServer'
 
-export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
+export default async function Page(props: { params: Promise<{ abbreviature: string, semester: string }> }) {
+  const params = await props.params
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id)
 

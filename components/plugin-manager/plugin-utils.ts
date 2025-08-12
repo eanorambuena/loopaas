@@ -28,7 +28,7 @@ export const transpileCode = async (code: string): Promise<string> => {
 /**
  * Renderiza un componente de manera segura desde código transpilado
  */
-export const renderPluginComponentSafe = async (code: string): Promise<React.ReactElement> => {
+export const renderPluginComponentSafe = async (code: string): Promise<React.ReactElement<any>> => {
   try {
     const codeToExecute = await transpileCode(code)
     

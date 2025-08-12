@@ -5,7 +5,10 @@ import Fallback from '@/components/Fallback'
 import { UserInfoSchema } from '@/utils/schema'
 import { isProfessorServer } from '@/utils/isProfessorServer'
 
-export default async function Page({ params }: { params: { abbreviature: string, semester: string, id: string } }) {
+export default async function Page(
+  props: { params: Promise<{ abbreviature: string, semester: string, id: string }> }
+) {
+  const params = await props.params
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id) as UserInfoSchema
   if (!userInfo.id) return <Fallback>No se encontró tu información de usuario</Fallback>
@@ -19,7 +22,7 @@ export default async function Page({ params }: { params: { abbreviature: string,
   })
   console.log(`Answering evaluation ${user.email}, isCourseProfessor: ${isCourseProfessor}`)
 
-  if (!await isStudentInCourse(course.id, userInfo.id)) {
+  if (!(await isStudentInCourse(course.id, userInfo.id))) {
     if (isCourseProfessor) {
       return <Fallback>Los profesores deben estar inscritos como estudiantes para ver evaluaciones</Fallback>
     }

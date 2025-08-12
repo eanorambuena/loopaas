@@ -8,7 +8,8 @@ import { isProfessorServer } from '@/utils/isProfessorServer'
 import { evaluationPath, studentsPath } from '@/utils/paths'
 import { getCourse, getCurrentUser, getUserInfo } from '@/utils/queries'
 
-export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
+export default async function Page(props: { params: Promise<{ abbreviature: string, semester: string }> }) {
+  const params = await props.params
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id)
 

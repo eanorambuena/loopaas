@@ -39,7 +39,7 @@ function PluginEditor({ plugin, onSave, onCancel }: PluginEditorProps) {
     description: plugin?.description || '',
     code: plugin?.code || ''
   })
-  const [previewComponent, setPreviewComponent] = useState<React.ReactElement | null>(null)
+  const [previewComponent, setPreviewComponent] = useState<React.ReactElement<any> | null>(null)
   const [splitSize, setSplitSize] = useState<number>(50)
 
   const helloWorldTemplate = `function Component() {
@@ -105,7 +105,7 @@ function PluginEditor({ plugin, onSave, onCancel }: PluginEditorProps) {
   }
 
   // Función para renderizar el componente de manera segura
-  const renderPluginComponent = useCallback(async (code: string): Promise<React.ReactElement> => {
+  const renderPluginComponent = useCallback(async (code: string): Promise<React.ReactElement<any>> => {
     try {
       const codeToExecute = await transpileCode(code)
       
@@ -343,7 +343,7 @@ export function CustomPluginManager() {
   const [isCreating, setIsCreating] = useState(false)
   const [showCodeFor, setShowCodeFor] = useState<string | null>(null)
   const [renderPreview, setRenderPreview] = useState<{ [key: string]: boolean }>({})
-  const [pluginComponents, setPluginComponents] = useState<{ [key: string]: React.ReactElement }>({})
+  const [pluginComponents, setPluginComponents] = useState<{ [key: string]: React.ReactElement<any> }>({})
 
   // Cargar plugins desde localStorage al montar el componente
   useEffect(() => {
@@ -546,7 +546,7 @@ export function CustomPluginManager() {
   }
 
   // Función para renderizar el componente de manera segura
-  const renderPluginComponent = useCallback(async (plugin: CustomPlugin): Promise<React.ReactElement> => {
+  const renderPluginComponent = useCallback(async (plugin: CustomPlugin): Promise<React.ReactElement<any>> => {
     try {
       let codeToExecute = plugin.transpiledCode
       
@@ -630,7 +630,7 @@ export function CustomPluginManager() {
   // Efecto para renderizar componentes cuando cambia renderPreview
   useEffect(() => {
     const renderComponents = async () => {
-      const newComponents: { [key: string]: React.ReactElement } = {}
+      const newComponents: { [key: string]: React.ReactElement<any> } = {}
       
       for (const plugin of plugins) {
         if (renderPreview[plugin.id]) {
@@ -675,7 +675,6 @@ export function CustomPluginManager() {
           ✨ Crear Nuevo Plugin
         </Button>
       </div>
-
       {/* Lista de plugins */}
       {plugins.length === 0 ? (
         <div className="text-center py-12">

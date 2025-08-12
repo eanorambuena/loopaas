@@ -3,7 +3,8 @@ import { getCourse, getCourseStudents } from '@/utils/queries'
 import { redirect } from 'next/navigation'
 import Fallback from '@/components/Fallback'
 
-export default async function GruposPage({ params }: { params: { abbreviature: string, semester: string } }) {
+export default async function GruposPage(props: { params: Promise<{ abbreviature: string, semester: string }> }) {
+  const params = await props.params
   let course
   try {
     course = await getCourse(params.abbreviature, params.semester)
@@ -14,7 +15,7 @@ export default async function GruposPage({ params }: { params: { abbreviature: s
 
   let students
   try {
-    students = course && await getCourseStudents({ course })
+    students = course && (await getCourseStudents({ course }))
   } catch (error) {
     return <Fallback>Error al cargar los estudiantes</Fallback>
   }

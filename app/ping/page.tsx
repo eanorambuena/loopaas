@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 
-export default async function PingPage({ searchParams }: { searchParams: { origin: string } }) {
+export default async function PingPage(props: { searchParams: Promise<{ origin: string }> }) {
+  const searchParams = await props.searchParams
   const supabase = createClient()
 
   const { data: courses } = await supabase

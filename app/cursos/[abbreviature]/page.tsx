@@ -3,7 +3,8 @@ import CourseCard from '@/components/CourseCard'
 import { getCurrentUser } from '@/utils/queries'
 import Fallback from '@/components/Fallback'
 
-export default async function Page({ params }: { params: { abbreviature: string } }) {
+export default async function Page(props: { params: Promise<{ abbreviature: string }> }) {
+  const params = await props.params
   const supabase = createClient()
   await getCurrentUser()
 

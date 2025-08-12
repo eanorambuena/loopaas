@@ -3,14 +3,15 @@ import StatisticsDashboard from '@/components/statistics/StatisticsDashboard'
 import { ShareStatsLinkButton } from '@/components/ShareStatsLinkButton'
 
 interface EstadisticasPageProps {
-  params: {
+  params: Promise<{
     abbreviature: string
     semester: string
     id: string
-  }
+  }>
 }
 
-export default function Page({ params }: EstadisticasPageProps) {
+export default async function Page(props: EstadisticasPageProps) {
+  const params = await props.params
   const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL}/compartir/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`
   return (
     <div className='p-3 sm:p-4 md:p-6 w-full max-w-screen 6xl mx-auto'>

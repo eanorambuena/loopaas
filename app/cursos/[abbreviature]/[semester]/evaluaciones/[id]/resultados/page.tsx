@@ -4,14 +4,15 @@ import { ResultsDisplay } from '@/components/results/ResultsDisplay'
 import { isDeadlinePassed } from '@/utils/dateUtils'
 
 interface Props {
-  params: {
+  params: Promise<{
     abbreviature: string
     semester: string
     id: string
-  }
+  }>
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page(props: Props) {
+  const params = await props.params
   await getCurrentUser()
 
   const course = await getCourse(params.abbreviature, params.semester)
@@ -23,7 +24,7 @@ export default async function Page({ params }: Props) {
 
   const evaluation = await getEvaluationByParams(params)
   if (!evaluation) return <Fallback>No se encontró la evaluación</Fallback>
-  
+
   return (
     <div className='animate-in flex-1 flex flex-col gap-3 sm:gap-4 md:gap-6 p-3 sm:p-4 md:p-8 opacity-0'>
       <h1 className='text-xl sm:text-2xl md:text-3xl font-bold break-words leading-tight'>{evaluation.title}</h1>

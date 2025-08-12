@@ -10,14 +10,15 @@ import { Evaluation } from '@/utils/schema'
 import { redirect } from 'next/navigation'
 
 interface EstadisticasPageProps {
-  params: {
+  params: Promise<{
     abbreviature: string
     semester: string
     id: string
-  }
+  }>
 }
 
-export default async function Page({ params }: EstadisticasPageProps) {
+export default async function Page(props: EstadisticasPageProps) {
+  const params = await props.params
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id, false)
   const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL}/compartir/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`
@@ -34,7 +35,7 @@ export default async function Page({ params }: EstadisticasPageProps) {
     userInfoId: userInfo.id,
     courseId: course.id
   })
-  
+
   if (!isCourseProfessor) {
     redirect(`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/respuestas`)
   }

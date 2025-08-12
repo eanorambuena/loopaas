@@ -5,9 +5,12 @@ import Fallback from '@/components/Fallback'
 import { AddProfessorForm } from './AddProfessorForm'
 import ProfessorsTable from '@/components/professors/ProfessorsTable'
 
-export default async function ProfesoresPage({ params }: {
-  params: { abbreviature: string, semester: string }
-}) {
+export default async function ProfesoresPage(
+  props: {
+    params: Promise<{ abbreviature: string, semester: string }>
+  }
+) {
+  const params = await props.params
   const course = await getCourse(params.abbreviature, params.semester)
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
