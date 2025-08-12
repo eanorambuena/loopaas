@@ -1,4 +1,4 @@
-import { APP_NAME } from '@/lib/constants'
+import { APP_NAME, APP_BASE_URL } from '@/lib/constants'
 import StatisticsDashboard from '@/components/statistics/StatisticsDashboard'
 import { ShareStatsLinkButton } from '@/components/ShareStatsLinkButton'
 
@@ -12,7 +12,7 @@ interface EstadisticasPageProps {
 
 export default async function Page(props: EstadisticasPageProps) {
   const params = await props.params
-  const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL}/compartir/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`
+  const publicUrl = `${APP_BASE_URL}/compartir/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`
   return (
     <div className='p-3 sm:p-4 md:p-6 w-full max-w-screen 6xl mx-auto'>
       <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between mb-4 sm:mb-6'>

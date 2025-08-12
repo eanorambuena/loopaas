@@ -8,6 +8,7 @@ import { isProfessorServer } from '@/utils/isProfessorServer'
 import { getCourse, getCurrentUser, getEvaluationByParams, getEvaluationResponses, getUserInfo } from '@/utils/queries'
 import { Evaluation } from '@/utils/schema'
 import { redirect } from 'next/navigation'
+import { APP_BASE_URL } from '@/lib/constants'
 
 interface EstadisticasPageProps {
   params: Promise<{
@@ -21,7 +22,7 @@ export default async function Page(props: EstadisticasPageProps) {
   const params = await props.params
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id, false)
-  const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL}/compartir/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`
+  const publicUrl = `${APP_BASE_URL}/compartir/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}/estadisticas`
 
   if (!userInfo || !userInfo.id) {
     Console.Error(`UserInfo not found for user ${user.email}`)
