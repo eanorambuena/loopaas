@@ -160,13 +160,16 @@ export default function PricingPage() {
                       <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
                     </div>
                     
-                    <div className="mb-4">
-                      <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                        {plan.price}
-                      </span>
-                      <span className="text-gray-600 dark:text-gray-400 ml-1">
-                        {plan.period}
-                      </span>
+                    <div className="mb-4 flex items-end justify-center gap-1">
+                      {plan.name === 'Pro' ? (
+                        <>
+                          <span className="text-4xl font-bold text-gray-900 dark:text-white">$29</span>
+                          <span className="text-lg font-semibold text-gray-900 dark:text-white mb-1 align-bottom">.90</span>
+                        </>
+                      ) : (
+                        <span className="text-4xl font-bold text-gray-900 dark:text-white">{plan.price}</span>
+                      )}
+                      <span className="text-gray-600 dark:text-gray-400 ml-1">{plan.period}</span>
                     </div>
                     
                     <CardDescription className="text-base">
