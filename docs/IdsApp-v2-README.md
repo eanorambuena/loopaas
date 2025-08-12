@@ -4,7 +4,7 @@
 
 ## Introducción
 
-IDSApp es una aplicación web para gestionar cursos, credenciales y evaluaciones para equipos y organizaciones.
+IDSApp es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable, principalmente sus coevaluaciones y autoevaluaciones.
 
 **Sitio web:** [idsapp.vercel.app](https://idsapp.vercel.app)
 
@@ -297,7 +297,7 @@ Para cada tipo de usuario, se debe indicar cómo usar la aplicación. Por ejempl
 
 ### Usuarios / clientes
 
-Los usuarios de la aplicación pueden ser alumnos, ayudantes, docentes y miembros de cualquier organización o equipo.
+Los usuarios de la aplicación son los alumnos, ayudantes y docentes del Instituto para el Desarrollo Sustentable.
 
 ### Colores
 
@@ -332,7 +332,7 @@ Los íconos son extraídos principalmente de [Tabler Icons](https://tabler.io/ic
 
 ## Historia de IDSApp
 
-IDSApp fue creada para facilitar la coevaluación y autoevaluación de alumnos y equipos en cualquier organización.
+IDSApp fue creada para facilitar la coevaluación y autoevaluación de los alumnos del Instituto para el Desarrollo Sustentable.
 
 Hasta 2023-2 se utilizaba una planilla de Google Sheets con scripts de Google Apps Script para gestionar las coevaluaciones. Este generaba un Google Form para que los alumnos ingresaran sus coevaluaciones.
 
@@ -348,7 +348,7 @@ Hasta 2023-2 se utilizaba una planilla de Google Sheets con scripts de Google Ap
 
 - **Transición de la UC hacia Microsoft 365**: La UC está migrando sus servicios hacia Microsoft 365, lo que implica que Google Sheets no es una herramienta oficial de la UC.
 
-Esta planilla ha sido utilizada por múltiples cursos y equipos, y ha generado una gran cantidad de datos que no se pueden migrar fácilmente a una nueva plataforma.
+Esta planilla ha sido utilizada por múltiples cursos del Instituto para el Desarrollo Sustentable, y ha generado una gran cantidad de datos que no se pueden migrar fácilmente a una nueva plataforma.
 
 ### Pensando en una nueva solución
 

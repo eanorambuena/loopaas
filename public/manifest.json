@@ -1,7 +1,7 @@
 {
-  "name": "Loopaas",
+  "name": "Loopaas - Plataforma de Aprendizaje",
   "short_name": "Loopaas",
-  "description": "Gestión de cursos y credenciales para el Instituto para el Desarrollo Sustentable.",
+  "description": "Gestión de cursos, credenciales y evaluaciones para equipos y organizaciones.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

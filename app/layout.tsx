@@ -16,7 +16,7 @@ export const metadata = {
     template: `%s | ${APP_NAME}`,
     default: APP_NAME
   },
-  description: `${APP_NAME} es una aplicación web para gestionar los cursos del Instituto para el Desarrollo Sustentable`,
+  description: `${APP_NAME} es una aplicación web para gestionar cursos, credenciales y evaluaciones para equipos y organizaciones`,
   verification: {
     google: '43TwFvQymK3-1sNg02-KVCL_ryqBTvr9zpJBQX1aVms'
   }
