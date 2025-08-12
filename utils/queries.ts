@@ -1,7 +1,5 @@
-import { APP_BASE_URL } from '@/lib/constants'
-import { APP_NAME } from '@/lib/constants'
 'use server'
-
+import { APP_BASE_URL, APP_NAME } from '@/lib/constants'
 import { User } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
 import { evaluationPath } from './paths'

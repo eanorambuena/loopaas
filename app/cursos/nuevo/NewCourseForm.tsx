@@ -1,7 +1,5 @@
-
 'use client'
 import React from 'react'
-
 import Input from '@/components/Input'
 import MainButton from '@/components/MainButton'
 import OrganizationSelector from '@/components/OrganizationSelector'
@@ -22,6 +20,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
   const { toast } = useToast()
   const router = useRouter()
   const supabase = createClient()
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [pending, setPending] = useState(false)
   const [canvasLoading, setCanvasLoading] = useState(false)
   const [canvasTokenStatus, setCanvasTokenStatus] = useState<{
@@ -252,6 +251,10 @@ export default function NewCourseForm({ userInfoId }: Props) {
   }
 
   const handleCourseCreationError = (error: any) => {
+    if (error.code === 'PLAN_LIMIT_EXCEEDED') {
+      setShowUpgradeModal(true)
+      return
+    }
     if (error.code === '23505') {
       return toast({
         title: 'Error',
@@ -355,6 +358,23 @@ export default function NewCourseForm({ userInfoId }: Props) {
 
   return (
     <div className="w-full max-w-2xl">
+      {/* Modal de upgrade */}
+      {showUpgradeModal && (
+        <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8 max-w-md w-full flex flex-col items-center">
+            <h2 className="text-xl font-bold mb-2 text-center">¡Has alcanzado el límite de cursos!</h2>
+            <p className="mb-4 text-center">Para crear más cursos necesitas actualizar tu plan a <span className="font-semibold text-emerald-700 dark:text-emerald-400">Pro</span>.</p>
+            <button
+              className="bg-emerald-700 text-white px-4 py-2 rounded hover:bg-emerald-800 transition mb-2"
+              onClick={() => { setShowUpgradeModal(false); router.push('/pricing') }}
+            >Ver planes Pro</button>
+            <button
+              className="text-sm text-gray-500 hover:underline"
+              onClick={() => setShowUpgradeModal(false)}
+            >Cerrar</button>
+          </div>
+        </div>
+      )}
       <form
         className='animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground'
         onSubmit={handleSubmit}

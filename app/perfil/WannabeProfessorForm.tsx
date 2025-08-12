@@ -1,6 +1,5 @@
-import { SUPPORT_EMAIL, APP_NAME } from '@/lib/constants'
 'use client'
-
+import { SUPPORT_EMAIL, APP_NAME } from '@/lib/constants'
 import Input from '@/components/Input'
 import MainButton from '@/components/MainButton'
 import { useToast } from '@/components/ui/use-toast'

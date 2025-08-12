@@ -83,8 +83,16 @@ describe('Flujo de límite de cursos y modal de upgrade', () => {
 
     // Esperar a que aparezca el modal de upgrade
     await waitFor(() => {
-      expect(screen.getByText(/has alcanzado el límite de cursos/i)).toBeInTheDocument()
-      expect(screen.getByText(/pro/i)).toBeInTheDocument()
+      expect(
+        screen.getByText((content, node) =>
+          node?.textContent?.toLowerCase().includes('has alcanzado el límite de cursos')
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText((content, node) =>
+          node?.textContent?.toLowerCase().includes('pro')
+        )
+      ).toBeInTheDocument()
     })
   })
 })

@@ -70,6 +70,8 @@
     "typescript": "5.3.3"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
     "@types/babel__standalone": "^7.1.9",
     "@types/jsonwebtoken": "9.0.6",
     "@types/node": "20.11.5",
@@ -77,11 +79,14 @@
     "@types/react": "^19.1.9",
     "@types/react-dom": "18.2.18",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "@vitest/ui": "^3.2.4",
     "encoding": "0.1.13",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.4",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2"
+    "jsdom": "^26.1.0",
+    "lint-staged": "^16.1.2",
+    "vitest": "^3.2.4"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
