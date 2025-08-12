@@ -105,7 +105,7 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
             id="format-select"
             value={credentialsPerPage}
             onChange={(e) => setCredentialsPerPage(Number(e.target.value) as 1 | 4)}
-            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 dark:bg-neutral-900 dark:text-gray-100 dark:border-neutral-700 transition-colors"
           >
             <option value={4}>4 credenciales por página</option>
             <option value={1}>1 credencial por página</option>
