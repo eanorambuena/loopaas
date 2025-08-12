@@ -4,6 +4,7 @@ import { APP_NAME } from '@/lib/constants'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { StripeCheckoutButton } from '@/components/StripeCheckoutButton'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
@@ -37,11 +38,11 @@ const pricingPlans = [
   },
   {
     name: 'Pro',
-    price: '$29',
+    price: '$29.90',
     period: '/mes',
     description: 'Para organizaciones que necesitan funcionalidades avanzadas',
-    badge: 'Más popular',
-    badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
+  badge: 'Más popular',
+  badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
     features: [
       { name: 'Estudiantes ilimitados', included: true },
       { name: 'Cursos ilimitados', included: true },
@@ -54,7 +55,7 @@ const pricingPlans = [
       { name: 'Reportes personalizados', included: true },
       { name: 'Backup automático', included: true },
     ],
-    buttonText: 'Comenzar prueba Pro',
+  buttonText: 'Comprar Pro',
     buttonVariant: 'default' as const,
     popular: true,
     icon: Crown,
@@ -123,15 +124,7 @@ export default function PricingPage() {
               Elige el plan perfecto para tu organización educativa. Desde instituciones pequeñas hasta universidades grandes, tenemos la solución ideal para ti.
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-4 py-2 rounded-full text-sm font-medium"
-            >
-              <Zap className="w-4 h-4" />
-              14 días de prueba gratuita en el plan Pro
-            </motion.div>
+
           </div>
 
           {/* Pricing Cards */}
@@ -197,17 +190,21 @@ export default function PricingPage() {
                       ))}
                     </ul>
 
-                    <Button
-                      onClick={() => handlePlanSelect(plan.name)}
-                      variant={plan.buttonVariant}
-                      className={`w-full py-3 text-lg font-medium ${
-                        plan.popular 
-                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
-                          : 'border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950'
-                      }`}
-                    >
-                      {plan.buttonText}
-                    </Button>
+                    {plan.name === 'Pro' ? (
+                      <StripeCheckoutButton priceId="prod_Sr7JbOWemYxSD9" />
+                    ) : (
+                      <Button
+                        onClick={() => handlePlanSelect(plan.name)}
+                        variant={plan.buttonVariant}
+                        className={`w-full py-3 text-lg font-medium ${
+                          plan.popular 
+                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
+                            : 'border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950'
+                        }`}
+                      >
+                        {plan.buttonText}
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
