@@ -1,10 +1,10 @@
-# IDSApp
+# Loopaas (antes IDSApp)
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/eanorambuena/idsapp-v2)
 
 ## Introducción
 
-IDSApp es una aplicación web para gestionar cursos, credenciales y evaluaciones para equipos y organizaciones.
+Loopaas es una aplicación web para gestionar cursos, credenciales y evaluaciones para equipos y organizaciones.
 
 **Sitio web:** [idsapp.vercel.app](https://idsapp.vercel.app)
 
@@ -330,9 +330,9 @@ Se usa color sólido para *Call To Action*, usando `<MainButton>`. Para botones 
 
 Los íconos son extraídos principalmente de [Tabler Icons](https://tabler.io/icons). Es importante cuidar la coherencia del estilo visual de los íconos.
 
-## Historia de IDSApp
+## Historia de Loopaas
 
-IDSApp fue creada para facilitar la coevaluación y autoevaluación de alumnos y equipos en cualquier organización.
+Loopaas (antes IDSApp) fue creada para facilitar la coevaluación y autoevaluación de alumnos y equipos en cualquier organización.
 
 Hasta 2023-2 se utilizaba una planilla de Google Sheets con scripts de Google Apps Script para gestionar las coevaluaciones. Este generaba un Google Form para que los alumnos ingresaran sus coevaluaciones.
 
@@ -358,7 +358,7 @@ En 2023-2, se decidió crear una nueva aplicación web para gestionar las coeval
 ![SusApp Mockup](./docs/susapp_mockup.png)
 - Febrero y Marzo 2024: Se creó la primera versión de SusApp, la cual cambió de nombre a **IDSApp** y posteriormente a **IDSApp Legacy**. Estaba hecha con Vite, React y Tailwind CSS. [Ir al sitio web](https://idsapp-legacy.vercel.app/)
 ![IDSApp Legacy](./docs/idsapp_legacy.png)
-- Abril 2024 hasta la fecha: Se creó la segunda versión de IDSApp, la cual se encuentra en producción. [Ir al sitio web](https://idsapp.vercel.app)
+- Abril 2024 hasta la fecha: Se creó la segunda versión de IDSApp (ahora Loopaas), la cual se encuentra en producción. [Ir al sitio web](https://idsapp.vercel.app)
 ![IDSApp](./docs/idsapp.png)
 
 ## Resultados
