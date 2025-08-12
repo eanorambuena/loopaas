@@ -97,7 +97,7 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
       {/* Controles de formato */}
       <div className="flex flex-col sm:flex-row gap-4 p-4 bg-gray-50 rounded-lg border">
         {/* Selector de credenciales por página */}
-        <div className="flex items-center gap-3">
+  <div className="flex items-center gap-3 bg-gray-50 rounded-lg border border-gray-200 p-2 dark:bg-neutral-900 dark:border-neutral-700 transition-colors">
           <label htmlFor="format-select" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
             Formato:
           </label>
