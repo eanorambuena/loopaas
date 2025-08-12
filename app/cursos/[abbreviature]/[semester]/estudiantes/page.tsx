@@ -10,7 +10,8 @@ import StudentsTable from '@/components/students/StudentsTable'
 import GenerateCredentialsPDF from '@/components/students/GenerateCredentialsPDF'
 import DownloadAttendanceButton from '@/components/students/DownloadAttendanceButton'
 
-export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
+export default async function Page(props: { params: Promise<{ abbreviature: string, semester: string }> }) {
+  const params = await props.params
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id, false)
 
@@ -33,12 +34,12 @@ export default async function Page({ params }: { params: { abbreviature: string,
     userInfoId: userInfo.id,
     courseId: course.id
   })
-  
+
   if (!isCourseProfessor) redirect(`/cursos/${params.abbreviature}/${params.semester}`)
 
   let students
   try {
-    students = course && await getCourseStudents({ course })
+    students = course && (await getCourseStudents({ course }))
   }
   catch (error) {
     Console.Error(`Error al obtener los estudiantes: ${error}`)

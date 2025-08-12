@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { getCurrentUser, getUserInfo } from '@/utils/queries'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { courseId: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ courseId: string }> }) {
+  const params = await props.params
   try {
     // Verificar autenticación
     const user = await getCurrentUser()

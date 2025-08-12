@@ -3,7 +3,8 @@ import Link from 'next/link'
 import Fallback from '@/components/Fallback'
 import { getCourse } from '@/utils/queries'
 
-export default async function Page({ params }: { params: { abbreviature: string, semester: string } }) {
+export default async function Page(props: { params: Promise<{ abbreviature: string, semester: string }> }) {
+  const params = await props.params
   const supabase = createClient()
 
   const course = await getCourse(params.abbreviature, params.semester)

@@ -9,7 +9,7 @@ interface PluginErrorBoundaryState {
 
 interface PluginErrorBoundaryProps {
   children: React.ReactNode
-  fallback?: React.ReactElement
+  fallback?: React.ReactElement<any>
   pluginName?: string
 }
 

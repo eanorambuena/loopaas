@@ -3,6 +3,7 @@ import { APP_BASE_URL } from '@/lib/constants'
 import { APP_NAME } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { IconMenu2, IconX } from '@tabler/icons-react'
+import Link from 'next/link'
 import {
   motion,
   AnimatePresence,
@@ -234,18 +235,18 @@ export const MobileNavToggle = ({
 
 export const NavbarLogo = () => {
   return (
-    <a
+    <Link
       href="/"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
     >
       <img
-  src={`${APP_BASE_URL}/loopaas_logo_square.png`}
+        src={`${APP_BASE_URL}/loopaas_logo_square.png`}
         alt="logo"
         width={20}
         height={20}
       />
-  <span className="font-medium text-black dark:text-white">{APP_NAME}</span>
-    </a>
+      <span className="font-medium text-black dark:text-white">{APP_NAME}</span>
+    </Link>
   )
 }
 
