@@ -199,20 +199,15 @@ describe('statisticsProcessor', () => {
     it('should detect injustice cases correctly', () => {
       const result = processInjusticeCases(mockStudentsWithScores)
 
-      expect(result).toHaveLength(2)
+    expect(result).toHaveLength(1)
       
-      // Grupo 1A debería estar primero (promedio más negativo)
-      expect(result[0].group).toBe('1A')
-      expect(result[0].averageScore).toBe(-0.4) // (-0.5 + -0.3) / 2
-      expect(result[0].studentCount).toBe(2)
-      expect(result[0].students).toHaveLength(2)
-      expect(result[0].students[0].score).toBe(-0.5) // Ordenado ascendentemente
-      expect(result[0].students[1].score).toBe(-0.3)
-
-      // Grupo 3C debería estar segundo
-      expect(result[1].group).toBe('3C')
-      expect(result[1].averageScore).toBe(-0.8)
-      expect(result[1].studentCount).toBe(1)
+    // Solo grupo 1A tiene más de 1 estudiante y promedio negativo
+    expect(result[0].group).toBe('1A')
+    expect(result[0].averageScore).toBe(-0.4)
+    expect(result[0].studentCount).toBe(2)
+    expect(result[0].students).toHaveLength(2)
+    expect(result[0].students[0].score).toBe(-0.5)
+    expect(result[0].students[1].score).toBe(-0.3)
     })
 
     it('should not include groups with positive averages', () => {

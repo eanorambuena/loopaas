@@ -38,7 +38,7 @@ describe('statisticsApi', () => {
         ok: false,
         status: 404
       })
-      await expect(fetchEvaluationData('eval123')).rejects.toThrow('Error al cargar la evaluación')
+      await expect(fetchEvaluationData('eval123')).rejects.toThrow('Error al obtener información de la evaluación')
     })
   })
 

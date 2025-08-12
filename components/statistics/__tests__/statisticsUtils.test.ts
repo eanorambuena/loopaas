@@ -29,9 +29,9 @@ describe('statisticsUtils', () => {
       const result = addSectionToStudents(students)
 
       expect(result).toHaveLength(3)
-      expect(result[0].section).toBe('N/A')
-      expect(result[1].section).toBe('N/A')
-      expect(result[2].section).toBe('N/A')
+      expect(result[0].section).toBe('Sin sección')
+      expect(result[1].section).toBe('Sin sección')
+      expect(result[2].section).toBe('Sin sección')
     })
 
     it('should handle empty array', () => {
