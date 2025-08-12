@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/lib/constants'
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -22,24 +23,24 @@ export default function InstruccionesEstudiantePage() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Guía para Estudiantes - IDSApp
+            Guía para Estudiantes - {APP_NAME}
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Aprende cómo participar en evaluaciones y coevaluaciones de manera efectiva
           </p>
         </div>
 
-        {/* Sección: ¿Qué es IDSApp para estudiantes? */}
+  {/* Sección: ¿Qué es {APP_NAME} para estudiantes? */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Info className="h-6 w-6 text-green-600" />
-              ¿Qué es IDSApp para estudiantes?
+              ¿Qué es {APP_NAME} para estudiantes?
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700 dark:text-gray-300">
-              IDSApp es una plataforma que te permite participar en evaluaciones y coevaluaciones 
+              {APP_NAME} es una plataforma que te permite participar en evaluaciones y coevaluaciones 
               de tus cursos universitarios. Como estudiante, puedes responder evaluaciones creadas 
               por tus profesores y contribuir a la evaluación de tus compañeros de manera justa y constructiva.
             </p>
@@ -305,7 +306,7 @@ export default function InstruccionesEstudiantePage() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Si tienes preguntas sobre cómo usar IDSApp o necesitas ayuda con una evaluación, 
+              Si tienes preguntas sobre cómo usar {APP_NAME} o necesitas ayuda con una evaluación, 
               no dudes en contactar a tu profesor o al equipo de soporte.
             </p>
             <div className="flex flex-wrap gap-4">

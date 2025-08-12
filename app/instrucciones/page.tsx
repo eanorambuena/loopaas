@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/lib/constants'
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -28,24 +29,24 @@ export default function InstruccionesPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Guía de Uso - IDSApp
+            Guía de Uso - {APP_NAME}
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Plataforma integral para la gestión de evaluaciones y coevaluaciones en cursos universitarios
           </p>
         </div>
 
-        {/* Sección: ¿Qué es IDSApp? */}
+  {/* Sección: ¿Qué es {APP_NAME}? */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Info className="h-6 w-6 text-blue-600" />
-              ¿Qué es IDSApp?
+              ¿Qué es {APP_NAME}?
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700 dark:text-gray-300">
-              IDSApp es una plataforma web diseñada para facilitar la gestión de evaluaciones y coevaluaciones 
+              {APP_NAME} es una plataforma web diseñada para facilitar la gestión de evaluaciones y coevaluaciones 
               en el contexto universitario. Permite a los profesores crear evaluaciones, gestionar estudiantes 
               y analizar resultados de manera eficiente.
             </p>
@@ -471,7 +472,7 @@ export default function InstruccionesPage() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Si tienes preguntas o necesitas ayuda con IDSApp, no dudes en contactar al equipo de desarrollo.
+              Si tienes preguntas o necesitas ayuda con {APP_NAME}, no dudes en contactar al equipo de desarrollo.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button asChild>

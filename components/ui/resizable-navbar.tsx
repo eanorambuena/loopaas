@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/lib/constants'
 'use client'
 import { cn } from '@/lib/utils'
 import { IconMenu2, IconX } from '@tabler/icons-react'
@@ -242,7 +243,7 @@ export const NavbarLogo = () => {
         width={20}
         height={20}
       />
-      <span className="font-medium text-black dark:text-white">Idsapp</span>
+  <span className="font-medium text-black dark:text-white">{APP_NAME}</span>
     </a>
   )
 }

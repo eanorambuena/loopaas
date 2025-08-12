@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/lib/constants'
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -33,24 +34,24 @@ export default function InstruccionesProfesorPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Guía para Profesores - IDSApp
+            Guía para Profesores - {APP_NAME}
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Aprende a gestionar cursos, estudiantes y evaluaciones de manera eficiente
           </p>
         </div>
 
-        {/* Sección: ¿Qué es IDSApp para profesores? */}
+  {/* Sección: ¿Qué es {APP_NAME} para profesores? */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Info className="h-6 w-6 text-blue-600" />
-              ¿Qué es IDSApp para profesores?
+              ¿Qué es {APP_NAME} para profesores?
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700 dark:text-gray-300">
-              IDSApp es una plataforma integral que te permite gestionar evaluaciones y coevaluaciones 
+              {APP_NAME} es una plataforma integral que te permite gestionar evaluaciones y coevaluaciones 
               en tus cursos universitarios. Como profesor, puedes crear cursos, gestionar estudiantes, 
               diseñar evaluaciones personalizadas y analizar resultados de manera detallada.
             </p>
@@ -442,7 +443,7 @@ export default function InstruccionesProfesorPage() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Si tienes preguntas sobre el uso de IDSApp o necesitas ayuda con alguna funcionalidad, 
+              Si tienes preguntas sobre el uso de {APP_NAME} o necesitas ayuda con alguna funcionalidad, 
               no dudes en contactar al equipo de soporte.
             </p>
             <div className="flex flex-wrap gap-4">

@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/lib/constants'
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
@@ -48,7 +49,7 @@ export default function OG({ params }: OGParams) {
             Evaluación: {id}
           </span>
           <span style={{ marginTop: 40, fontSize: 28, color: '#a0aec0', fontWeight: 400 }}>
-            IDSApp
+            {APP_NAME}
           </span>
         </div>
       </div>

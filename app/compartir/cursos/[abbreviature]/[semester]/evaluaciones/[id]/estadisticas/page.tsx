@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/lib/constants'
 import StatisticsDashboard from '@/components/statistics/StatisticsDashboard'
 import { ShareStatsLinkButton } from '@/components/ShareStatsLinkButton'
 
@@ -24,23 +25,23 @@ export default function Page({ params }: EstadisticasPageProps) {
 
 export const metadata = {
   title: 'Estadísticas públicas de la evaluación',
-  description: 'Visualiza y comparte las estadísticas de esta evaluación en IDSApp.',
+  description: `Visualiza y comparte las estadísticas de esta evaluación en ${APP_NAME}.`,
   openGraph: {
     title: 'Estadísticas públicas de la evaluación',
-    description: 'Visualiza y comparte las estadísticas de esta evaluación en IDSApp.',
+    description: `Visualiza y comparte las estadísticas de esta evaluación en ${APP_NAME}.`,
     images: [
       {
         url: '/opengraph-image.png',
         width: 1200,
         height: 630,
-        alt: 'IDSApp Estadísticas',
+        alt: `${APP_NAME} Estadísticas`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Estadísticas públicas de la evaluación',
-    description: 'Visualiza y comparte las estadísticas de esta evaluación en IDSApp.',
+    description: `Visualiza y comparte las estadísticas de esta evaluación en ${APP_NAME}.`,
     images: ['/opengraph-image.png'],
   },
 }

@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/lib/constants'
 'use server'
 
 import { User } from '@supabase/supabase-js'
@@ -112,7 +113,7 @@ async function sendWelcomeEmail({ email, password, sendingEmail } : WelcomeEmail
   await sendEmail({
     from: 'onboarding@resend.dev',
     to: sendingEmail,
-    subject: 'IDSApp | Bienvenid@ a IDSApp',
+  subject: `${APP_NAME} | Bienvenid@ a ${APP_NAME}`,
     html: /*html*/`
       <h1>Bienvenido a IDS App</h1>
       <p>Para continuar con el proceso de inscripción, por favor haz click en el siguiente enlace:</p>

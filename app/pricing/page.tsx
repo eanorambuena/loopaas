@@ -1,3 +1,4 @@
+import { APP_NAME } from '@/lib/constants'
 'use client'
 
 import { useState } from 'react'
@@ -222,7 +223,7 @@ export default function PricingPage() {
           >
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                ¿Por qué elegir IDSApp?
+                ¿Por qué elegir {APP_NAME}?
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                 Nuestra plataforma está diseñada específicamente para instituciones educativas modernas que buscan optimizar sus procesos de evaluación.
@@ -313,7 +314,7 @@ export default function PricingPage() {
               ¿Listo para transformar tu institución educativa?
             </h2>
             <p className="text-xl mb-8 opacity-90">
-              Únete a miles de educadores que ya están usando IDSApp para mejorar sus procesos de evaluación.
+              Únete a miles de educadores que ya están usando {APP_NAME} para mejorar sus procesos de evaluación.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
