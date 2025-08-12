@@ -163,4 +163,3 @@ describe('statisticsApi', () => {
     })
   })
 })
-// (Eliminado duplicado y referencias a jest)
