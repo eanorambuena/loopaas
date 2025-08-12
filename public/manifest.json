@@ -1,0 +1,21 @@
+{
+  "name": "Loopaas",
+  "short_name": "Loopaas",
+  "description": "Gestión de cursos y credenciales para el Instituto para el Desarrollo Sustentable.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#146233",
+  "icons": [
+    {
+      "src": "/loopaas_logo_square.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/loopaas_logo_square.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -25,6 +25,13 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={GeistSans.className}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#146233" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <link rel="apple-touch-icon" href="/loopaas_logo_square.png" />
+      </head>
       <body className="bg-background overflow-x-hidden text-foreground">
         <UserInfoSyncProvider>
           <Spotlight className="overflow-hidden" />
