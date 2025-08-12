@@ -49,15 +49,11 @@ export default function GenerateCredentialsPDF({
           <ul className='text-sm text-green-800 dark:text-green-200 space-y-1'>
             <li className='flex items-center gap-2'>
               <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
-              <strong>Nombre prominente</strong> - tipografía grande y en mayúsculas
-            </li>
-            <li className='flex items-center gap-2'>
-              <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
               <strong>Código QR en fondo blanco</strong> - escaneado fácil del email
             </li>
             <li className='flex items-center gap-2'>
               <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
-              <strong>{students.length} credenciales</strong> - usando react-pdf
+              <strong>{students.length} credenciales</strong>
             </li>
           </ul>
         </div>
