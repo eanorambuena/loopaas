@@ -1,3 +1,4 @@
+import { APP_BASE_URL } from '@/lib/constants'
 import { APP_NAME } from '@/lib/constants'
 'use client'
 import { cn } from '@/lib/utils'
@@ -238,7 +239,7 @@ export const NavbarLogo = () => {
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
     >
       <img
-        src="https://idsapp.vercel.app/loopaas_logo_square.png"
+  src={`${APP_BASE_URL}/loopaas_logo_square.png`}
         alt="logo"
         width={20}
         height={20}

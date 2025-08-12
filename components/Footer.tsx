@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from '@/lib/constants'
 import ManualTranslator from './ManualTranslator'
 
 export default function Footer() {
@@ -22,10 +23,10 @@ export default function Footer() {
         <p>
           Si tienes algún problema, por favor{' '}
           <a
-            href="mailto:soporte.idsapp@gmail.com"
+            href={`mailto:${SUPPORT_EMAIL}`}
             className="font-bold hover:underline"
           >
-            contáctanos a <span className="text-emerald-700" data-translate="no">soporte.idsapp@gmail.com</span>
+            contáctanos a <span className="text-emerald-700" data-translate="no">{SUPPORT_EMAIL}</span>
           </a>
         </p>
       </div>

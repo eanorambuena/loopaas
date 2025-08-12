@@ -1,3 +1,4 @@
+import { APP_BASE_URL } from '@/lib/constants'
 import { APP_NAME } from '@/lib/constants'
 'use server'
 
@@ -120,9 +121,9 @@ async function sendWelcomeEmail({ email, password, sendingEmail } : WelcomeEmail
       <p>Correo: ${email}</p>
       <strong>Contraseña: ${password}</strong>
       <br>
-      <a href="https://idsapp.vercel.app/login">Continuar</a>
+  <a href="${APP_BASE_URL}/login">Continuar</a>
       <br>
-      <a href="https://idsapp.vercel.app/cursos/SUS1000-1/2024-1/evaluaciones">Ir a Coevaluación Debate SUS1000-1</a>
+  <a href="${APP_BASE_URL}/cursos/SUS1000-1/2024-1/evaluaciones">Ir a Coevaluación Debate SUS1000-1</a>
     `
   })
 }

@@ -1,4 +1,4 @@
-import { APP_NAME } from '@/lib/constants'
+import { SUPPORT_EMAIL, APP_NAME } from '@/lib/constants'
 'use client'
 
 import Input from '@/components/Input'
@@ -15,7 +15,7 @@ export default function WannabeProfessorForm({ userEmail }: { userEmail: string 
     const token = formData.get('token')
     sendEmail({
       from: 'onboarding@resend.dev',
-      to: 'soporte.idsapp@gmail.com',
+  to: SUPPORT_EMAIL,
   subject: `${APP_NAME} | Cuenta de Profesor Solicitada`,
       html: /*html*/`<h1>Un usuario ha solicitado una cuenta de profesor</h1>
       <p>Token de Canvas: <strong>${token}</strong></p>

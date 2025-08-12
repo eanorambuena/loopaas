@@ -1,4 +1,4 @@
-import { APP_NAME } from '@/lib/constants'
+import { APP_NAME, APP_BASE_URL } from '@/lib/constants'
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
@@ -23,7 +23,7 @@ export default function OG({ params }: OGParams) {
         }}
       >
         <img
-          src="https://idsapp.vercel.app/loopaas_logo.png"
+          src={`${APP_BASE_URL}/loopaas_logo.png`}
           width={120}
           height={120}
           style={{ position: 'absolute', top: 40, left: 60, display: 'block' }}

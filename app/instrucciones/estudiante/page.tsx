@@ -1,6 +1,5 @@
-import { APP_NAME } from '@/lib/constants'
 'use client'
-
+import { SUPPORT_EMAIL, APP_NAME } from '@/lib/constants'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { 
@@ -316,7 +315,7 @@ export default function InstruccionesEstudiantePage() {
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <a href="mailto:soporte.idsapp@gmail.com">
+                <a href={`mailto:${SUPPORT_EMAIL}`}>
                   Contactar Soporte
                 </a>
               </Button>
