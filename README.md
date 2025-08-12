@@ -20,7 +20,7 @@ Loopaas es una aplicación web para gestionar cursos, credenciales y evaluacione
 
 Clonar el repositorio. Por ejemplo, con SSH:
 ```bash
-git clone git@github.com:eanorambuena/idsapp-v2.git
+git clone git@github.com:eanorambuena/loopaas.git
 ```
 
 Si no tienes Bun, puedes instalarlo con npm:
@@ -291,7 +291,7 @@ Se puede acceder a la aplicación web en [idsapp.vercel.app](https://idsapp.verc
 
 ### Instrucciones de uso
 Para cada tipo de usuario, se debe indicar cómo usar la aplicación. Por ejemplo, para los estudiantes, se debe indicar cómo acceder a las coevaluaciones. Por ejemplo, desde el primer semestre 2024, se les otorga a los estudiantes las siguientes instrucciones:
-[Ejemplo de Instrucciones de uso de IDSApp](./docs/usage_instructions_example.pdf)
+[Ejemplo de Instrucciones de uso de Loopaas](./docs/usage_instructions_example.pdf)
 
 ## Diseño
 
@@ -301,7 +301,7 @@ Los usuarios de la aplicación pueden ser alumnos, ayudantes, docentes y miembro
 
 ### Colores
 
-Se utilizan los colores de Tailwind CSS, cuidando la accesibilidad e identidad visual de IDSApp.
+Se utilizan los colores de Tailwind CSS, cuidando la accesibilidad e identidad visual de Loopaas.
 
 - **Verde Acento**: `emerald-700`
 - **Gris Fondo y Texto**: `gray`
@@ -358,8 +358,9 @@ En 2023-2, se decidió crear una nueva aplicación web para gestionar las coeval
 ![SusApp Mockup](./docs/susapp_mockup.png)
 - Febrero y Marzo 2024: Se creó la primera versión de SusApp, la cual cambió de nombre a **IDSApp** y posteriormente a **IDSApp Legacy**. Estaba hecha con Vite, React y Tailwind CSS. [Ir al sitio web](https://idsapp-legacy.vercel.app/)
 ![IDSApp Legacy](./docs/idsapp_legacy.png)
-- Abril 2024 hasta la fecha: Se creó la segunda versión de IDSApp (ahora Loopaas), la cual se encuentra en producción. [Ir al sitio web](https://idsapp.vercel.app)
+- Abril 2024: Se creó la segunda versión de IDSApp (IDSApp-v2, ahora Loopaas), la cual se encuentra en producción. [Ir al sitio web](https://idsapp.vercel.app)
 ![IDSApp](./docs/idsapp.png)
+- Agosto 2025 hasta la fecha: Se mejoró IDSApp-v2 para dar paso a Loopaas. Se mantuvo el stack tecnológico.
 
 ## Resultados
 
