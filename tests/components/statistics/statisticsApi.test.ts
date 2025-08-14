@@ -4,7 +4,7 @@ import {
   fetchResponsesData,
   fetchStudentsData,
   fetchPeerEvaluationScores
-} from '../statisticsApi'
+} from '@/components/statistics/statisticsApi'
 
 // Mock fetch globally
 global.fetch = vi.fn()

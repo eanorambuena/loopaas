@@ -1,5 +1,4 @@
-import { processResponsesData, processInjusticeCases } from '../statisticsProcessor'
-import { GeneralStats, TemporalStats, DailyResponse, GroupStats, InjusticeCase } from '../types'
+import { processResponsesData, processInjusticeCases } from '@/components/statistics/statisticsProcessor'
 
 describe('statisticsProcessor', () => {
   describe('processResponsesData', () => {
