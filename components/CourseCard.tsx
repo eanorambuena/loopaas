@@ -6,14 +6,18 @@ import Link from 'next/link'
 export default async function CourseCard({ course }: { course: any }) {
   const supabase = createClient()
 
-  const { data: professorToBeDisplayed } = await supabase
-    .from('userInfo')
-    .select('*')
-    .eq('id', course.teacherInfoId)
-
-  if (!professorToBeDisplayed) return null
-
-  const teacherName = `${professorToBeDisplayed[0].firstName} ${professorToBeDisplayed[0].lastName}`
+  // Fetch organization name using organizationId
+  let organizationName = 'Sin organización'
+  if (course.organizationId) {
+    const { data: orgData } = await supabase
+      .from('organizations')
+      .select('name')
+      .eq('id', course.organizationId)
+      .single()
+    if (orgData && orgData.name) {
+      organizationName = orgData.name
+    }
+  }
 
   return (
     <Link href={`/cursos/${course.abbreviature}/${course.semester}`}>
@@ -30,7 +34,7 @@ export default async function CourseCard({ course }: { course: any }) {
               </div>
               <h3 className="text-sm font-bold line-clamp-2 text-gray-900 dark:text-white leading-snug">{course.title}</h3>
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300 truncate mt-auto">{teacherName}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-300 truncate mt-auto">{organizationName}</p>
           </CardItem>
         </CardBody>
       </CardContainer>
