@@ -6,6 +6,7 @@ import OrganizationSelector from '@/components/OrganizationSelector'
 import { useToast } from '@/components/ui/use-toast'
 import { LinkPreview } from '@/components/ui/link-preview'
 import { createClient } from '@/utils/supabase/client'
+import { ORGANIZATION_PLAN_FREE } from '@/lib/constants'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -27,6 +28,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
     hasAnyToken: boolean
     tokenSource: string
   } | null>(null)
+
   const [formData, setFormData] = useState({
     canvasId: '',
     title: '',
@@ -36,6 +38,10 @@ export default function NewCourseForm({ userInfoId }: Props) {
     img: '',
     organizationId: ''
   })
+
+  // Store selected organization info
+  const [selectedOrg, setSelectedOrg] = useState<{ id: string, name: string, plan: string, courseCount: number } | null>(null)
+  const [orgsList, setOrgsList] = useState<{ id: string, name: string, plan: string, courseCount: number }[]>([])
 
   // Verificar el estado del token de Canvas al montar el componente
   useEffect(() => {
@@ -232,6 +238,32 @@ export default function NewCourseForm({ userInfoId }: Props) {
     }
   }
 
+  
+
+  // Fetch organizations for local use (for plan info)
+  useEffect(() => {
+    async function fetchOrganizationsWithCourseCounts() {
+      try {
+        const response = await fetch('/api/organizations')
+        if (!response.ok) return
+        const data = await response.json()
+        // Para cada organización, obtener el número de cursos
+        const orgs = data.organizations || []
+        const counts = await Promise.all(orgs.map(async (org: any) => {
+          try {
+            const res = await fetch(`/api/organization-courses?organizationId=${org.id}`)
+            if (!res.ok) return 0
+            const d = await res.json()
+            return d.count || 0
+          } catch { return 0 }
+        }))
+        const orgsWithCounts = orgs.map((org: any, idx: number) => ({ ...org, courseCount: counts[idx] }))
+        setOrgsList(orgsWithCounts)
+      } catch {}
+    }
+    fetchOrganizationsWithCourseCounts()
+  }, [])
+
   // Early return después de todos los hooks
   if (!userInfoId) return null
 
@@ -247,6 +279,19 @@ export default function NewCourseForm({ userInfoId }: Props) {
 
   // Función para manejar cambios en el formulario
   const handleInputChange = (name: string, value: string) => {
+    if (name === 'organizationId') {
+      const org = orgsList.find(o => o.id === value)
+      console.log('[DEBUG] Organización seleccionada:', org)
+      setSelectedOrg(org || null)
+  if (org && org.plan.toLowerCase() === ORGANIZATION_PLAN_FREE.toLowerCase() && org.courseCount >= 3) {
+        console.log('[DEBUG] Límite alcanzado para organización free:', org)
+        setShowUpgradeModal(true)
+        return
+      }
+      setFormData(prev => ({ ...prev, organizationId: value }))
+      console.log('[DEBUG] Organización válida, actualizando formData:', value)
+      return
+    }
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
@@ -366,11 +411,19 @@ export default function NewCourseForm({ userInfoId }: Props) {
             <p className="mb-4 text-center">Para crear más cursos necesitas actualizar tu plan a <span className="font-semibold text-emerald-700 dark:text-emerald-400">Pro</span>.</p>
             <button
               className="bg-emerald-700 text-white px-4 py-2 rounded hover:bg-emerald-800 transition mb-2"
-              onClick={() => { setShowUpgradeModal(false); router.push('/pricing') }}
+              onClick={() => { 
+                console.log('[DEBUG] Botón Ver planes Pro clickeado, cerrando modal y redirigiendo')
+                setShowUpgradeModal(false) 
+                router.push('/pricing') 
+              }}
             >Ver planes Pro</button>
             <button
               className="text-sm text-gray-500 hover:underline"
-              onClick={() => setShowUpgradeModal(false)}
+              onClick={() => {
+                console.log('[DEBUG] Botón Cerrar modal clickeado, limpiando selección de organización')
+                setShowUpgradeModal(false)
+                setFormData(prev => ({ ...prev, organizationId: '' }))
+              }}
             >Cerrar</button>
           </div>
         </div>
@@ -379,7 +432,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
         className='animate-in flex-1 flex flex-col w-full justify-center items-center gap-2 text-foreground'
         onSubmit={handleSubmit}
       >
-        <fieldset className='flex flex-col gap-6 max-w-2xl w-full' disabled={pending}>
+        <fieldset className='flex flex-col gap-6 max-w-2xl w-full' disabled={pending || showUpgradeModal}>
           {/* Selector de Organización */}
           <OrganizationSelector
             value={formData.organizationId}
