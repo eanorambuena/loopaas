@@ -1,7 +1,11 @@
 import { Evaluation, StudentWithGrades } from '@/utils/schema'
-import { getGrades } from '@/utils/queries'
+import { getGrades as realGetGrades } from '@/utils/queries'
 
-export async function getStudentsWithGradesSSR(evaluation: Evaluation, students: StudentWithGrades[]): Promise<StudentWithGrades[]> {
+export async function getStudentsWithGradesSSR(
+  evaluation: Evaluation,
+  students: StudentWithGrades[],
+  getGrades: typeof realGetGrades = realGetGrades
+): Promise<StudentWithGrades[]> {
   return Promise.all(
     students.map(async (student) => {
       try {
@@ -18,4 +22,4 @@ export async function getStudentsWithGradesSSR(evaluation: Evaluation, students:
       }
     })
   )
-} 
+}
