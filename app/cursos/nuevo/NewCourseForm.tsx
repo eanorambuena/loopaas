@@ -380,6 +380,15 @@ export default function NewCourseForm({ userInfoId }: Props) {
         onSubmit={handleSubmit}
       >
         <fieldset className='flex flex-col gap-6 max-w-2xl w-full' disabled={pending}>
+          {/* Selector de Organización */}
+          <OrganizationSelector
+            value={formData.organizationId}
+            onChange={(organizationId) => handleInputChange('organizationId', organizationId)}
+            label="Organización"
+            placeholder="Selecciona una organización"
+            required
+          />
+          
           {/* Canvas ID - Opcional */}
           <div className="space-y-2">
             <Input 
@@ -439,15 +448,6 @@ export default function NewCourseForm({ userInfoId }: Props) {
               placeholder="2024-1"
             />
           </div>
-
-          {/* Selector de Organización */}
-          <OrganizationSelector
-            value={formData.organizationId}
-            onChange={(organizationId) => handleInputChange('organizationId', organizationId)}
-            label="Organización"
-            placeholder="Selecciona una organización"
-            required
-          />
 
           {/* Color e Imagen en la misma fila */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
