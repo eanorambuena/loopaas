@@ -1,5 +1,6 @@
 'use client'
 import React from 'react'
+import { isProfessor } from '@/utils/isProfessor'
 import { Document, Page, Text, View, PDFDownloadLink, Image } from '@react-pdf/renderer'
 import QRCode from 'qrcode'
 import { styles } from './CredentialsPDF.styles'
@@ -9,6 +10,7 @@ import { styles } from './CredentialsPDF.styles'
 
 interface StudentData {
   id: string
+  userInfoId: string
   userInfo: {
     firstName: string
     lastName: string
@@ -19,23 +21,38 @@ interface StudentData {
 interface CredentialsPDFProps {
   students: StudentData[]
   courseCode?: string
+  courseId?: string
   semester?: string
 }
 
 // Componente principal exportado
-const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, semester }) => {
+const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, courseId, semester }) => {
   const [studentsWithQR, setStudentsWithQR] = React.useState<(StudentData & { qrCode: string })[]>([])
   const [isGenerating, setIsGenerating] = React.useState(false)
   const [credentialsPerPage, setCredentialsPerPage] = React.useState<1 | 4>(4) // Estado para controlar cuántas por página
   const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('portrait') // Estado para orientación
+  const [includeTeachers, setIncludeTeachers] = React.useState(false) // Toggle para incluir profesores
 
   // Pre-generar todos los QR codes
   React.useEffect(() => {
     const generateAllQRs = async () => {
       setIsGenerating(true)
       try {
+        let filtered = students
+  console.log({courseId})
+  if (!includeTeachers && courseId) {
+          // Filtrar profesores usando la utilidad isProfessor
+          const checks = await Promise.all(
+            students.map(async s => {
+              console.log({ userInfoId: s.userInfoId, courseId })
+              const isProf = await isProfessor({ userInfoId: s.userInfoId, courseId })
+              return !isProf
+            })
+          )
+          filtered = students.filter((_, idx) => checks[idx])
+        }
         const studentsWithQRCodes = await Promise.all(
-          students.map(async (student) => {
+          filtered.map(async (student) => {
             try {
               const qrCode = await QRCode.toDataURL(student.userInfo.email, {
                 width: 200,
@@ -51,11 +68,7 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
               console.error('Error generating QR for', student.userInfo.email, error)
               // QR de fallback
               const fallbackQR = `data:image/svg+xml;base64,${btoa(`
-                <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="200" height="200" fill="white" stroke="black"/>
-                  <text x="100" y="100" text-anchor="middle" font-size="10" fill="black">${student.userInfo.email}</text>
-                </svg>
-              `)}`
+                <svg width=\"200\" height=\"200\" viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\">\n                  <rect width=\"200\" height=\"200\" fill=\"white\" stroke=\"black\"/>\n                  <text x=\"100\" y=\"100\" text-anchor=\"middle\" font-size=\"10\" fill=\"black\">${student.userInfo.email}</text>\n                </svg>\n              `)}`
               return { ...student, qrCode: fallbackQR }
             }
           })
@@ -71,7 +84,7 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
     if (students.length > 0) {
       generateAllQRs()
     }
-  }, [students])
+  }, [students, includeTeachers, courseCode])
 
   if (students.length === 0) {
     return (
@@ -97,7 +110,7 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
       {/* Controles de formato */}
       <div className="flex flex-col sm:flex-row gap-4 p-4 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-700 shadow-sm transition-colors duration-300">
         {/* Selector de credenciales por página */}
-  <div className="flex items-center gap-3 bg-gray-50 rounded-lg border border-gray-200 p-2 dark:bg-neutral-900 dark:border-neutral-700 transition-colors">
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg border border-gray-200 p-2 dark:bg-neutral-900 dark:border-neutral-700 transition-colors">
           <label htmlFor="format-select" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
             Formato:
           </label>
@@ -142,6 +155,24 @@ const CredentialsPDF: React.FC<CredentialsPDFProps> = ({ students, courseCode, s
             </div>
           </div>
         )}
+
+        {/* Toggle para incluir profesores */}
+        <div className="flex items-center gap-3">
+          <label htmlFor="toggle-teachers" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            Incluir profesores:
+          </label>
+          <button
+            id="toggle-teachers"
+            type="button"
+            onClick={() => setIncludeTeachers(v => !v)}
+            className={`w-10 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ${includeTeachers ? 'bg-green-600' : 'bg-gray-300'}`}
+            aria-pressed={includeTeachers}
+          >
+            <span
+              className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-200 ${includeTeachers ? 'translate-x-4' : 'translate-x-0'}`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Botón de descarga */}
