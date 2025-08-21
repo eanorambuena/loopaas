@@ -52,14 +52,6 @@ export default function Login() {
     const firstName = formData.get('firstName') as string || ''
     const lastName = formData.get('lastName') as string || ''
 
-    const isUC = email.endsWith('uc.cl')
-    if (!isUC) {
-      return toastError({
-        name: 'NotUcEmailError',
-        status: 400,
-      })
-    }
-
     try {
       const result = await Auth.SignUp(email, password, firstName, lastName)
       
@@ -146,7 +138,7 @@ export default function Login() {
         )}
         
         <label className="text-md" htmlFor="email">
-          Correo UC
+          Correo
         </label>
         <input
           className="rounded-md px-4 py-2 bg-inherit border mb-6"

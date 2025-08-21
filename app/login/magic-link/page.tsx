@@ -7,7 +7,6 @@ import { Auth } from '@/utils/auth'
 import useCurrentUser from '@/utils/hooks/useCurrentUser'
 import { ErrorWithStatus, useToastError } from '@/utils/hooks/useToastError'
 import useUserInfo from '@/utils/hooks/useUserInfo'
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -52,7 +51,7 @@ export default function Login() {
         onSubmit={handleSubmit}
       >
         <label className="text-md" htmlFor="email">
-          Correo UC
+          Correo
         </label>
         <input
           className="rounded-md px-4 py-2 bg-inherit border mb-6"
