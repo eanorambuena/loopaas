@@ -55,6 +55,7 @@ export default async function Page(props: { params: Promise<{ abbreviature: stri
       <StudentsTable students={students} />
       <GenerateCredentialsPDF 
         students={students} 
+        courseId={course?.id ?? ''}
         courseTitle={course?.title ?? params.abbreviature}
         courseSemester={params.semester}
       />

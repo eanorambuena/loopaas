@@ -5,12 +5,14 @@ import { CourseStudentWithUserInfo } from '@/utils/queries'
 
 interface GenerateCredentialsPDFProps {
   students: CourseStudentWithUserInfo[]
+  courseId: string
   courseTitle: string
   courseSemester: string
 }
 
 export default function GenerateCredentialsPDF({ 
-  students, 
+  students,
+  courseId,
   courseTitle,
   courseSemester
 }: GenerateCredentialsPDFProps) {
@@ -61,6 +63,7 @@ export default function GenerateCredentialsPDF({
         <CredentialsPDF 
           students={mappedStudents}
           courseCode={courseTitle}
+          courseId={courseId}
           semester={courseSemester}
         />
       </div>
