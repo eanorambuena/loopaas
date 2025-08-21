@@ -227,9 +227,16 @@ const CredentialCardWithQR: React.FC<{
   const shouldSeparateFirstNames = firstName.length > 15 && firstNameParts.length > 1
   
   // Separar apellidos si son muy largos
-  const lastName = student.userInfo.lastName
-  const lastNameParts = lastName.split(' ')
-  const shouldSeparateLastNames = lastName.length > 15 && lastNameParts.length > 1
+    const lastName = student.userInfo.lastName
+    const lastNameParts = lastName.split(' ')
+    let lastNameLines: string[] = []
+    let shouldSeparateLastNames = lastName.length > 15 && lastNameParts.length > 1
+    // Caso especial: si hay 3 partes y es largo, unir las dos primeras
+    if (shouldSeparateLastNames && lastNameParts.length === 3) {
+      lastNameLines = [lastNameParts.slice(0, 2).join(' '), lastNameParts[2]]
+    } else if (shouldSeparateLastNames) {
+      lastNameLines = [lastNameParts[0], lastNameParts.slice(1).join(' ')]
+    }
   
   // Determinar qué estilos usar según formato y orientación
   const getContainerStyle = () => {
@@ -331,12 +338,9 @@ const CredentialCardWithQR: React.FC<{
             )}
             {shouldSeparateLastNames ? (
               <>
-                <Text style={getLastNameStyle()}>
-                  {lastNameParts[0]}
-                </Text>
-                <Text style={getLastNameStyle()}>
-                  {lastNameParts.slice(1).join(' ')}
-                </Text>
+                {lastNameLines.map((line, idx) => (
+                  <Text style={getLastNameStyle()} key={idx}>{line}</Text>
+                ))}
               </>
             ) : (
               <Text style={getLastNameStyle()}>
