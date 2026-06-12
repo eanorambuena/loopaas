@@ -1,0 +1,21 @@
+# Loopas
+
+https://loopaas.app | https://idsapp.vercel.app
+
+## About
+Aplicación web para gestionar cursos, credenciales y evaluaciones para equipos y organizaciones.
+
+## Key pages
+- Home: https://loopaas.app/
+- Login: https://loopaas.app/login
+- Register: https://loopaas.app/register
+
+## Features
+- Course management
+- Credential issuance and verification
+- Evaluation workflows
+- Team and organization management
+- Real-time dashboards
+
+## Tech
+Built with Next.js, React, TypeScript, Supabase, PostgreSQL, Tailwind CSS, Auth0, Stripe.
