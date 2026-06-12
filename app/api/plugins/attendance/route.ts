@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
 import { getCurrentUser, getUserInfo } from '@/utils/queries'
+import { db } from '@/drizzle/db'
+import { attendance, courses, students } from '@/drizzle/schema'
+import { and, eq, sql } from 'drizzle-orm'
 
 export async function POST(request: NextRequest) {
   try {
-    // Verificar autenticación
     const user = await getCurrentUser()
     const userInfo = await getUserInfo(user.id)
     
@@ -21,64 +22,41 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-
-    const supabase = createClient()
     
-    // Verificar que el curso existe
-    const { data: course, error: courseError } = await supabase
-      .from('courses')
-      .select('id')
-      .eq('id', courseId)
-      .single()
+    const course = await db.query.courses.findFirst({
+      where: eq(courses.id, courseId),
+    })
 
-    if (courseError || !course) {
+    if (!course) {
       return NextResponse.json(
         { error: 'Curso no encontrado' },
         { status: 404 }
       )
     }
 
-    // Verificar que el estudiante existe en el curso
-    const { data: student, error: studentError } = await supabase
-      .from('students')
-      .select('id')
-      .eq('id', studentId)
-      .eq('courseId', courseId)
-      .single()
+    const student = await db.query.students.findFirst({
+      where: and(eq(students.id, studentId), eq(students.courseId, courseId)),
+    })
 
-    if (studentError || !student) {
+    if (!student) {
       return NextResponse.json(
         { error: 'Estudiante no encontrado en el curso' },
         { status: 404 }
       )
     }
 
-    // Guardar asistencia (usar upsert para evitar duplicados)
-    const { data, error } = await supabase
-      .from('attendance')
-      .upsert({
-        courseId: parseInt(courseId),
-        studentId: parseInt(studentId),
-        present,
-        date,
-        createdAt: new Date().toISOString()
-      }, {
-        onConflict: 'courseId,studentId,date'
-      })
-      .select()
-
-    if (error) {
-      console.error('Error saving attendance:', error)
-      return NextResponse.json(
-        { error: 'Error al guardar asistencia' },
-        { status: 500 }
-      )
-    }
+    // Insert attendance record
+    const [row] = await db.insert(attendance).values({
+      courseId,
+      studentId,
+      date: new Date(date),
+      status: present ? 'present' : 'absent',
+    }).returning()
 
     return NextResponse.json({ 
       success: true, 
       message: 'Asistencia guardada correctamente',
-      data
+      data: row
     })
   } catch (error) {
     console.error('Error in attendance API:', error)

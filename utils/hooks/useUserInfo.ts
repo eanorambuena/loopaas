@@ -1,30 +1,30 @@
+'use client'
+
 import useSWR from 'swr'
-import { createClient } from '../supabase/client'
+import useCurrentUser from './useCurrentUser'
 import { useRouter } from 'next/navigation'
 
-const supabase = createClient()
+const fetcher = async (url: string) => {
+  const res = await fetch(url)
+  if (!res.ok) return null
+  return res.json()
+}
 
-const fetcher = (url: string) => supabase
-  .from('userInfo')
-  .select('*')
-  .eq('userId', url)
-  .single()
-  .then((userData) => userData.data)
-
-export default function useUserInfo(userId?: string) {
+export default function useUserInfo() {
   const router = useRouter()
-  const { data, error, isLoading, mutate } = useSWR(userId, fetcher)
-
-  if (error)
-    router.push('/perfil')
+  const { user } = useCurrentUser()
+  const { data, error, isLoading, mutate } = useSWR(
+    user ? `/api/user-info` : null,
+    fetcher
+  )
 
   const refetch = async () => {
-    if (!userId) return
+    if (!user) return
     mutate()
   }
 
   return {
-    userInfo: data?.userInfo,
+    userInfo: data ?? null,
     isLoading,
     error,
     refetch,

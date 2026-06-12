@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { motion } from 'motion/react'
 import { Check, X, Zap, Users, BarChart3, Shield, Clock } from 'lucide-react'
-import { createClient } from '@/utils/supabase/client'
+import { useSession } from 'next-auth/react'
 import { useToast } from '@/components/ui/use-toast'
 
 const pricingPlans = [
@@ -73,48 +73,31 @@ function NuevaOrganizacionContent() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [organizationName, setOrganizationName] = useState('')
   const [showForm, setShowForm] = useState(false)
-  const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createClient()
+  const { data: session } = useSession()
   const { toast } = useToast()
 
   // Verificar autenticación al cargar y detectar plan preseleccionado
   useEffect(() => {
-    async function checkAuth() {
-      try {
-        const { data: { user }, error } = await supabase.auth.getUser()
-        if (error) throw error
-        
-        if (!user) {
-          // Redirigir al login si no está autenticado
-          router.push('/login?redirect=/organizacion/nueva')
-          return
-        }
-        
-        setUser(user)
-        
-        // Detectar plan preseleccionado desde URL
-        const planFromUrl = searchParams.get('plan')
-        if (planFromUrl) {
-          const plan = planFromUrl.charAt(0).toUpperCase() + planFromUrl.slice(1).toLowerCase()
-          if (plan === 'Free' || plan === 'Pro') {
-            setSelectedPlan(plan)
-            setShowForm(true)
-          }
-        }
-      } catch (error) {
-        console.error('Error verificando autenticación:', error)
-        router.push('/login?redirect=/organizacion/nueva')
-      } finally {
-        setLoading(false)
+    if (!session?.user) {
+      router.push('/login?redirect=/organizacion/nueva')
+      return
+    }
+    setLoading(false)
+    
+    // Detectar plan preseleccionado desde URL
+    const planFromUrl = searchParams.get('plan')
+    if (planFromUrl) {
+      const plan = planFromUrl.charAt(0).toUpperCase() + planFromUrl.slice(1).toLowerCase()
+      if (plan === 'Free' || plan === 'Pro') {
+        setSelectedPlan(plan)
+        setShowForm(true)
       }
     }
-    
-    checkAuth()
-  }, [router, searchParams, supabase.auth])
+  }, [session, router, searchParams])
 
   const handlePlanSelect = (planName: string) => {
     setSelectedPlan(planName)
@@ -189,7 +172,7 @@ function NuevaOrganizacionContent() {
   }
 
   // Solo mostrar el contenido si está autenticado
-  if (!user) {
+  if (!session?.user) {
     return null
   }
 

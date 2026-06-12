@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { db } from '@/drizzle/db'
+import { grades } from '@/drizzle/schema'
 import { ServerResultsCache } from '@/utils/cache'
 
 export async function POST(req: NextRequest) {
@@ -8,15 +9,8 @@ export async function POST(req: NextRequest) {
     if (!userInfoId || !evaluationId || typeof score !== 'number') {
       return NextResponse.json({ error: 'Missing or invalid data' }, { status: 400 })
     }
-    const supabase = createClient()
     try {
-      const { error } = await supabase
-        .from('grades')
-        .insert({ userInfoId, evaluationId, score })
-      if (error) {
-        console.error('Supabase insert error:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
-      }
+      await db.insert(grades).values({ userInfoId, evaluationId, score })
       
       // Clear cache for this evaluation since a grade was updated
       ServerResultsCache.clear(evaluationId)

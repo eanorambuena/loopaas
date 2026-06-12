@@ -40,7 +40,7 @@ var __toESM = (mod3, isNodeMode, target) => (target = mod3 != null ? __create(__
 ));
 var __toCommonJS = (mod3) => __copyProps(__defProp({}, "__esModule", { value: true }), mod3);
 
-// node_modules/@opennextjs/aws/dist/utils/error.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/error.js
 function isOpenNextError(e) {
   try {
     return "__openNextInternal" in e;
@@ -50,7 +50,7 @@ function isOpenNextError(e) {
 }
 var IgnorableError, FatalError;
 var init_error = __esm({
-  "node_modules/@opennextjs/aws/dist/utils/error.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/error.js"() {
     IgnorableError = class extends Error {
       __openNextInternal = true;
       canIgnore = true;
@@ -72,7 +72,7 @@ var init_error = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/adapters/logger.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/adapters/logger.js
 function debug(...args) {
   if (globalThis.openNextDebug) {
     console.log(...args);
@@ -115,7 +115,7 @@ function getOpenNextErrorLogLevel() {
 }
 var DOWNPLAYED_ERROR_LOGS, isDownplayedErrorLog;
 var init_logger = __esm({
-  "node_modules/@opennextjs/aws/dist/adapters/logger.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/adapters/logger.js"() {
     init_error();
     DOWNPLAYED_ERROR_LOGS = [
       {
@@ -128,7 +128,7 @@ var init_logger = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/http/util.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/http/util.js
 function parseSetCookieHeader(cookies) {
   if (!cookies) {
     return [];
@@ -155,7 +155,7 @@ function getQueryFromIterator(it) {
 }
 var parseHeaders, convertHeader;
 var init_util = __esm({
-  "node_modules/@opennextjs/aws/dist/http/util.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/http/util.js"() {
     init_logger();
     parseHeaders = (headers) => {
       const result = {};
@@ -201,7 +201,7 @@ var init_node_module = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/utils/stream.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/stream.js
 import { ReadableStream as ReadableStream2 } from "node:stream/web";
 function emptyReadableStream() {
   if (process.env.OPEN_NEXT_FORCE_NON_EMPTY_RESPONSE === "true") {
@@ -221,23 +221,23 @@ function emptyReadableStream() {
 }
 var maybeSomethingBuffer;
 var init_stream = __esm({
-  "node_modules/@opennextjs/aws/dist/utils/stream.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/stream.js"() {
   }
 });
 
-// node_modules/@opennextjs/aws/dist/overrides/converters/utils.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/converters/utils.js
 function getQueryFromSearchParams(searchParams) {
   return getQueryFromIterator(searchParams.entries());
 }
 var init_utils = __esm({
-  "node_modules/@opennextjs/aws/dist/overrides/converters/utils.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/converters/utils.js"() {
     init_util();
   }
 });
 
-// node_modules/cookie/dist/index.js
+// node_modules/.pnpm/cookie@1.1.1/node_modules/cookie/dist/index.js
 var require_dist = __commonJS({
-  "node_modules/cookie/dist/index.js"(exports) {
+  "node_modules/.pnpm/cookie@1.1.1/node_modules/cookie/dist/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.parseCookie = parseCookie;
@@ -484,7 +484,7 @@ var require_dist = __commonJS({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/overrides/converters/edge.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/converters/edge.js
 var edge_exports = {};
 __export(edge_exports, {
   default: () => edge_default
@@ -492,7 +492,7 @@ __export(edge_exports, {
 import { Buffer as Buffer2 } from "node:buffer";
 var import_cookie, NULL_BODY_STATUSES, converter, edge_default;
 var init_edge = __esm({
-  "node_modules/@opennextjs/aws/dist/overrides/converters/edge.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/converters/edge.js"() {
     import_cookie = __toESM(require_dist(), 1);
     init_util();
     init_utils();
@@ -574,7 +574,7 @@ var init_edge = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/overrides/wrappers/cloudflare-node.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/wrappers/cloudflare-node.js
 var cloudflare_node_exports = {};
 __export(cloudflare_node_exports, {
   default: () => cloudflare_node_default
@@ -582,7 +582,7 @@ __export(cloudflare_node_exports, {
 import { Writable } from "node:stream";
 var NULL_BODY_STATUSES2, handler, cloudflare_node_default;
 var init_cloudflare_node = __esm({
-  "node_modules/@opennextjs/aws/dist/overrides/wrappers/cloudflare-node.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/wrappers/cloudflare-node.js"() {
     NULL_BODY_STATUSES2 = /* @__PURE__ */ new Set([101, 204, 205, 304]);
     handler = async (handler3, converter2) => async (request, env, ctx, abortSignal) => {
       globalThis.process = process;
@@ -674,14 +674,14 @@ var init_cloudflare_node = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/overrides/tagCache/dummy.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/tagCache/dummy.js
 var dummy_exports = {};
 __export(dummy_exports, {
   default: () => dummy_default
 });
 var dummyTagCache, dummy_default;
 var init_dummy = __esm({
-  "node_modules/@opennextjs/aws/dist/overrides/tagCache/dummy.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/tagCache/dummy.js"() {
     dummyTagCache = {
       name: "dummy",
       mode: "original",
@@ -705,14 +705,14 @@ var init_dummy = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/overrides/queue/dummy.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/queue/dummy.js
 var dummy_exports2 = {};
 __export(dummy_exports2, {
   default: () => dummy_default2
 });
 var dummyQueue, dummy_default2;
 var init_dummy2 = __esm({
-  "node_modules/@opennextjs/aws/dist/overrides/queue/dummy.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/queue/dummy.js"() {
     init_error();
     dummyQueue = {
       name: "dummy",
@@ -724,14 +724,14 @@ var init_dummy2 = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/overrides/incrementalCache/dummy.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/incrementalCache/dummy.js
 var dummy_exports3 = {};
 __export(dummy_exports3, {
   default: () => dummy_default3
 });
 var dummyIncrementalCache, dummy_default3;
 var init_dummy3 = __esm({
-  "node_modules/@opennextjs/aws/dist/overrides/incrementalCache/dummy.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/incrementalCache/dummy.js"() {
     init_error();
     dummyIncrementalCache = {
       name: "dummy",
@@ -749,14 +749,14 @@ var init_dummy3 = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/overrides/assetResolver/dummy.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/assetResolver/dummy.js
 var dummy_exports4 = {};
 __export(dummy_exports4, {
   default: () => dummy_default4
 });
 var resolver, dummy_default4;
 var init_dummy4 = __esm({
-  "node_modules/@opennextjs/aws/dist/overrides/assetResolver/dummy.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/assetResolver/dummy.js"() {
     resolver = {
       name: "dummy"
     };
@@ -764,14 +764,14 @@ var init_dummy4 = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/overrides/proxyExternalRequest/fetch.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/proxyExternalRequest/fetch.js
 var fetch_exports = {};
 __export(fetch_exports, {
   default: () => fetch_default
 });
 var fetchProxy, fetch_default;
 var init_fetch = __esm({
-  "node_modules/@opennextjs/aws/dist/overrides/proxyExternalRequest/fetch.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/proxyExternalRequest/fetch.js"() {
     init_stream();
     fetchProxy = {
       name: "fetch-proxy",
@@ -808,14 +808,14 @@ var init_fetch = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/overrides/cdnInvalidation/dummy.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/cdnInvalidation/dummy.js
 var dummy_exports5 = {};
 __export(dummy_exports5, {
   default: () => dummy_default5
 });
 var dummy_default5;
 var init_dummy5 = __esm({
-  "node_modules/@opennextjs/aws/dist/overrides/cdnInvalidation/dummy.js"() {
+  "node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/overrides/cdnInvalidation/dummy.js"() {
     dummy_default5 = {
       name: "dummy",
       invalidatePaths: (_) => {
@@ -825,10 +825,10 @@ var init_dummy5 = __esm({
   }
 });
 
-// node_modules/@opennextjs/aws/dist/core/createMainHandler.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/createMainHandler.js
 init_logger();
 
-// node_modules/@opennextjs/aws/dist/adapters/util.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/adapters/util.js
 function setNodeEnv() {
   const processEnv = process.env;
   processEnv.NODE_ENV = process.env.NODE_ENV ?? "production";
@@ -837,10 +837,10 @@ function generateUniqueId() {
   return Math.random().toString(36).slice(2, 8);
 }
 
-// node_modules/@opennextjs/aws/dist/core/requestHandler.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/requestHandler.js
 import { AsyncLocalStorage } from "node:async_hooks";
 
-// node_modules/@opennextjs/aws/dist/http/openNextResponse.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/http/openNextResponse.js
 init_logger();
 init_util();
 import { Transform } from "node:stream";
@@ -1125,7 +1125,7 @@ var OpenNextNodeResponse = class extends Transform {
   }
 };
 
-// node_modules/@opennextjs/aws/dist/http/request.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/http/request.js
 import http from "node:http";
 var IncomingMessage = class extends http.IncomingMessage {
   constructor({ method, url, headers, body, remoteAddress }) {
@@ -1158,10 +1158,10 @@ var IncomingMessage = class extends http.IncomingMessage {
   }
 };
 
-// node_modules/@opennextjs/aws/dist/utils/promise.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/promise.js
 init_logger();
 
-// node_modules/@opennextjs/aws/dist/utils/requestCache.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/requestCache.js
 var RequestCache = class {
   _caches = /* @__PURE__ */ new Map();
   /**
@@ -1179,7 +1179,7 @@ var RequestCache = class {
   }
 };
 
-// node_modules/@opennextjs/aws/dist/utils/promise.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/promise.js
 var DetachedPromise = class {
   resolve;
   reject;
@@ -1260,7 +1260,7 @@ function runWithOpenNextRequestContext({ isISRRevalidation, waitUntil, requestId
   });
 }
 
-// node_modules/@opennextjs/aws/dist/adapters/config/index.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/adapters/config/index.js
 init_logger();
 import path from "node:path";
 globalThis.__dirname ??= "";
@@ -1268,32 +1268,32 @@ var NEXT_DIR = path.join(__dirname, ".next");
 var OPEN_NEXT_DIR = path.join(__dirname, ".open-next");
 debug({ NEXT_DIR, OPEN_NEXT_DIR });
 var NextConfig = { "env": {}, "webpack": null, "eslint": { "ignoreDuringBuilds": true }, "typescript": { "ignoreBuildErrors": false, "tsconfigPath": "tsconfig.json" }, "distDir": ".next", "cleanDistDir": true, "assetPrefix": "", "cacheMaxMemorySize": 52428800, "configOrigin": "next.config.js", "useFileSystemPublicRoutes": true, "generateEtags": true, "pageExtensions": ["tsx", "ts", "jsx", "js"], "poweredByHeader": true, "compress": true, "images": { "deviceSizes": [640, 750, 828, 1080, 1200, 1920, 2048, 3840], "imageSizes": [16, 32, 48, 64, 96, 128, 256, 384], "path": "/_next/image", "loader": "default", "loaderFile": "", "domains": ["api.microlink.io"], "disableStaticImages": false, "minimumCacheTTL": 60, "formats": ["image/webp"], "dangerouslyAllowSVG": false, "contentSecurityPolicy": "script-src 'none'; frame-src 'none'; sandbox;", "contentDispositionType": "attachment", "remotePatterns": [], "unoptimized": false }, "devIndicators": { "position": "bottom-left" }, "onDemandEntries": { "maxInactiveAge": 6e4, "pagesBufferLength": 5 }, "amp": { "canonicalBase": "" }, "basePath": "", "sassOptions": {}, "trailingSlash": false, "i18n": null, "productionBrowserSourceMaps": false, "excludeDefaultMomentLocales": true, "serverRuntimeConfig": {}, "publicRuntimeConfig": {}, "reactProductionProfiling": false, "reactStrictMode": null, "reactMaxHeadersLength": 6e3, "httpAgentOptions": { "keepAlive": true }, "logging": {}, "compiler": {}, "expireTime": 31536e3, "staticPageGenerationTimeout": 60, "output": "standalone", "modularizeImports": { "@mui/icons-material": { "transform": "@mui/icons-material/{{member}}" }, "lodash": { "transform": "lodash/{{member}}" } }, "outputFileTracingRoot": "/tmp/loopaas", "experimental": { "useSkewCookie": false, "nodeMiddleware": false, "cacheLife": { "default": { "stale": 300, "revalidate": 900, "expire": 4294967294 }, "seconds": { "stale": 0, "revalidate": 1, "expire": 60 }, "minutes": { "stale": 300, "revalidate": 60, "expire": 3600 }, "hours": { "stale": 300, "revalidate": 3600, "expire": 86400 }, "days": { "stale": 300, "revalidate": 86400, "expire": 604800 }, "weeks": { "stale": 300, "revalidate": 604800, "expire": 2592e3 }, "max": { "stale": 300, "revalidate": 2592e3, "expire": 4294967294 } }, "cacheHandlers": {}, "cssChunking": true, "multiZoneDraftMode": false, "appNavFailHandling": false, "prerenderEarlyExit": true, "serverMinification": true, "serverSourceMaps": false, "linkNoTouchStart": false, "caseSensitiveRoutes": false, "clientSegmentCache": false, "dynamicOnHover": false, "preloadEntriesOnStart": true, "clientRouterFilter": true, "clientRouterFilterRedirects": false, "fetchCacheKeyPrefix": "", "middlewarePrefetch": "flexible", "optimisticClientCache": true, "manualClientBasePath": false, "cpus": 15, "memoryBasedWorkersCount": false, "imgOptConcurrency": null, "imgOptTimeoutInSeconds": 7, "imgOptMaxInputPixels": 268402689, "imgOptSequentialRead": null, "isrFlushToDisk": true, "workerThreads": false, "optimizeCss": false, "nextScriptWorkers": false, "scrollRestoration": false, "externalDir": false, "disableOptimizedLoading": false, "gzipSize": true, "craCompat": false, "esmExternals": true, "fullySpecified": false, "swcTraceProfiling": false, "forceSwcTransforms": false, "largePageDataBytes": 128e3, "typedRoutes": false, "typedEnv": false, "parallelServerCompiles": false, "parallelServerBuildTraces": false, "ppr": false, "authInterrupts": false, "webpackMemoryOptimizations": false, "optimizeServerReact": true, "viewTransition": false, "routerBFCache": false, "removeUncaughtErrorAndRejectionListeners": false, "validateRSCRequestHeaders": false, "staleTimes": { "dynamic": 0, "static": 300 }, "serverComponentsHmrCache": true, "staticGenerationMaxConcurrency": 8, "staticGenerationMinPagesPerWorker": 25, "dynamicIO": false, "inlineCss": false, "useCache": false, "globalNotFound": false, "devtoolNewPanelUI": false, "devtoolSegmentExplorer": false, "browserDebugInfoInTerminal": false, "optimizeRouterScrolling": false, "strictNextHead": true, "optimizePackageImports": ["lucide-react", "date-fns", "lodash-es", "ramda", "antd", "react-bootstrap", "ahooks", "@ant-design/icons", "@headlessui/react", "@headlessui-float/react", "@heroicons/react/20/solid", "@heroicons/react/24/solid", "@heroicons/react/24/outline", "@visx/visx", "@tremor/react", "rxjs", "@mui/material", "@mui/icons-material", "recharts", "react-use", "effect", "@effect/schema", "@effect/platform", "@effect/platform-node", "@effect/platform-browser", "@effect/platform-bun", "@effect/sql", "@effect/sql-mssql", "@effect/sql-mysql2", "@effect/sql-pg", "@effect/sql-sqlite-node", "@effect/sql-sqlite-bun", "@effect/sql-sqlite-wasm", "@effect/sql-sqlite-react-native", "@effect/rpc", "@effect/rpc-http", "@effect/typeclass", "@effect/experimental", "@effect/opentelemetry", "@material-ui/core", "@material-ui/icons", "@tabler/icons-react", "mui-core", "react-icons/ai", "react-icons/bi", "react-icons/bs", "react-icons/cg", "react-icons/ci", "react-icons/di", "react-icons/fa", "react-icons/fa6", "react-icons/fc", "react-icons/fi", "react-icons/gi", "react-icons/go", "react-icons/gr", "react-icons/hi", "react-icons/hi2", "react-icons/im", "react-icons/io", "react-icons/io5", "react-icons/lia", "react-icons/lib", "react-icons/lu", "react-icons/md", "react-icons/pi", "react-icons/ri", "react-icons/rx", "react-icons/si", "react-icons/sl", "react-icons/tb", "react-icons/tfi", "react-icons/ti", "react-icons/vsc", "react-icons/wi"], "trustHostHeader": false, "isExperimentalCompile": false }, "htmlLimitedBots": "Mediapartners-Google|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti", "bundlePagesRouterDependencies": false, "configFileName": "next.config.js", "turbopack": { "root": "/tmp/loopaas" } };
-var BuildId = "ZeTrfArmvTDf2IAQjbh65";
+var BuildId = "_GoNR2LbRiB9YKc8Y5ZV1";
 var HtmlPages = ["/404"];
 var RoutesManifest = { "basePath": "", "rewrites": { "beforeFiles": [], "afterFiles": [], "fallback": [] }, "redirects": [{ "source": "/:path+/", "destination": "/:path+", "internal": true, "statusCode": 308, "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$" }], "routes": { "static": [{ "page": "/", "regex": "^/(?:/)?$", "routeKeys": {}, "namedRegex": "^/(?:/)?$" }, { "page": "/_not-found", "regex": "^/_not\\-found(?:/)?$", "routeKeys": {}, "namedRegex": "^/_not\\-found(?:/)?$" }, { "page": "/cursos", "regex": "^/cursos(?:/)?$", "routeKeys": {}, "namedRegex": "^/cursos(?:/)?$" }, { "page": "/cursos/nuevo", "regex": "^/cursos/nuevo(?:/)?$", "routeKeys": {}, "namedRegex": "^/cursos/nuevo(?:/)?$" }, { "page": "/demo/plugins", "regex": "^/demo/plugins(?:/)?$", "routeKeys": {}, "namedRegex": "^/demo/plugins(?:/)?$" }, { "page": "/favicon.ico", "regex": "^/favicon\\.ico(?:/)?$", "routeKeys": {}, "namedRegex": "^/favicon\\.ico(?:/)?$" }, { "page": "/instrucciones", "regex": "^/instrucciones(?:/)?$", "routeKeys": {}, "namedRegex": "^/instrucciones(?:/)?$" }, { "page": "/instrucciones/estudiante", "regex": "^/instrucciones/estudiante(?:/)?$", "routeKeys": {}, "namedRegex": "^/instrucciones/estudiante(?:/)?$" }, { "page": "/instrucciones/profesor", "regex": "^/instrucciones/profesor(?:/)?$", "routeKeys": {}, "namedRegex": "^/instrucciones/profesor(?:/)?$" }, { "page": "/login", "regex": "^/login(?:/)?$", "routeKeys": {}, "namedRegex": "^/login(?:/)?$" }, { "page": "/login/magic-link", "regex": "^/login/magic\\-link(?:/)?$", "routeKeys": {}, "namedRegex": "^/login/magic\\-link(?:/)?$" }, { "page": "/opengraph-image.png", "regex": "^/opengraph\\-image\\.png(?:/)?$", "routeKeys": {}, "namedRegex": "^/opengraph\\-image\\.png(?:/)?$" }, { "page": "/organizacion", "regex": "^/organizacion(?:/)?$", "routeKeys": {}, "namedRegex": "^/organizacion(?:/)?$" }, { "page": "/organizacion/nueva", "regex": "^/organizacion/nueva(?:/)?$", "routeKeys": {}, "namedRegex": "^/organizacion/nueva(?:/)?$" }, { "page": "/organizaciones", "regex": "^/organizaciones(?:/)?$", "routeKeys": {}, "namedRegex": "^/organizaciones(?:/)?$" }, { "page": "/organizaciones/nueva", "regex": "^/organizaciones/nueva(?:/)?$", "routeKeys": {}, "namedRegex": "^/organizaciones/nueva(?:/)?$" }, { "page": "/perfil", "regex": "^/perfil(?:/)?$", "routeKeys": {}, "namedRegex": "^/perfil(?:/)?$" }, { "page": "/ping", "regex": "^/ping(?:/)?$", "routeKeys": {}, "namedRegex": "^/ping(?:/)?$" }, { "page": "/plugins", "regex": "^/plugins(?:/)?$", "routeKeys": {}, "namedRegex": "^/plugins(?:/)?$" }, { "page": "/plugins-manager", "regex": "^/plugins\\-manager(?:/)?$", "routeKeys": {}, "namedRegex": "^/plugins\\-manager(?:/)?$" }, { "page": "/pricing", "regex": "^/pricing(?:/)?$", "routeKeys": {}, "namedRegex": "^/pricing(?:/)?$" }, { "page": "/sitemap.xml", "regex": "^/sitemap\\.xml(?:/)?$", "routeKeys": {}, "namedRegex": "^/sitemap\\.xml(?:/)?$" }, { "page": "/supabase/auth/callback", "regex": "^/supabase/auth/callback(?:/)?$", "routeKeys": {}, "namedRegex": "^/supabase/auth/callback(?:/)?$" }, { "page": "/twitter-image.png", "regex": "^/twitter\\-image\\.png(?:/)?$", "routeKeys": {}, "namedRegex": "^/twitter\\-image\\.png(?:/)?$" }], "dynamic": [{ "page": "/api/canvas/course/[id]", "regex": "^/api/canvas/course/([^/]+?)(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/api/canvas/course/(?<nxtPid>[^/]+?)(?:/)?$" }, { "page": "/api/courses/[courseId]/students", "regex": "^/api/courses/([^/]+?)/students(?:/)?$", "routeKeys": { "nxtPcourseId": "nxtPcourseId" }, "namedRegex": "^/api/courses/(?<nxtPcourseId>[^/]+?)/students(?:/)?$" }, { "page": "/api/evaluations/[id]", "regex": "^/api/evaluations/([^/]+?)(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/api/evaluations/(?<nxtPid>[^/]+?)(?:/)?$" }, { "page": "/api/evaluations/[id]/check-grades", "regex": "^/api/evaluations/([^/]+?)/check\\-grades(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/api/evaluations/(?<nxtPid>[^/]+?)/check\\-grades(?:/)?$" }, { "page": "/api/evaluations/[id]/responses", "regex": "^/api/evaluations/([^/]+?)/responses(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/api/evaluations/(?<nxtPid>[^/]+?)/responses(?:/)?$" }, { "page": "/api/plugins/students/[courseId]", "regex": "^/api/plugins/students/([^/]+?)(?:/)?$", "routeKeys": { "nxtPcourseId": "nxtPcourseId" }, "namedRegex": "^/api/plugins/students/(?<nxtPcourseId>[^/]+?)(?:/)?$" }, { "page": "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas", "regex": "^/compartir/cursos/([^/]+?)/([^/]+?)/evaluaciones/([^/]+?)/estadisticas(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester", "nxtPid": "nxtPid" }, "namedRegex": "^/compartir/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/evaluaciones/(?<nxtPid>[^/]+?)/estadisticas(?:/)?$" }, { "page": "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas/opengraph-image", "regex": "^/compartir/cursos/([^/]+?)/([^/]+?)/evaluaciones/([^/]+?)/estadisticas/opengraph\\-image(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester", "nxtPid": "nxtPid" }, "namedRegex": "^/compartir/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/evaluaciones/(?<nxtPid>[^/]+?)/estadisticas/opengraph\\-image(?:/)?$" }, { "page": "/cursos/[abbreviature]", "regex": "^/cursos/([^/]+?)(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]", "regex": "^/cursos/([^/]+?)/([^/]+?)(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/configuracion", "regex": "^/cursos/([^/]+?)/([^/]+?)/configuracion(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/configuracion(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/estudiantes", "regex": "^/cursos/([^/]+?)/([^/]+?)/estudiantes(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/estudiantes(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/evaluaciones", "regex": "^/cursos/([^/]+?)/([^/]+?)/evaluaciones(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/evaluaciones(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/evaluaciones/nuevo", "regex": "^/cursos/([^/]+?)/([^/]+?)/evaluaciones/nuevo(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/evaluaciones/nuevo(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]", "regex": "^/cursos/([^/]+?)/([^/]+?)/evaluaciones/([^/]+?)(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester", "nxtPid": "nxtPid" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/evaluaciones/(?<nxtPid>[^/]+?)(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/configuracion", "regex": "^/cursos/([^/]+?)/([^/]+?)/evaluaciones/([^/]+?)/configuracion(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester", "nxtPid": "nxtPid" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/evaluaciones/(?<nxtPid>[^/]+?)/configuracion(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas", "regex": "^/cursos/([^/]+?)/([^/]+?)/evaluaciones/([^/]+?)/estadisticas(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester", "nxtPid": "nxtPid" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/evaluaciones/(?<nxtPid>[^/]+?)/estadisticas(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/respuestas", "regex": "^/cursos/([^/]+?)/([^/]+?)/evaluaciones/([^/]+?)/respuestas(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester", "nxtPid": "nxtPid" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/evaluaciones/(?<nxtPid>[^/]+?)/respuestas(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/resultados", "regex": "^/cursos/([^/]+?)/([^/]+?)/evaluaciones/([^/]+?)/resultados(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester", "nxtPid": "nxtPid" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/evaluaciones/(?<nxtPid>[^/]+?)/resultados(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/grupos", "regex": "^/cursos/([^/]+?)/([^/]+?)/grupos(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/grupos(?:/)?$" }, { "page": "/cursos/[abbreviature]/[semester]/profesores", "regex": "^/cursos/([^/]+?)/([^/]+?)/profesores(?:/)?$", "routeKeys": { "nxtPabbreviature": "nxtPabbreviature", "nxtPsemester": "nxtPsemester" }, "namedRegex": "^/cursos/(?<nxtPabbreviature>[^/]+?)/(?<nxtPsemester>[^/]+?)/profesores(?:/)?$" }, { "page": "/organizacion/[id]", "regex": "^/organizacion/([^/]+?)(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/organizacion/(?<nxtPid>[^/]+?)(?:/)?$" }, { "page": "/organizaciones/[id]", "regex": "^/organizaciones/([^/]+?)(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/organizaciones/(?<nxtPid>[^/]+?)(?:/)?$" }, { "page": "/organizaciones/[id]/analytics", "regex": "^/organizaciones/([^/]+?)/analytics(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/organizaciones/(?<nxtPid>[^/]+?)/analytics(?:/)?$" }, { "page": "/organizaciones/[id]/configuracion", "regex": "^/organizaciones/([^/]+?)/configuracion(?:/)?$", "routeKeys": { "nxtPid": "nxtPid" }, "namedRegex": "^/organizaciones/(?<nxtPid>[^/]+?)/configuracion(?:/)?$" }], "data": { "static": [], "dynamic": [] } }, "locales": [] };
-var PrerenderManifest = { "version": 4, "routes": { "/opengraph-image.png": { "initialHeaders": { "cache-control": "public, immutable, no-transform, max-age=31536000", "content-type": "image/png", "x-next-cache-tags": "_N_T_/layout,_N_T_/opengraph-image.png/layout,_N_T_/opengraph-image.png/route,_N_T_/opengraph-image.png" }, "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/opengraph-image.png", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/twitter-image.png": { "initialHeaders": { "cache-control": "public, immutable, no-transform, max-age=31536000", "content-type": "image/png", "x-next-cache-tags": "_N_T_/layout,_N_T_/twitter-image.png/layout,_N_T_/twitter-image.png/route,_N_T_/twitter-image.png" }, "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/twitter-image.png", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/sitemap.xml": { "initialHeaders": { "cache-control": "public, max-age=0, must-revalidate", "content-type": "application/xml", "x-next-cache-tags": "_N_T_/layout,_N_T_/sitemap.xml/layout,_N_T_/sitemap.xml/route,_N_T_/sitemap.xml" }, "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/sitemap.xml", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/favicon.ico": { "initialHeaders": { "cache-control": "public, max-age=0, must-revalidate", "content-type": "image/x-icon", "x-next-cache-tags": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico" }, "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/favicon.ico", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/demo/plugins": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/demo/plugins", "dataRoute": "/demo/plugins.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/instrucciones/estudiante": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/instrucciones/estudiante", "dataRoute": "/instrucciones/estudiante.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/instrucciones/profesor": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/instrucciones/profesor", "dataRoute": "/instrucciones/profesor.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/instrucciones": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/instrucciones", "dataRoute": "/instrucciones.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/login/magic-link": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/login/magic-link", "dataRoute": "/login/magic-link.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/login": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/login", "dataRoute": "/login.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/organizacion": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/organizacion", "dataRoute": "/organizacion.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/organizacion/nueva": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/organizacion/nueva", "dataRoute": "/organizacion/nueva.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/organizaciones": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/organizaciones", "dataRoute": "/organizaciones.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/organizaciones/nueva": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/organizaciones/nueva", "dataRoute": "/organizaciones/nueva.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/", "dataRoute": "/index.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/pricing": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/pricing", "dataRoute": "/pricing.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/plugins-manager": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/plugins-manager", "dataRoute": "/plugins-manager.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/plugins": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/plugins", "dataRoute": "/plugins.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] } }, "dynamicRoutes": {}, "notFoundRoutes": [], "preview": { "previewModeId": "db34dccb0b8a4b4974fb0783a89c6e86", "previewModeSigningKey": "ac1c2b1a902dd73b6db489f8b9a4bfe2f2c74c34dccc4b9548fef1cf07ff7494", "previewModeEncryptionKey": "1d8498dec149ae18444c696749c9f02009d223782e8db355f50cc391fee45f60" } };
-var MiddlewareManifest = { "version": 3, "middleware": { "/": { "files": ["server/edge-runtime-webpack.js", "server/middleware.js"], "name": "middleware", "page": "/", "matchers": [{ "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/((?!_next\\/static|_next\\/image|favicon.ico|sitemap.xml|robots.txt).*))(\\.json)?[\\/#\\?]?$", "originalSource": "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)" }], "wasm": [], "assets": [], "env": { "__NEXT_BUILD_ID": "ZeTrfArmvTDf2IAQjbh65", "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "A4dJ7vSRQ0yiVFvf3kLdDc9YB/0Xv9hsa6YnsSwE+Z8=", "__NEXT_PREVIEW_MODE_ID": "db34dccb0b8a4b4974fb0783a89c6e86", "__NEXT_PREVIEW_MODE_SIGNING_KEY": "ac1c2b1a902dd73b6db489f8b9a4bfe2f2c74c34dccc4b9548fef1cf07ff7494", "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "1d8498dec149ae18444c696749c9f02009d223782e8db355f50cc391fee45f60" } } }, "functions": {}, "sortedMiddleware": ["/"] };
-var AppPathRoutesManifest = { "/api/add-professor/route": "/api/add-professor", "/api/auth/callback/route": "/api/auth/callback", "/api/auto-login/route": "/api/auto-login", "/api/canvas/course/[id]/route": "/api/canvas/course/[id]", "/api/canvas/token-status/route": "/api/canvas/token-status", "/api/clear-cache/route": "/api/clear-cache", "/api/course-info/route": "/api/course-info", "/api/courses/[courseId]/students/route": "/api/courses/[courseId]/students", "/api/create-organization/route": "/api/create-organization", "/api/create-user-info/route": "/api/create-user-info", "/api/delete-course/route": "/api/delete-course", "/api/delete-student/route": "/api/delete-student", "/api/evaluations/[id]/check-grades/route": "/api/evaluations/[id]/check-grades", "/api/evaluations/[id]/responses/route": "/api/evaluations/[id]/responses", "/api/evaluations/[id]/route": "/api/evaluations/[id]", "/api/get-peer-evaluation-scores/route": "/api/get-peer-evaluation-scores", "/api/get-students-with-grades/route": "/api/get-students-with-grades", "/api/is-professor/route": "/api/is-professor", "/api/organization-courses/route": "/api/organization-courses", "/api/organizations/route": "/api/organizations", "/api/plan-usage/route": "/api/plan-usage", "/api/plugins/attendance/download/route": "/api/plugins/attendance/download", "/api/plugins/attendance/route": "/api/plugins/attendance", "/api/plugins/courses/route": "/api/plugins/courses", "/api/plugins/students/[courseId]/route": "/api/plugins/students/[courseId]", "/api/save-grade/route": "/api/save-grade", "/api/save-grades/route": "/api/save-grades", "/api/save-students/route": "/api/save-students", "/api/signup-user/route": "/api/signup-user", "/api/stripe/checkout/route": "/api/stripe/checkout", "/api/sync-user-info/route": "/api/sync-user-info", "/api/update-course/route": "/api/update-course", "/api/update-student/route": "/api/update-student", "/api/user-info/route": "/api/user-info", "/supabase/auth/callback/route": "/supabase/auth/callback", "/favicon.ico/route": "/favicon.ico", "/sitemap.xml/route": "/sitemap.xml", "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas/opengraph-image/route": "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas/opengraph-image", "/opengraph-image.png/route": "/opengraph-image.png", "/twitter-image.png/route": "/twitter-image.png", "/api/transpile-plugin/route": "/api/transpile-plugin", "/_not-found/page": "/_not-found", "/cursos/[abbreviature]/[semester]/configuracion/page": "/cursos/[abbreviature]/[semester]/configuracion", "/cursos/[abbreviature]/[semester]/estudiantes/page": "/cursos/[abbreviature]/[semester]/estudiantes", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/configuracion/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/configuracion", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]", "/cursos/[abbreviature]/[semester]/evaluaciones/nuevo/page": "/cursos/[abbreviature]/[semester]/evaluaciones/nuevo", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/respuestas/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/respuestas", "/cursos/[abbreviature]/[semester]/evaluaciones/page": "/cursos/[abbreviature]/[semester]/evaluaciones", "/cursos/[abbreviature]/[semester]/profesores/page": "/cursos/[abbreviature]/[semester]/profesores", "/cursos/[abbreviature]/[semester]/page": "/cursos/[abbreviature]/[semester]", "/cursos/[abbreviature]/[semester]/grupos/page": "/cursos/[abbreviature]/[semester]/grupos", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/resultados/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/resultados", "/cursos/[abbreviature]/page": "/cursos/[abbreviature]", "/cursos/nuevo/page": "/cursos/nuevo", "/cursos/page": "/cursos", "/instrucciones/page": "/instrucciones", "/instrucciones/estudiante/page": "/instrucciones/estudiante", "/demo/plugins/page": "/demo/plugins", "/instrucciones/profesor/page": "/instrucciones/profesor", "/login/page": "/login", "/organizacion/[id]/page": "/organizacion/[id]", "/login/magic-link/page": "/login/magic-link", "/organizacion/nueva/page": "/organizacion/nueva", "/organizacion/page": "/organizacion", "/organizaciones/[id]/analytics/page": "/organizaciones/[id]/analytics", "/organizaciones/[id]/configuracion/page": "/organizaciones/[id]/configuracion", "/organizaciones/[id]/page": "/organizaciones/[id]", "/organizaciones/page": "/organizaciones", "/organizaciones/nueva/page": "/organizaciones/nueva", "/page": "/", "/ping/page": "/ping", "/perfil/page": "/perfil", "/plugins-manager/page": "/plugins-manager", "/plugins/page": "/plugins", "/pricing/page": "/pricing", "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas/page": "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas" };
+var PrerenderManifest = { "version": 4, "routes": { "/sitemap.xml": { "initialHeaders": { "cache-control": "public, max-age=0, must-revalidate", "content-type": "application/xml", "x-next-cache-tags": "_N_T_/layout,_N_T_/sitemap.xml/layout,_N_T_/sitemap.xml/route,_N_T_/sitemap.xml" }, "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/sitemap.xml", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/twitter-image.png": { "initialHeaders": { "cache-control": "public, immutable, no-transform, max-age=31536000", "content-type": "image/png", "x-next-cache-tags": "_N_T_/layout,_N_T_/twitter-image.png/layout,_N_T_/twitter-image.png/route,_N_T_/twitter-image.png" }, "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/twitter-image.png", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/opengraph-image.png": { "initialHeaders": { "cache-control": "public, immutable, no-transform, max-age=31536000", "content-type": "image/png", "x-next-cache-tags": "_N_T_/layout,_N_T_/opengraph-image.png/layout,_N_T_/opengraph-image.png/route,_N_T_/opengraph-image.png" }, "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/opengraph-image.png", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/favicon.ico": { "initialHeaders": { "cache-control": "public, max-age=0, must-revalidate", "content-type": "image/x-icon", "x-next-cache-tags": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico" }, "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/favicon.ico", "dataRoute": null, "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/instrucciones/profesor": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/instrucciones/profesor", "dataRoute": "/instrucciones/profesor.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/instrucciones/estudiante": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/instrucciones/estudiante", "dataRoute": "/instrucciones/estudiante.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/login/magic-link": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/login/magic-link", "dataRoute": "/login/magic-link.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/login": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/login", "dataRoute": "/login.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/demo/plugins": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/demo/plugins", "dataRoute": "/demo/plugins.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/organizacion": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/organizacion", "dataRoute": "/organizacion.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/organizacion/nueva": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/organizacion/nueva", "dataRoute": "/organizacion/nueva.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/organizaciones": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/organizaciones", "dataRoute": "/organizaciones.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/", "dataRoute": "/index.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/instrucciones": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/instrucciones", "dataRoute": "/instrucciones.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/organizaciones/nueva": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/organizaciones/nueva", "dataRoute": "/organizaciones/nueva.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/pricing": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/pricing", "dataRoute": "/pricing.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/plugins": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/plugins", "dataRoute": "/plugins.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] }, "/plugins-manager": { "experimentalBypassFor": [{ "type": "header", "key": "Next-Action" }, { "type": "header", "key": "content-type", "value": "multipart/form-data;.*" }], "initialRevalidateSeconds": false, "srcRoute": "/plugins-manager", "dataRoute": "/plugins-manager.rsc", "allowHeader": ["host", "x-matched-path", "x-prerender-revalidate", "x-prerender-revalidate-if-generated", "x-next-revalidated-tags", "x-next-revalidate-tag-token"] } }, "dynamicRoutes": {}, "notFoundRoutes": [], "preview": { "previewModeId": "db34dccb0b8a4b4974fb0783a89c6e86", "previewModeSigningKey": "ac1c2b1a902dd73b6db489f8b9a4bfe2f2c74c34dccc4b9548fef1cf07ff7494", "previewModeEncryptionKey": "1d8498dec149ae18444c696749c9f02009d223782e8db355f50cc391fee45f60" } };
+var MiddlewareManifest = { "version": 3, "middleware": { "/": { "files": ["server/edge-runtime-webpack.js", "server/middleware.js"], "name": "middleware", "page": "/", "matchers": [{ "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/((?!_next\\/static|_next\\/image|favicon.ico|sitemap.xml|robots.txt).*))(\\.json)?[\\/#\\?]?$", "originalSource": "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)" }], "wasm": [], "assets": [], "env": { "__NEXT_BUILD_ID": "_GoNR2LbRiB9YKc8Y5ZV1", "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "A4dJ7vSRQ0yiVFvf3kLdDc9YB/0Xv9hsa6YnsSwE+Z8=", "__NEXT_PREVIEW_MODE_ID": "db34dccb0b8a4b4974fb0783a89c6e86", "__NEXT_PREVIEW_MODE_SIGNING_KEY": "ac1c2b1a902dd73b6db489f8b9a4bfe2f2c74c34dccc4b9548fef1cf07ff7494", "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "1d8498dec149ae18444c696749c9f02009d223782e8db355f50cc391fee45f60" } } }, "functions": {}, "sortedMiddleware": ["/"] };
+var AppPathRoutesManifest = { "/api/add-professor/route": "/api/add-professor", "/api/auth/callback/route": "/api/auth/callback", "/api/auto-login/route": "/api/auto-login", "/api/canvas/course/[id]/route": "/api/canvas/course/[id]", "/api/canvas/token-status/route": "/api/canvas/token-status", "/api/clear-cache/route": "/api/clear-cache", "/api/course-info/route": "/api/course-info", "/api/courses/[courseId]/students/route": "/api/courses/[courseId]/students", "/api/create-organization/route": "/api/create-organization", "/api/create-user-info/route": "/api/create-user-info", "/api/delete-course/route": "/api/delete-course", "/api/delete-student/route": "/api/delete-student", "/api/evaluations/[id]/check-grades/route": "/api/evaluations/[id]/check-grades", "/api/evaluations/[id]/responses/route": "/api/evaluations/[id]/responses", "/api/get-peer-evaluation-scores/route": "/api/get-peer-evaluation-scores", "/api/evaluations/[id]/route": "/api/evaluations/[id]", "/api/get-students-with-grades/route": "/api/get-students-with-grades", "/api/is-professor/route": "/api/is-professor", "/api/organization-courses/route": "/api/organization-courses", "/api/organizations/route": "/api/organizations", "/api/plan-usage/route": "/api/plan-usage", "/api/plugins/attendance/download/route": "/api/plugins/attendance/download", "/api/plugins/attendance/route": "/api/plugins/attendance", "/api/plugins/courses/route": "/api/plugins/courses", "/api/save-grade/route": "/api/save-grade", "/api/plugins/students/[courseId]/route": "/api/plugins/students/[courseId]", "/api/save-grades/route": "/api/save-grades", "/api/save-students/route": "/api/save-students", "/api/signup-user/route": "/api/signup-user", "/api/stripe/checkout/route": "/api/stripe/checkout", "/api/sync-user-info/route": "/api/sync-user-info", "/api/transpile-plugin/route": "/api/transpile-plugin", "/api/update-course/route": "/api/update-course", "/api/update-student/route": "/api/update-student", "/api/user-info/route": "/api/user-info", "/favicon.ico/route": "/favicon.ico", "/supabase/auth/callback/route": "/supabase/auth/callback", "/sitemap.xml/route": "/sitemap.xml", "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas/opengraph-image/route": "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas/opengraph-image", "/opengraph-image.png/route": "/opengraph-image.png", "/twitter-image.png/route": "/twitter-image.png", "/_not-found/page": "/_not-found", "/cursos/[abbreviature]/[semester]/configuracion/page": "/cursos/[abbreviature]/[semester]/configuracion", "/cursos/[abbreviature]/[semester]/estudiantes/page": "/cursos/[abbreviature]/[semester]/estudiantes", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/configuracion/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/configuracion", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/respuestas/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/respuestas", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]", "/cursos/[abbreviature]/[semester]/evaluaciones/nuevo/page": "/cursos/[abbreviature]/[semester]/evaluaciones/nuevo", "/cursos/[abbreviature]/[semester]/evaluaciones/page": "/cursos/[abbreviature]/[semester]/evaluaciones", "/cursos/[abbreviature]/[semester]/grupos/page": "/cursos/[abbreviature]/[semester]/grupos", "/cursos/[abbreviature]/[semester]/page": "/cursos/[abbreviature]/[semester]", "/cursos/[abbreviature]/[semester]/profesores/page": "/cursos/[abbreviature]/[semester]/profesores", "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/resultados/page": "/cursos/[abbreviature]/[semester]/evaluaciones/[id]/resultados", "/cursos/nuevo/page": "/cursos/nuevo", "/cursos/[abbreviature]/page": "/cursos/[abbreviature]", "/cursos/page": "/cursos", "/demo/plugins/page": "/demo/plugins", "/instrucciones/page": "/instrucciones", "/instrucciones/estudiante/page": "/instrucciones/estudiante", "/instrucciones/profesor/page": "/instrucciones/profesor", "/login/magic-link/page": "/login/magic-link", "/login/page": "/login", "/organizacion/[id]/page": "/organizacion/[id]", "/organizacion/nueva/page": "/organizacion/nueva", "/organizacion/page": "/organizacion", "/organizaciones/[id]/analytics/page": "/organizaciones/[id]/analytics", "/organizaciones/[id]/configuracion/page": "/organizaciones/[id]/configuracion", "/organizaciones/nueva/page": "/organizaciones/nueva", "/organizaciones/[id]/page": "/organizaciones/[id]", "/organizaciones/page": "/organizaciones", "/page": "/", "/perfil/page": "/perfil", "/ping/page": "/ping", "/plugins-manager/page": "/plugins-manager", "/plugins/page": "/plugins", "/pricing/page": "/pricing", "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas/page": "/compartir/cursos/[abbreviature]/[semester]/evaluaciones/[id]/estadisticas" };
 var FunctionsConfigManifest = { "version": 1, "functions": {} };
 var PagesManifest = { "/_app": "pages/_app.js", "/_error": "pages/_error.js", "/_document": "pages/_document.js", "/404": "pages/404.html" };
 process.env.NEXT_BUILD_ID = BuildId;
 process.env.OPEN_NEXT_BUILD_ID = NextConfig.deploymentId ?? BuildId;
 process.env.NEXT_PREVIEW_MODE_ID = PrerenderManifest?.preview?.previewModeId;
 
-// node_modules/@opennextjs/aws/dist/core/requestHandler.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/requestHandler.js
 init_logger();
 
-// node_modules/@opennextjs/aws/dist/core/patchAsyncStorage.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/patchAsyncStorage.js
 var mod = (init_node_module(), __toCommonJS(node_module_exports));
 var resolveFilename = mod._resolveFilename;
 
-// node_modules/@opennextjs/aws/dist/core/routing/util.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/util.js
 import crypto from "node:crypto";
 init_util();
 init_logger();
 import { ReadableStream as ReadableStream3 } from "node:stream/web";
 
-// node_modules/@opennextjs/aws/dist/utils/binary.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/binary.js
 var commonBinaryMimeTypes = /* @__PURE__ */ new Set([
   "application/octet-stream",
   // Docs
@@ -1361,11 +1361,11 @@ function isBinaryContentType(contentType) {
   return commonBinaryMimeTypes.has(value);
 }
 
-// node_modules/@opennextjs/aws/dist/core/routing/i18n/index.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/i18n/index.js
 init_stream();
 init_logger();
 
-// node_modules/@opennextjs/aws/dist/core/routing/i18n/accept-header.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/i18n/accept-header.js
 function parse(raw, preferences, options) {
   const lowers = /* @__PURE__ */ new Map();
   const header = raw.replace(/[ \t]/g, "");
@@ -1465,7 +1465,7 @@ function acceptLanguage(header = "", preferences) {
   })[0] || void 0;
 }
 
-// node_modules/@opennextjs/aws/dist/core/routing/i18n/index.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/i18n/index.js
 function isLocalizedPath(path2) {
   return NextConfig.i18n?.locales.includes(path2.split("/")[1].toLowerCase()) ?? false;
 }
@@ -1517,7 +1517,7 @@ function localizePath(internalEvent) {
   return `/${detectedLocale}${internalEvent.rawPath}`;
 }
 
-// node_modules/@opennextjs/aws/dist/core/routing/queue.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/queue.js
 function generateShardId(rawPath, maxConcurrency, prefix) {
   let a = cyrb128(rawPath);
   let t = a += 1831565813;
@@ -1551,7 +1551,7 @@ function cyrb128(str) {
   return h1 >>> 0;
 }
 
-// node_modules/@opennextjs/aws/dist/core/routing/util.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/util.js
 function constructNextUrl(baseUrl, path2) {
   const nextBasePath = NextConfig.basePath ?? "";
   const url = new URL(`${nextBasePath}${path2}`, baseUrl);
@@ -1718,25 +1718,25 @@ async function invalidateCDNOnRequest(params, headers) {
   }
 }
 
-// node_modules/@opennextjs/aws/dist/core/routingHandler.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routingHandler.js
 init_logger();
 
-// node_modules/@opennextjs/aws/dist/core/routing/cacheInterceptor.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/cacheInterceptor.js
 init_stream();
 
-// node_modules/@opennextjs/aws/dist/utils/cache.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/cache.js
 init_logger();
 
-// node_modules/@opennextjs/aws/dist/core/routing/cacheInterceptor.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/cacheInterceptor.js
 init_logger();
 var CACHE_ONE_YEAR = 60 * 60 * 24 * 365;
 var CACHE_ONE_MONTH = 60 * 60 * 24 * 30;
 
-// node_modules/@opennextjs/aws/dist/core/routing/matcher.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/matcher.js
 init_stream();
 init_logger();
 
-// node_modules/@opennextjs/aws/dist/core/routing/routeMatcher.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/routeMatcher.js
 var optionalLocalePrefixRegex = `^/(?:${RoutesManifest.locales.map((locale) => `${locale}/?`).join("|")})?`;
 var optionalBasepathPrefixRegex = RoutesManifest.basePath ? `^${RoutesManifest.basePath}/?` : "^/";
 var optionalPrefix = optionalLocalePrefixRegex.replace("^/", optionalBasepathPrefixRegex);
@@ -1786,14 +1786,14 @@ function getStaticAPIRoutes() {
   return [...pagesStaticAPIRoutes, ...appPathsStaticAPIRoutes];
 }
 
-// node_modules/@opennextjs/aws/dist/core/routing/middleware.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routing/middleware.js
 init_stream();
 init_utils();
 var middlewareManifest = MiddlewareManifest;
 var functionsConfigManifest = FunctionsConfigManifest;
 var middleMatch = getMiddlewareMatch(middlewareManifest, functionsConfigManifest);
 
-// node_modules/@opennextjs/aws/dist/core/routingHandler.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/routingHandler.js
 var MIDDLEWARE_HEADER_PREFIX = "x-middleware-response-";
 var MIDDLEWARE_HEADER_PREFIX_LEN = MIDDLEWARE_HEADER_PREFIX.length;
 var INTERNAL_HEADER_PREFIX = "x-opennext-";
@@ -1803,16 +1803,16 @@ var INTERNAL_HEADER_RESOLVED_ROUTES = `${INTERNAL_HEADER_PREFIX}resolved-routes`
 var INTERNAL_HEADER_REWRITE_STATUS_CODE = `${INTERNAL_HEADER_PREFIX}rewrite-status-code`;
 var INTERNAL_EVENT_REQUEST_ID = `${INTERNAL_HEADER_PREFIX}request-id`;
 
-// node_modules/@opennextjs/aws/dist/core/util.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/util.js
 init_logger();
 import NextServer from "next/dist/server/next-server.js";
 
-// node_modules/@opennextjs/aws/dist/core/require-hooks.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/require-hooks.js
 init_logger();
 var mod2 = (init_node_module(), __toCommonJS(node_module_exports));
 var resolveFilename2 = mod2._resolveFilename;
 
-// node_modules/@opennextjs/aws/dist/core/util.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/util.js
 var cacheHandlerPath = __require.resolve("./cache.cjs");
 var composableCacheHandlerPath = __require.resolve("./composable-cache.cjs");
 var nextServer = new NextServer.default({
@@ -1882,7 +1882,7 @@ globalThis.__next_route_preloader = async (stage) => {
 };
 var requestHandler = (metadata) => "getRequestHandlerWithMetadata" in nextServer ? nextServer.getRequestHandlerWithMetadata(metadata) : nextServer.getRequestHandler();
 
-// node_modules/@opennextjs/aws/dist/core/requestHandler.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/requestHandler.js
 globalThis.__openNextAls = new AsyncLocalStorage();
 async function openNextHandler(internalEvent, options) {
   const initialHeaders = internalEvent.headers;
@@ -2094,7 +2094,7 @@ async function tryRenderError(type, res, internalEvent) {
   }
 }
 
-// node_modules/@opennextjs/aws/dist/core/resolve.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/resolve.js
 async function resolveConverter(converter2) {
   if (typeof converter2 === "function") {
     return converter2();
@@ -2152,7 +2152,7 @@ async function resolveCdnInvalidation(cdnInvalidation) {
   return m_1.default;
 }
 
-// node_modules/@opennextjs/aws/dist/core/createMainHandler.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/core/createMainHandler.js
 async function createMainHandler() {
   const config = await import("./open-next.config.mjs").then((m) => m.default);
   const thisFunction = globalThis.fnName ? config.functions[globalThis.fnName] : config.default;
@@ -2173,7 +2173,7 @@ async function createMainHandler() {
   return wrapper(openNextHandler, converter2);
 }
 
-// node_modules/@opennextjs/aws/dist/adapters/server-adapter.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/adapters/server-adapter.js
 setNodeEnv();
 setNextjsServerWorkingDirectory();
 globalThis.internalFetch = fetch;

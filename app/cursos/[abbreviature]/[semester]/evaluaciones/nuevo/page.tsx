@@ -1,21 +1,19 @@
-import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Fallback from '@/components/Fallback'
 import { getCourse } from '@/utils/queries'
+import { db } from '@/drizzle/db'
+import { evaluations } from '@/drizzle/schema'
 
 export default async function Page(props: { params: Promise<{ abbreviature: string, semester: string }> }) {
   const params = await props.params
-  const supabase = createClient()
 
   const course = await getCourse(params.abbreviature, params.semester)
 
   if (!course) return <Fallback>No se encontró el curso</Fallback>
 
-  const { data: newEvaluation, error } = await supabase
-    .from('evaluations')
-    .insert([{ courseId: course.id, title: '', instructions: '', deadLine: new Date(), questions: {} }])
-    .select()
-    .single()
+  const [newEvaluation] = await db.insert(evaluations)
+    .values({ courseId: course.id, title: '', instructions: '', deadLine: new Date().toISOString(), questions: {} })
+    .returning()
 
   return (
     <div>
@@ -29,7 +27,7 @@ export default async function Page(props: { params: Promise<{ abbreviature: stri
           <p className="text-gray-600 dark:text-gray-400">Haz clic aquí para comenzar a editar la nueva evaluación.</p>
         </div>
       </Link>
-      {error && <p className="text-red-500">Error al crear la evaluación: {error.message}</p>}
+      {!newEvaluation && <p className="text-red-500">Error al crear la evaluación</p>}
     </div>
   )
 }

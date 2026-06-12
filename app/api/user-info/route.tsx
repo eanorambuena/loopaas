@@ -1,24 +1,21 @@
-import { createClient } from '@/utils/supabase/server'
+import { auth } from '@/lib/auth'
+import { db } from '@/drizzle/db'
+import { userInfo } from '@/drizzle/schema'
+import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
-export async function GET(req: Request) {
-  const supabase = createClient()
-  const { searchParams } = new URL(req.url)
-  const id = searchParams.get('id')
-
-  if (!id) {
-    return NextResponse.json({ error: 'Missing id parameter' }, { status: 400 })
+export async function GET() {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
   }
 
-  const { data, error } = await supabase
-    .from('userInfo')
-    .select('*')
-    .eq('id', id)
-    .single()
+  const data = await db.query.userInfo.findFirst({
+    where: eq(userInfo.userId, session.user.id),
+  })
 
-  if (error) {
-    console.error('Error fetching user info:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  if (!data) {
+    return NextResponse.json({ error: 'User info not found' }, { status: 404 })
   }
 
   return NextResponse.json(data)

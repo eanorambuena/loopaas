@@ -5,7 +5,6 @@ import MainButton from '@/components/MainButton'
 import SecondaryButton from '@/components/SecondaryButton'
 import { useToast } from '@/components/ui/use-toast'
 import { Evaluation, LinearQuestion } from '@/utils/schema'
-import { createClient } from '@/utils/supabase/client'
 import QuestionForm from './QuestionForm'
 import { useState } from 'react'
 import Fallback from '@/components/Fallback'
@@ -15,7 +14,6 @@ interface Props {
 }
 
 export default function ConfigForm({ evaluation }: Props) {
-  const supabase = createClient()
   const { toast } = useToast()
   const [questions, setQuestions] = useState<Record<string, LinearQuestion | any>>(evaluation.questions)
   const [deletedQuestions, setDeletedQuestions] = useState<string[]>([])
@@ -62,12 +60,13 @@ export default function ConfigForm({ evaluation }: Props) {
       questions: _questions
     }
 
-    const { error } = await supabase
-      .from('evaluations')
-      .update(newEvaluation)
-      .eq('id', evaluation.id)
+    const res = await fetch(`/api/evaluations/${evaluation.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newEvaluation),
+    })
 
-    if (error) return toast({
+    if (!res.ok) return toast({
       title: 'Error',
       description: 'Ocurrió un error al guardar la evaluación',
       variant: 'destructive'

@@ -1,4 +1,6 @@
-import { createClient } from '@/utils/supabase/server'
+import { db } from '@/drizzle/db'
+import { grades } from '@/drizzle/schema'
+import { eq, and } from 'drizzle-orm'
 import { getCourseById, getGrades } from '@/utils/queries'
 import { Evaluation, Grade } from '@/utils/schema'
 import { calculatePeerEvaluationScore } from '@/utils/calculatePeerEvaluationScore'
@@ -13,7 +15,6 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
     throw new Error('Course not found')
   }
 
-  // Use the extracted calculation logic
   const peerEvaluationResults = await calculatePeerEvaluationScore(
     evaluation, 
     students, 
@@ -23,28 +24,28 @@ export async function saveGrades(evaluation: Evaluation, students: any) {
 
   console.log('Peer evaluation scores calculated for students:', peerEvaluationResults.length)
 
-  const newGrades = []
   for (const peerResult of peerEvaluationResults) {
-    const grades = await getGrades(evaluation, peerResult.userInfoId)
-    const groupGrade = 4.0 // Default value, adjust if you have another source
-    const newGrade = {
-      evaluationId: evaluation.id,
-      userInfoId: peerResult.userInfoId,
-      score: Number((groupGrade + peerResult.peerEvaluationScore).toFixed(2)),
-    }
-    newGrades.push(newGrade)
-    console.log(`Final grade for student ${peerResult.userInfoId}:`, newGrade)
-  }
+    const existingGrades = await getGrades(evaluation, peerResult.userInfoId)
+    const groupGrade = 4.0
+    const score = Number((groupGrade + peerResult.peerEvaluationScore).toFixed(2))
 
-  const supabase = createClient()
-  for (const grade of newGrades) {
-    const { error } = await supabase
-      .from('grades')
-      .upsert(grade)
-    if (error) {
-      console.error('Error upserting grade:', error)
-      throw new Error(`Error saving grade for student ${grade.userInfoId}: ${error.message}`)
+    if (existingGrades) {
+      await db.update(grades)
+        .set({ score })
+        .where(
+          and(
+            eq(grades.evaluationId, evaluation.id),
+            eq(grades.userInfoId, peerResult.userInfoId)
+          )
+        )
+    } else {
+      await db.insert(grades).values({
+        evaluationId: evaluation.id,
+        userInfoId: peerResult.userInfoId,
+        score,
+      })
     }
+    console.log(`Final grade for student ${peerResult.userInfoId}:`, { score })
   }
   
   console.log('All grades saved successfully')

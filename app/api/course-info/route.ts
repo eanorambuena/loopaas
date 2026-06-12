@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser, getUserInfo } from '@/utils/queries'
-import { createClient } from '@/utils/supabase/server'
+import { db } from '@/drizzle/db'
+import { courses } from '@/drizzle/schema'
+import { and, eq } from 'drizzle-orm'
 import { isProfessorServer } from '@/utils/isProfessorServer'
 
 export async function GET(req: Request) {
@@ -12,14 +14,10 @@ export async function GET(req: Request) {
   }
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id)
-  const supabase = createClient()
-  const { data: course, error } = await supabase
-    .from('courses')
-    .select('*')
-    .eq('abbreviature', abbreviature)
-    .eq('semester', semester)
-    .single()
-  if (error || !course) {
+  const course = await db.query.courses.findFirst({
+    where: and(eq(courses.abbreviature, abbreviature), eq(courses.semester, semester)),
+  })
+  if (!course) {
     return NextResponse.json({ error: 'No se encontró el curso' }, { status: 404 })
   }
   if (!userInfo || !userInfo.id) {

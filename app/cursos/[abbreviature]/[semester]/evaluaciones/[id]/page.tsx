@@ -31,7 +31,7 @@ export default async function Page(
 
   let evaluation
   try {
-    evaluation = await getEvaluationWithSections(params, user)
+    evaluation = await getEvaluationWithSections(params, user.id)
     if (!evaluation) {
       return <Fallback>No se encontró la evaluación</Fallback>
     }

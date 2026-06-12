@@ -1,54 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
 import { getCurrentUser, getUserInfo } from '@/utils/queries'
+import { db } from '@/drizzle/db'
+import { students, userInfo } from '@/drizzle/schema'
+import { eq, asc } from 'drizzle-orm'
 
 export async function GET(request: NextRequest, props: { params: Promise<{ courseId: string }> }) {
   const params = await props.params
   try {
-    // Verificar autenticación
     const user = await getCurrentUser()
-    const userInfo = await getUserInfo(user.id)
+    const userInfoVal = await getUserInfo(user.id)
     
-    if (!userInfo?.id) {
+    if (!userInfoVal?.id) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
-    const supabase = createClient()
-    
-    const { data: students, error } = await supabase
-      .from('students')
-      .select(`
-        id,
-        userInfoId,
-        group,
-        userInfo:userInfoId (
-          id,
-          firstName,
-          lastName,
-          email
-        )
-      `)
-      .eq('courseId', params.courseId)
-      .order('group', { ascending: true })
+    const studentRows = await db.query.students.findMany({
+      where: eq(students.courseId, params.courseId),
+      orderBy: [asc(students.group)],
+    })
 
-    if (error) {
-      console.error('Error fetching students:', error)
-      return NextResponse.json(
-        { error: 'Error al obtener los estudiantes' },
-        { status: 500 }
-      )
-    }
+    const formattedStudents = await Promise.all(studentRows.map(async (s) => {
+      const ui = await db.query.userInfo.findFirst({
+        where: eq(userInfo.id, s.userInfoId),
+      })
+      return {
+        id: s.id,
+        name: `${ui?.firstName || ''} ${ui?.lastName || ''}`.trim(),
+        email: ui?.email || '',
+        grade: 0,
+        active: true,
+      }
+    }))
 
-    // Transformar datos al formato esperado por el plugin
-    const formattedStudents = students?.map(student => ({
-      id: student.id,
-      name: `${(student.userInfo as any)?.firstName || ''} ${(student.userInfo as any)?.lastName || ''}`.trim(),
-      email: (student.userInfo as any)?.email || '',
-      grade: 0, // Se puede agregar si existe en la BD
-      active: true
-    })) || []
-
-    return NextResponse.json({ students: formattedStudents })
+    return NextResponse.json({ students: formattedStudents || [] })
   } catch (error) {
     console.error('Error in students API:', error)
     return NextResponse.json(

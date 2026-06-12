@@ -2,24 +2,20 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/utils/supabase/client'
+import { useSession } from 'next-auth/react'
 import { PluginsMarketplace } from './marketplace'
 
 export default function Page() {
   const router = useRouter()
-  const supabase = createClient()
+  const { data: session, status } = useSession()
 
   useEffect(() => {
-    async function checkAuth() {
-      const { data: { user }, error } = await supabase.auth.getUser()
-      if (error || !user) {
-        router.push('/login')
-        return
-      }
+    if (status === 'unauthenticated') {
+      router.push('/login')
     }
-    
-    checkAuth()
-  }, [router, supabase])
+  }, [status, router])
+
+  if (status === 'loading') return null
 
   return <PluginsMarketplace />
 }

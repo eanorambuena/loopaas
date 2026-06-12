@@ -1,27 +1,23 @@
-import { createClient } from '@/utils/supabase/server'
 import CourseCard from '@/components/CourseCard'
 import { AddCard } from '@/components/AddCard'
 import { getCurrentUser, getUserInfo } from '@/utils/queries'
 import Fallback from '@/components/Fallback'
 import { isProfessorServer } from '@/utils/isProfessorServer'
+import { db } from '@/drizzle/db'
+import { courses } from '@/drizzle/schema'
 
 export default async function CursosPage() {
   const user = await getCurrentUser()
   const userInfo = await getUserInfo(user.id)
 
-  const supabase = createClient()
-
-  const { data: courses } = await supabase
-    .from('courses')
-    .select('*')
-    .order('created_at', { ascending: false })
+  const coursesData = await db.query.courses.findMany()
 
   const isProfessor = await isProfessorServer({
     userInfoId: userInfo?.id!
   })
 
-  const coursesCount = courses?.length || 0
-  const uniqueSemesters = courses ? new Set(courses.map(course => course.semester)).size : 0
+  const coursesCount = coursesData?.length || 0
+  const uniqueSemesters = coursesData ? new Set(coursesData.map(course => course.semester)).size : 0
 
   return (
     <div className="animate-in flex flex-col gap-6 py-8 px-4 opacity-0 w-full max-w-8xl mx-auto">
@@ -52,7 +48,7 @@ export default async function CursosPage() {
                 />
               </div>
             )}
-            {courses?.map((course, index) => (
+            {coursesData?.map((course, index) => (
               <div 
                 key={course.id} 
                 className="group animate-in fade-in duration-500"

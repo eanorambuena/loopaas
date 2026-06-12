@@ -1,5 +1,8 @@
-import { createClient } from '@/utils/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/drizzle/db'
+import { users, userInfo } from '@/drizzle/schema'
+import { eq } from 'drizzle-orm'
+import bcrypt from 'bcryptjs'
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,7 +15,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validar que sea correo UC
     if (!email.endsWith('uc.cl')) {
       return NextResponse.json(
         { message: 'Solo se permiten correos UC (@uc.cl)' },
@@ -20,54 +22,42 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createClient()
-
-    // Crear usuario autoconfirmado usando admin
-    const { data: { user }, error: signUpError } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: {
-        first_name: firstName,
-        last_name: lastName,
-      }
+    const existing = await db.query.users.findFirst({
+      where: eq(users.email, email.toLowerCase()),
     })
-
-    if (signUpError) {
-      console.error('Error creating user:', signUpError)
+    if (existing) {
       return NextResponse.json(
-        { message: signUpError.message || 'Error al crear usuario' },
+        { message: 'El usuario ya existe' },
         { status: 400 }
       )
     }
 
-    if (!user) {
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const [newUser] = await db.insert(users).values({
+      email: email.toLowerCase(),
+      password: hashedPassword,
+      name: `${firstName || ''} ${lastName || ''}`.trim(),
+    }).returning()
+
+    if (!newUser) {
       return NextResponse.json(
         { message: 'No se pudo crear el usuario' },
         { status: 400 }
       )
     }
 
-    // Crear userInfo
-    const { error: userInfoError } = await supabase
-      .from('userInfo')
-      .insert({
-        userId: user.id,
-        email,
-        firstName: firstName || '',
-        lastName: lastName || ''
-      })
-
-    if (userInfoError) {
-      console.error('Error creating userInfo:', userInfoError)
-      // No fallar completamente si userInfo falla, se puede crear después
-    }
+    await db.insert(userInfo).values({
+      userId: newUser.id,
+      email,
+      firstName: firstName || '',
+      lastName: lastName || '',
+    }).onConflictDoNothing()
 
     return NextResponse.json({
-      user,
-      message: 'Usuario creado exitosamente'
+      user: { id: newUser.id, email: newUser.email },
+      message: 'Usuario creado exitosamente',
     })
-
   } catch (error) {
     console.error('Signup error:', error)
     return NextResponse.json(

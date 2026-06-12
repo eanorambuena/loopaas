@@ -1,20 +1,17 @@
-import { createClient } from '@/utils/supabase/server'
+import { db } from '@/drizzle/db'
+import { organizations } from '@/drizzle/schema'
+import { eq } from 'drizzle-orm'
 import Badge from '@/components/Badge'
 import { CardContainer, CardBody, CardItem } from '@/components/ui/3d-card'
 import Link from 'next/link'
 
 export default async function CourseCard({ course }: { course: any }) {
-  const supabase = createClient()
-
-  // Fetch organization name using organizationId
   let organizationName = 'Sin organización'
   if (course.organizationId) {
-    const { data: orgData } = await supabase
-      .from('organizations')
-      .select('name')
-      .eq('id', course.organizationId)
-      .single()
-    if (orgData && orgData.name) {
+    const orgData = await db.query.organizations.findFirst({
+      where: eq(organizations.id, course.organizationId),
+    })
+    if (orgData?.name) {
       organizationName = orgData.name
     }
   }

@@ -5,12 +5,10 @@ import MainButton from '@/components/MainButton'
 import { useToast } from '@/components/ui/use-toast'
 import { ErrorWithStatus, useToastError } from '@/utils/hooks/useToastError'
 import { UserInfoSchema } from '@/utils/schema'
-import { createClient } from '@/utils/supabase/client'
-import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 
 interface Props {
-  user: User
+  user: { id: string; email: string }
   userInfo?: UserInfoSchema
 }
 
@@ -18,7 +16,6 @@ export default function ProfileForm({ user, userInfo }: Props) {
   const { toast } = useToast()
   const router = useRouter()
   const toastError = useToastError()
-  const supabase = createClient()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -27,16 +24,17 @@ export default function ProfileForm({ user, userInfo }: Props) {
     const lastName = formData.get('lastName') as string
 
     try {
-      const { data, error } = await supabase
-        .from('userInfo')
-        .upsert({
-          id: userInfo?.id,
+      const res = await fetch('/api/create-user-info', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           userId: user.id,
           email: user.email,
           firstName,
-          lastName
-        })
-      if (error) throw error
+          lastName,
+        }),
+      })
+      if (!res.ok) throw new Error('Error al actualizar la información')
       toast({
         title: 'Información Actualizada',
         description: 'Tu información personal ha sido actualizada',

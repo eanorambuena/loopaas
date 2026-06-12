@@ -1,16 +1,16 @@
+import { auth } from '@/lib/auth'
+import { db } from '@/drizzle/db'
+import { organizations, userInfo } from '@/drizzle/schema'
+import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
     console.log('🔍 [API] Starting create-organization...')
-    const supabase = createClient()
+    const session = await auth()
+    console.log('🔍 [API] User check:', { user: session?.user?.id })
     
-    // Verificar autenticación
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    console.log('🔍 [API] User check:', { user: user?.id, authError })
-    
-    if (authError || !user) {
+    if (!session?.user?.id) {
       console.log('❌ [API] Authentication failed')
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
@@ -23,44 +23,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Nombre y plan requeridos' }, { status: 400 })
     }
 
-    // Obtener información del usuario
-    console.log('🔍 [API] Fetching userInfo for userId:', user.id)
-    const { data: userInfo, error: userInfoError } = await supabase
-      .from('userInfo')
-      .select('*')
-      .eq('userId', user.id)
-      .single()
+    console.log('🔍 [API] Fetching userInfo for userId:', session.user.id)
+    const ui = await db.query.userInfo.findFirst({
+      where: eq(userInfo.userId, session.user.id),
+    })
     
-    console.log('🔍 [API] UserInfo result:', { userInfo: userInfo?.id, userInfoError })
+    console.log('🔍 [API] UserInfo result:', { userInfo: ui?.id })
     
-    if (userInfoError || !userInfo) {
-      console.log('❌ [API] UserInfo not found', userInfoError)
+    if (!ui) {
+      console.log('❌ [API] UserInfo not found')
       return NextResponse.json({ error: 'Información de usuario no encontrada' }, { status: 404 })
     }
 
-    // Crear la organización
     console.log('🔍 [API] Creating organization...')
     const orgData = {
       name: name.trim(),
-      plan: plan,
-      ownerId: userInfo.id
     }
     console.log('🔍 [API] Organization data:', orgData)
 
-    const { data: organization, error: orgError } = await supabase
-      .from('organizations')
-      .insert(orgData)
-      .select()
-      .single()
+    const [organization] = await db.insert(organizations).values(orgData).returning()
 
-    console.log('🔍 [API] Organization creation result:', { organization: organization?.id, orgError })
+    console.log('🔍 [API] Organization creation result:', { organization: organization?.id })
 
-    if (orgError) {
-      console.error('❌ [API] Error creating organization:', orgError)
+    if (!organization) {
+      console.error('❌ [API] Error creating organization')
       return NextResponse.json({ 
         error: 'Error al crear organización', 
-        details: orgError.message,
-        code: orgError.code 
       }, { status: 500 })
     }
 

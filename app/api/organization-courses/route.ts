@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { db } from '@/drizzle/db'
+import { courses } from '@/drizzle/schema'
+import { sql } from 'drizzle-orm'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -7,13 +9,7 @@ export async function GET(req: Request) {
   if (!organizationId) {
     return NextResponse.json({ count: 0 })
   }
-  const supabase = createClient()
-  const { count, error } = await supabase
-    .from('courses')
-    .select('id', { count: 'exact', head: true })
-    .eq('organizationId', organizationId)
-  if (error) {
-    return NextResponse.json({ count: 0 })
-  }
-  return NextResponse.json({ count: count || 0 })
+  const result = await db.select({ count: sql<number>`count(*)` }).from(courses)
+  const count = Number(result[0]?.count || 0)
+  return NextResponse.json({ count })
 }

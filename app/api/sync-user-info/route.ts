@@ -1,58 +1,35 @@
-import { createClient } from '@/utils/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
+import { db } from '@/drizzle/db'
+import { userInfo } from '@/drizzle/schema'
+import { eq } from 'drizzle-orm'
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
-    
-    // Obtener el usuario actual
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    
-    if (userError || !user) {
-      return NextResponse.json({ error: 'No authenticated user' }, { status: 401 })
+    const session = await auth()
+    if (!session?.user?.email) {
+      return NextResponse.json({ message: 'No autenticado' }, { status: 401 })
     }
 
-    // Verificar si ya existe un userInfo para este usuario
-    const { data: existingUserInfo, error: fetchError } = await supabase
-      .from('userInfo')
-      .select('*')
-      .eq('userId', user.id)
-      .single()
+    const existing = await db.query.userInfo.findFirst({
+      where: eq(userInfo.userId, session.user.id),
+    })
 
-    if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows returned
-      console.error('Error fetching user info:', fetchError)
-      return NextResponse.json({ error: fetchError.message }, { status: 500 })
+    if (!existing) {
+      await db.insert(userInfo).values({
+        userId: session.user.id,
+        email: session.user.email,
+        firstName: session.user.name?.split(' ')[0] || '',
+        lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
+      }).onConflictDoNothing()
     }
 
-    if (existingUserInfo) {
-      return NextResponse.json({ userInfo: existingUserInfo, created: false })
-    }
-
-    // Crear nuevo userInfo usando los metadatos del usuario
-    const firstName = user.user_metadata?.first_name || ''
-    const lastName = user.user_metadata?.last_name || ''
-    
-    const userInfo = {
-      userId: user.id,
-      firstName,
-      lastName,
-      email: user.email || '',
-    }
-
-    const { data, error: insertError } = await supabase
-      .from('userInfo')
-      .insert([userInfo])
-      .select()
-      .single()
-
-    if (insertError) {
-      console.error('Error creating user info:', insertError)
-      return NextResponse.json({ error: insertError.message }, { status: 500 })
-    }
-
-    return NextResponse.json({ userInfo: data, created: true })
+    return NextResponse.json({ message: 'User info synced' })
   } catch (error) {
-    console.error('Error in sync-user-info API:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('Sync error:', error)
+    return NextResponse.json(
+      { message: 'Error interno del servidor' },
+      { status: 500 }
+    )
   }
 }

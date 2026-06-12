@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { createClient } from '@/utils/supabase/client'
+import { useSession } from 'next-auth/react'
 import { useToast } from '@/components/ui/use-toast'
 import { 
   Settings, 
@@ -29,7 +29,7 @@ export default function OrganizacionSettingsPage() {
   const [saving, setSaving] = useState(false)
   const params = useParams()
   const router = useRouter()
-  const supabase = createClient()
+  const { data: session } = useSession()
   const { toast } = useToast()
 
   // Settings state
@@ -43,32 +43,32 @@ export default function OrganizacionSettingsPage() {
   })
 
   useEffect(() => {
+    if (!session?.user) {
+      router.push('/login')
+      return
+    }
+
     async function loadOrganization() {
       try {
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) {
-          router.push('/login')
-          return
-        }
-
-        const { data: userInfo, error: userInfoError } = await supabase
-          .from('userInfo')
-          .select('id')
-          .eq('userId', user.id)
-          .single()
-
-        if (userInfoError || !userInfo) {
+        const userInfoRes = await fetch('/api/user-info')
+        if (!userInfoRes.ok) {
           router.push('/organizaciones')
           return
         }
+        const userInfo = await userInfoRes.json()
 
-        const { data: org, error: orgError } = await supabase
-          .from('organizations')
-          .select('*')
-          .eq('id', params.id)
-          .single()
+        const orgsRes = await fetch('/api/organizations')
+        if (!orgsRes.ok) {
+          router.push('/organizaciones')
+          return
+        }
+        const orgsData = await orgsRes.json()
 
-        if (orgError || !org) {
+        const org = (orgsData.organizations || []).find(
+          (o: any) => o.id === params.id
+        )
+
+        if (!org) {
           router.push('/organizaciones')
           return
         }
@@ -92,7 +92,7 @@ export default function OrganizacionSettingsPage() {
     }
 
     loadOrganization()
-  }, [params.id, router, supabase, toast])
+  }, [params.id, session, router, toast])
 
   const handleSaveSettings = async () => {
     setSaving(true)

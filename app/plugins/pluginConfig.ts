@@ -1,6 +1,5 @@
 import { Microkernel, Allow } from 'plugini'
 import * as ostromPlugin from './ostromPlugin'
-import { createClient } from '@/utils/supabase/client'
 
 // Registrar permiso getCourses - datos reales de Supabase
 Allow.registerPermission({

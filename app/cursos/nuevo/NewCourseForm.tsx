@@ -5,7 +5,6 @@ import MainButton from '@/components/MainButton'
 import OrganizationSelector from '@/components/OrganizationSelector'
 import { useToast } from '@/components/ui/use-toast'
 import { LinkPreview } from '@/components/ui/link-preview'
-import { createClient } from '@/utils/supabase/client'
 import { ORGANIZATION_PLAN_FREE } from '@/lib/constants'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -20,7 +19,6 @@ interface Props {
 export default function NewCourseForm({ userInfoId }: Props) {
   const { toast } = useToast()
   const router = useRouter()
-  const supabase = createClient()
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [pending, setPending] = useState(false)
   const [canvasLoading, setCanvasLoading] = useState(false)
@@ -268,12 +266,10 @@ export default function NewCourseForm({ userInfoId }: Props) {
   if (!userInfoId) return null
 
   const addProfessorToCourse = async (courseId: string) => {
-    await supabase.from('professors').insert({ teacherInfoId: userInfoId, courseId })
-
-    await supabase.from('students').insert({ 
-      userInfoId: userInfoId, 
-      courseId, 
-      group: DEFAULT_PROFESSOR_GROUP 
+    await fetch('/api/add-professor', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ teacherInfoId: userInfoId, courseId, group: DEFAULT_PROFESSOR_GROUP }),
     })
   }
 
@@ -296,20 +292,9 @@ export default function NewCourseForm({ userInfoId }: Props) {
   }
 
   const handleCourseCreationError = (error: any) => {
-    if (error.code === 'PLAN_LIMIT_EXCEEDED') {
-      setShowUpgradeModal(true)
-      return
-    }
-    if (error.code === '23505') {
-      return toast({
-        title: 'Error',
-        description: 'El curso ya existe. Si crees que esto es un error, por favor ponte en contacto con nosotros.',
-        variant: 'destructive'
-      })
-    }
     return toast({
       title: 'Error',
-      description: `Hubo un error al crear el curso. Por favor intenta de nuevo o ponte en contacto con nosotros. Código de error: ${error.code}`,
+      description: error?.message || 'Hubo un error al crear el curso. Por favor intenta de nuevo.',
       variant: 'destructive'
     })
   }
@@ -361,25 +346,26 @@ export default function NewCourseForm({ userInfoId }: Props) {
         title: formData.title.trim(),
         abbreviature: formData.abbreviature.trim(),
         semester: formData.semester.trim(),
-        color: formData.color || DEFAULT_COLOR,
         img: formData.img.trim() || 'https://bit.ly/2k1H1t6',
-        organizationId: formData.organizationId.trim(),
         teacherInfoId: userInfoId,
         ...(formData.canvasId.trim() && { canvasId: formData.canvasId.trim() })
       }
 
-      const { error, data } = await supabase
-        .from('courses')
-        .insert([courseData])
-        .select()
-        .single()
+      const res = await fetch('/api/update-course', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(courseData),
+      })
 
-      if (error) {
-        throw error
+      if (!res.ok) {
+        const errData = await res.json()
+        throw new Error(errData.error || 'Error al crear el curso')
       }
 
-      if (data && data.id) {
-        await addProfessorToCourse(data.id)
+      const course = await res.json()
+
+      if (course?.id) {
+        await addProfessorToCourse(course.id)
       }
 
       toast({
@@ -390,7 +376,7 @@ export default function NewCourseForm({ userInfoId }: Props) {
 
       // Redirigir a la página del curso creado
       setTimeout(() => {
-        router.push(`/cursos/${data.abbreviature}/${data.semester}`)
+        router.push(`/cursos/${course.abbreviature}/${course.semester}`)
       }, 1000) // Esperar 1 segundo para mostrar el toast
 
     } catch (error) {

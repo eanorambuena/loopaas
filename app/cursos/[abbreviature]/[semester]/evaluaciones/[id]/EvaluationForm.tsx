@@ -79,7 +79,7 @@ export default function EvaluationForm({ evaluation, userInfo }: Props) {
     ;(async () => {
       try {
         const error = await createResponse(evaluation, userInfo.id as string, valuesList)
-        if (error) throw new Error(error)
+        if (error) throw new Error(typeof error === 'string' ? error : error.message || 'Error')
       } catch (error: any) {
         Console.Error(`Error creating response: ${error.message}`)
         if (error) return toast({

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { createClient } from '@/utils/supabase/client'
+import { useSession } from 'next-auth/react'
 import { useToast } from '@/components/ui/use-toast'
 import { Building2, Crown, Calendar, Users, Plus, ArrowRight } from 'lucide-react'
 
@@ -27,27 +27,20 @@ export default function OrganizacionesPage() {
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClient()
+  const { data: session } = useSession()
   const { toast } = useToast()
 
   useEffect(() => {
+    if (!session?.user) {
+      router.push('/login')
+      return
+    }
+
     async function loadOrganizations() {
       try {
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) {
-          router.push('/login')
-          return
-        }
-
-        // Obtener userInfo para conseguir el ID correcto
-        const { data: userInfo, error: userInfoError } = await supabase
-          .from('userInfo')
-          .select('id')
-          .eq('userId', user.id)
-          .single()
-
-        if (userInfoError || !userInfo) {
-          console.error('Error getting user info:', userInfoError)
+        const userInfoRes = await fetch('/api/user-info')
+        if (!userInfoRes.ok) {
+          console.error('Error getting user info')
           toast({
             title: 'Error',
             description: 'No se pudo obtener información del usuario',
@@ -55,29 +48,11 @@ export default function OrganizacionesPage() {
           })
           return
         }
+        const userInfo = await userInfoRes.json()
 
-        // Obtener organizaciones donde el usuario es el propietario
-        const { data: orgs, error: orgsError } = await supabase
-          .from('organizations')
-          .select(`
-            id,
-            name,
-            plan,
-            created_at,
-            ownerId,
-            userInfo!inner (
-              id,
-              firstName,
-              lastName,
-              email
-            ),
-            courses (count)
-          `)
-          .eq('ownerId', userInfo.id)
-          .order('created_at', { ascending: false })
-
-        if (orgsError) {
-          console.error('Error loading organizations:', orgsError)
+        const orgsRes = await fetch('/api/organizations')
+        if (!orgsRes.ok) {
+          console.error('Error loading organizations')
           toast({
             title: 'Error',
             description: 'No se pudieron cargar las organizaciones',
@@ -85,16 +60,25 @@ export default function OrganizacionesPage() {
           })
           return
         }
+        const orgsData = await orgsRes.json()
 
-        // Transformar los datos para que coincidan con la interfaz
-        const formattedOrgs = orgs?.map(org => ({
+        const userOrgs = (orgsData.organizations || []).filter(
+          (org: any) => org.ownerId === userInfo.id
+        )
+
+        const formattedOrgs = userOrgs.map((org: any) => ({
           id: org.id,
           name: org.name,
           plan: org.plan,
           created_at: org.created_at,
-          coursesCount: org.courses?.[0]?.count || 0,
-          owner: Array.isArray(org.userInfo) ? org.userInfo[0] : org.userInfo
-        })) || []
+          coursesCount: 0,
+          owner: {
+            id: userInfo.id,
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            email: userInfo.email
+          }
+        }))
 
         setOrganizations(formattedOrgs)
       } catch (error) {
@@ -110,7 +94,7 @@ export default function OrganizacionesPage() {
     }
 
     loadOrganizations()
-  }, [router, supabase, toast])
+  }, [session, router, toast])
 
   if (loading) {
     return (

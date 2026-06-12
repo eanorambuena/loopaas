@@ -317,6 +317,6 @@
     ".next/required-server-files.json"
   ],
   "ignore": [
-    "node_modules/next/dist/compiled/@ampproject/toolbox-optimizer/**/*"
+    "node_modules/.pnpm/next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1/node_modules/next/dist/compiled/@ampproject/toolbox-optimizer/**/*"
   ]
 }

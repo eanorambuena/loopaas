@@ -16,7 +16,7 @@ var define_IMAGES_QUALITIES_default = [75];
 // <define:__IMAGES_REMOTE_PATTERNS__>
 var define_IMAGES_REMOTE_PATTERNS_default = [];
 
-// node_modules/@opennextjs/aws/dist/utils/error.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/utils/error.js
 function isOpenNextError(e) {
   try {
     return "__openNextInternal" in e;
@@ -25,7 +25,7 @@ function isOpenNextError(e) {
   }
 }
 
-// node_modules/@opennextjs/aws/dist/adapters/logger.js
+// node_modules/.pnpm/@opennextjs+aws@4.0.2_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1_/node_modules/@opennextjs/aws/dist/adapters/logger.js
 function debug(...args) {
   if (globalThis.openNextDebug) {
     console.log(...args);
@@ -75,7 +75,7 @@ function getOpenNextErrorLogLevel() {
   }
 }
 
-// node_modules/@opennextjs/cloudflare/dist/cli/templates/images.js
+// node_modules/.pnpm/@opennextjs+cloudflare@1.19.11_encoding@0.1.13_next@15.4.6_react-dom@19.1.1_react@19.1.1__react@19.1.1__wrangler@4.100.0/node_modules/@opennextjs/cloudflare/dist/cli/templates/images.js
 async function handleImageRequest(requestURL, requestHeaders, env) {
   const parseResult = parseImageRequest(requestURL, requestHeaders);
   if (!parseResult.ok) {
@@ -247,8 +247,7 @@ async function handleCdnCgiImageRequest(requestURL, env) {
 }
 function parseCdnCgiImageRequest(pathname) {
   const match = pathname.match(/^\/cdn-cgi\/image\/(?<options>[^/]+)\/(?<url>.+)$/);
-  if (match === null || // Valid URLs have at least one option
-  !match.groups?.options || !match.groups?.url) {
+  if (match === null || !match.groups?.options || !match.groups?.url) {
     return { ok: false, message: "Invalid /cdn-cgi/image/ URL format" };
   }
   const imageUrl = match.groups.url;

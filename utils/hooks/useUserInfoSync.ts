@@ -1,39 +1,17 @@
 'use client'
 
 import { useEffect } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { useSession } from 'next-auth/react'
 
 export function useUserInfoSync() {
-  const supabase = createClient()
+  const { data: session } = useSession()
 
   useEffect(() => {
-    const syncUserInfo = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (user) {
-        try {
-          await fetch('/api/sync-user-info', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-        } catch (error) {
-          console.error('Error syncing user info:', error)
-        }
-      }
+    if (session?.user?.email) {
+      fetch('/api/sync-user-info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      }).catch(console.error)
     }
-
-    // Sincronizar al cargar
-    syncUserInfo()
-
-    // Escuchar cambios de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        syncUserInfo()
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [supabase])
+  }, [session?.user?.email])
 }

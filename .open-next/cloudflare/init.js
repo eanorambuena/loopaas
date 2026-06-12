@@ -3,7 +3,7 @@ import process from "node:process";
 import stream from "node:stream";
 import * as nextEnvVars from "./next-env.mjs";
 const cloudflareContextALS = new AsyncLocalStorage();
-Object.defineProperty(globalThis, /* @__PURE__ */ Symbol.for("__cloudflare-context__"), {
+Object.defineProperty(globalThis, Symbol.for("__cloudflare-context__"), {
   get() {
     return cloudflareContextALS.getStore();
   }
@@ -38,7 +38,6 @@ function initRuntime() {
       if (init2) {
         delete init2.cache;
         Object.defineProperty(init2, "body", {
-          // @ts-ignore
           value: init2.body instanceof stream.Readable ? ReadableStream.from(init2.body) : init2.body
         });
       }
@@ -47,13 +46,10 @@ function initRuntime() {
   };
   Object.assign(globalThis, {
     Request: CustomRequest,
-    __BUILD_TIMESTAMP_MS__: 1781230860720,
+    __BUILD_TIMESTAMP_MS__: 1781242218646,
     __NEXT_BASE_PATH__: "",
     __ASSETS_RUN_WORKER_FIRST__: false,
     __TRAILING_SLASH__: false,
-    // The external middleware will use the convertTo function of the `edge` converter
-    // by default it will try to fetch the request, but since we are running everything in the same worker
-    // we need to use the request as is.
     __dangerous_ON_edge_converter_returns_request: true
   });
 }

@@ -1,16 +1,10 @@
 import { Evaluation } from './schema'
-import { createClient } from '@/utils/supabase/client'
 
 export async function createResponse(evaluation: Evaluation, userInfoId: string, data: string[]) {
-  const supabase = createClient()
-  const { data: error } = await supabase
-    .from('responses')
-    .insert([
-      {
-        evaluationId: evaluation.id,
-        userInfoId: userInfoId,
-        data: JSON.stringify(data)
-      }
-    ])
-  return error
+  const res = await fetch(`/api/evaluations/${evaluation.id}/responses`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userInfoId, data }),
+  })
+  return res.ok ? null : { message: 'Error creating response' }
 }

@@ -1,10 +1,8 @@
 // app/api/save-students/route.ts
 import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
 import { createAutoConfirmUsers } from '@/utils/queries'
 
 export async function POST(req: Request) {
-  const supabase = createClient()
   const body = await req.json()
 
   const { csv, courseAbbreviation, courseSemester } = body

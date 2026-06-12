@@ -28,7 +28,7 @@ export default async function Page(props: EvaluationConfigPageProps) {
 
   if (!isCourseProfessor) redirect(`/cursos/${params.abbreviature}/${params.semester}/evaluaciones/${params.id}`)
 
-  const evaluation = await getEvaluationWithSections(params, user)
+  const evaluation = await getEvaluationWithSections(params, user.id)
 
   return (
     <div className='animate-in flex-1 flex flex-col gap-6 p-8 opacity-0 w-full max-w-xl sm:max-w-4xl px-3'>

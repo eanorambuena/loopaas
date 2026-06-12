@@ -1,19 +1,14 @@
-import useSWR from 'swr'
-import { createClient } from '../supabase/client'
-import { user } from '@nextui-org/react'
+'use client'
 
-const supabase = createClient()
+import { useSession } from 'next-auth/react'
 
-const fetcher = (url: string) => supabase.auth.getUser()
-  .then((userData) => userData.data)
+export default function useCurrentUser() {
+  const { data: session, status, update } = useSession()
 
-export default function useCurrentUser () {
-  const { data, error, isLoading, mutate } = useSWR('/api/user', fetcher)
- 
   return {
-    user: data?.user,
-    isLoading,
-    error,
-    mutate
+    user: session?.user ?? null,
+    isLoading: status === 'loading',
+    error: status === 'unauthenticated' ? new Error('No authenticated') : null,
+    mutate: update,
   }
 }

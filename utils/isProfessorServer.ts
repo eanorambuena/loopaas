@@ -1,6 +1,8 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { db } from '@/drizzle/db'
+import { professors } from '@/drizzle/schema'
+import { eq, and } from 'drizzle-orm'
 import { Console } from '@/utils/console'
 
 interface IsProfessorServerParams {
@@ -9,28 +11,16 @@ interface IsProfessorServerParams {
 }
 
 export async function isProfessorServer({ userInfoId, courseId }: IsProfessorServerParams): Promise<boolean> {
-  const supabase = createClient()
-
   try {
-    let query = supabase
-      .from('professors')
-      .select()
-      .eq('teacherInfoId', userInfoId)
-
+    const conditions = [eq(professors.teacherInfoId, userInfoId)]
     if (courseId) {
-      query = query.eq('courseId', courseId)
+      conditions.push(eq(professors.courseId, courseId))
     }
 
-    const { data, error } = await query
+    const data = await db.query.professors.findMany({
+      where: and(...conditions),
+    })
     
-    if (error) {
-      Console.Error(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId} - Error al consultar profesores: ${error}`) 
-      return false
-    }
-    if (!data) {
-      Console.Info(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId} - No es profesor`)
-      return false
-    }
     const isProfessor = data.length > 0
     Console.Info(`isProfessorServer: userInfoId=${userInfoId}, courseId=${courseId}, isProfessor=${isProfessor}`)
     return isProfessor

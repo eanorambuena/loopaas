@@ -1,35 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { db } from '@/drizzle/db'
+import { students, userInfo } from '@/drizzle/schema'
+import { eq, asc } from 'drizzle-orm'
 
 export async function GET(request: NextRequest, props: { params: Promise<{ courseId: string }> }) {
   const params = await props.params
   try {
-    const supabase = createClient()
-    
-    const { data: students, error } = await supabase
-      .from('students')
-      .select(`
-        userInfoId,
-        group,
-        userInfo:userInfoId (
-          id,
-          firstName,
-          lastName,
-          email
-        )
-      `)
-      .eq('courseId', params.courseId)
-      .order('group', { ascending: true })
+    const studentRows = await db.query.students.findMany({
+      where: eq(students.courseId, params.courseId),
+      orderBy: [asc(students.group)],
+    })
 
-    if (error) {
-      console.error('Error fetching students:', error)
-      return NextResponse.json(
-        { error: 'Error al obtener los estudiantes' },
-        { status: 500 }
-      )
-    }
+    const studentsWithInfo = await Promise.all(
+      studentRows.map(async (s) => {
+        const ui = await db.query.userInfo.findFirst({
+          where: eq(userInfo.id, s.userInfoId),
+        })
+        return {
+          userInfoId: s.userInfoId,
+          group: s.group,
+          userInfo: ui ? {
+            id: ui.id,
+            firstName: ui.firstName,
+            lastName: ui.lastName,
+            email: ui.email,
+          } : null,
+        }
+      })
+    )
 
-    return NextResponse.json({ students: students || [] })
+    return NextResponse.json({ students: studentsWithInfo || [] })
   } catch (error) {
     console.error('Error in students API:', error)
     return NextResponse.json(

@@ -1,20 +1,19 @@
-import { createClient } from '@/utils/supabase/server'
 import CourseCard from '@/components/CourseCard'
 import { getCurrentUser } from '@/utils/queries'
 import Fallback from '@/components/Fallback'
+import { db } from '@/drizzle/db'
+import { courses } from '@/drizzle/schema'
+import { eq } from 'drizzle-orm'
 
 export default async function Page(props: { params: Promise<{ abbreviature: string }> }) {
   const params = await props.params
-  const supabase = createClient()
   await getCurrentUser()
 
-  const { data: courses, error } = await supabase
-    .from('courses')
-    .select('*')
-    .eq('abbreviature', params.abbreviature)
-    .order('created_at', { ascending: false })
+  const coursesData = await db.query.courses.findMany({
+    where: eq(courses.abbreviature, params.abbreviature),
+  })
 
-  if (error || !courses || courses?.length === 0)
+  if (!coursesData || coursesData?.length === 0)
     return <Fallback>No se encontraron cursos</Fallback>
 
   return (
@@ -26,7 +25,7 @@ export default async function Page(props: { params: Promise<{ abbreviature: stri
         </p>
       </div>
       <main className="animate-in grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        {courses?.map((course) => (
+        {coursesData?.map((course) => (
           <CourseCard key={course.id} course={course} />
         ))}
       </main>

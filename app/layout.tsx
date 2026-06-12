@@ -1,6 +1,7 @@
 import Footer from '@/components/Footer'
 import GoBackLink from '@/components/GoBackLink'
 import Header from '@/components/Header'
+import { SessionProvider } from '@/components/SessionProvider'
 import { Spotlight } from '@/components/ui/spotlight-new'
 import { Toaster } from '@/components/ui/toaster'
 import { UserInfoSyncProvider } from '@/components/UserInfoSyncProvider'
@@ -71,22 +72,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-background overflow-x-hidden text-foreground">
-        <UserInfoSyncProvider>
-          <Spotlight className="overflow-hidden" />
-          <main className="min-h-screen relative w-full flex flex-col items-center">
-            <Header />
-            <section className="flex-1 mt-20 w-full flex flex-col gap-5 items-center">
-              <GoBackLink />
-              <div>
-                {children}
-              </div>
-              <Toaster />
-              <Footer />
-            </section>
-          </main>
-          <Analytics />
-          <SpeedInsights />
-        </UserInfoSyncProvider>
+        <SessionProvider>
+          <UserInfoSyncProvider>
+            <Spotlight className="overflow-hidden" />
+            <main className="min-h-screen relative w-full flex flex-col items-center">
+              <Header />
+              <section className="flex-1 mt-20 w-full flex flex-col gap-5 items-center">
+                <GoBackLink />
+                <div>
+                  {children}
+                </div>
+                <Toaster />
+                <Footer />
+              </section>
+            </main>
+            <Analytics />
+            <SpeedInsights />
+          </UserInfoSyncProvider>
+        </SessionProvider>
       </body>
     </html>
   )

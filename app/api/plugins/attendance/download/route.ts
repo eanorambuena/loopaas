@@ -1,20 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { db } from '@/drizzle/db'
+import { attendance } from '@/drizzle/schema'
 import ExcelJS from 'exceljs'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
-    // Obtener todas las asistencias
-    const { data: attendance, error } = await supabase
-      .from('attendance')
-      .select('*')
+    const attendanceRows = await db.query.attendance.findMany()
 
-    if (error) {
-      return NextResponse.json({ error: 'Error al obtener asistencias' }, { status: 500 })
-    }
-
-    // Crear workbook y worksheet
     const workbook = new ExcelJS.Workbook()
     const worksheet = workbook.addWorksheet('Asistencias')
 
@@ -22,12 +14,11 @@ export async function GET(request: NextRequest) {
       { header: 'ID', key: 'id', width: 10 },
       { header: 'ID Curso', key: 'courseId', width: 15 },
       { header: 'ID Estudiante', key: 'studentId', width: 18 },
-      { header: 'Presente', key: 'present', width: 10 },
+      { header: 'Estado', key: 'status', width: 10 },
       { header: 'Fecha', key: 'date', width: 20 },
-      { header: 'Creado', key: 'createdAt', width: 25 },
     ]
 
-    attendance?.forEach(row => {
+    attendanceRows?.forEach(row => {
       worksheet.addRow(row)
     })
 
