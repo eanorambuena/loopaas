@@ -19,6 +19,7 @@ export default function GenerateCredentialsPDF({
   // Convertir la estructura de datos para el nuevo componente
   const mappedStudents = students.map(student => ({
     id: student.id,
+    userInfoId: student.userInfoId || student.id,
     userInfo: {
       firstName: student.userInfo.firstName || '',
       lastName: student.userInfo.lastName || '',
