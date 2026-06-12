@@ -17,9 +17,23 @@ export const metadata = {
     default: APP_NAME
   },
   description: `${APP_NAME} es una aplicación web para gestionar cursos, credenciales y evaluaciones para equipos y organizaciones`,
+  keywords: ['loopaas', 'cursos', 'credenciales', 'evaluaciones', 'educación', 'gestión académica'],
   verification: {
     google: '43TwFvQymK3-1sNg02-KVCL_ryqBTvr9zpJBQX1aVms'
-  }
+  },
+  openGraph: {
+    title: APP_NAME,
+    description: 'Aplicación web para gestionar cursos, credenciales y evaluaciones',
+    url: APP_BASE_URL,
+    siteName: APP_NAME,
+    locale: 'es_CL',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: APP_NAME,
+    description: 'Aplicación web para gestionar cursos, credenciales y evaluaciones',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -31,6 +45,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" href="/loopaas_logo_square.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              'name': APP_NAME,
+              'url': APP_BASE_URL,
+              'applicationCategory': 'EducationalApplication',
+              'operatingSystem': 'Web',
+              'description': 'Aplicación para la gestión de cursos, credenciales y evaluaciones',
+              'author': {
+                '@type': 'Person',
+                'name': 'Emmanuel Norambuena',
+                'url': 'https://eanorambuena.github.io'
+              },
+              'offers': {
+                '@type': 'Offer',
+                'price': '0',
+                'priceCurrency': 'USD'
+              }
+            })
+          }}
+        />
       </head>
       <body className="bg-background overflow-x-hidden text-foreground">
         <UserInfoSyncProvider>
