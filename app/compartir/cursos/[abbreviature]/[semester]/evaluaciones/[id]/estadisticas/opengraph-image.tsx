@@ -1,8 +1,6 @@
 import { APP_NAME, APP_BASE_URL } from '@/lib/constants'
 import { ImageResponse } from 'next/og'
 
-export const runtime = 'edge'
-
 interface OGParams {
   params: { abbreviature: string; semester: string; id: string }
 }

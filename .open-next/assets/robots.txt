@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Crawl-delay: 10
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+Sitemap: https://loopaas.app/sitemap.xml

@@ -41,3 +41,7 @@ next-env.d.ts
 # data
 *.csv
 .env
+
+# build outputs
+.open-next/
+.vercel/
