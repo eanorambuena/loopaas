@@ -3,14 +3,22 @@ import { describe, it, expect } from 'vitest'
 
 describe('dateUtils', () => {
   describe('toChileTime', () => {
-    it('should convert UTC date to Chile time', () => {
-      // Test con una fecha UTC específica
+    it('should return a valid Date object', () => {
       const utcDate = new Date('2025-07-02T00:00:00.000Z')
       const chileTime = toChileTime(utcDate)
       
-      // Verificar que la fecha se convirtió correctamente
       expect(chileTime).toBeInstanceOf(Date)
-      expect(chileTime.getTime()).not.toBe(utcDate.getTime())
+      expect(chileTime.getTime()).not.toBeNaN()
+    })
+
+    it('should produce different local time values than UTC for a midnight date', () => {
+      // Midnight UTC is 8pm previous day in Chile (UTC-4 in July)
+      const utcDate = new Date('2025-07-02T00:00:00.000Z')
+      const chileTime = toChileTime(utcDate)
+      
+      // The Chile time should show a different hour than midnight
+      const chileHour = chileTime.getHours()
+      expect(chileHour).not.toBe(0)
     })
 
     it('should handle string dates', () => {
