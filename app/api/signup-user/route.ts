@@ -15,13 +15,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!email.endsWith('uc.cl')) {
-      return NextResponse.json(
-        { message: 'Solo se permiten correos UC (@uc.cl)' },
-        { status: 400 }
-      )
-    }
-
     const existing = await db.query.users.findFirst({
       where: eq(users.email, email.toLowerCase()),
     })

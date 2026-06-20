@@ -143,7 +143,7 @@ export default function Login() {
         <input
           className="rounded-md px-4 py-2 bg-inherit border mb-6"
           name="email"
-          placeholder="correo@estudiante.uc.cl"
+          placeholder="tu@email.com"
           autoComplete='email'
           type='email'
           required
