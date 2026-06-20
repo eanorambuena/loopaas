@@ -61,7 +61,7 @@ export function registerPublishedPlugins() {
           isCustom: true
         },
         component: function CustomPluginComponent(props: any) {
-          const React = require('react')
+          const React = require('react') as typeof import('react')
           const { useRef, useEffect } = React
 
           function PluginWrapper(innerProps: any) {
