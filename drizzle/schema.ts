@@ -13,7 +13,7 @@ export const users = pgTable('user', {
 
 export const accounts = pgTable('account', {
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  type: text('type').$type().notNull(),
+  type: text('type').notNull(),
   provider: text('provider').notNull(),
   providerAccountId: text('providerAccountId').notNull(),
   refresh_token: text('refresh_token'),

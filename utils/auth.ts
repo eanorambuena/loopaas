@@ -24,6 +24,15 @@ export class Auth {
     return response.json()
   }
 
+  static async SignInWithMagicLink(email: string) {
+    const result = await nextAuthSignIn('email', {
+      email: email.toLowerCase(),
+      redirect: false,
+    })
+    if (result?.error) throw new Error(result.error)
+    return result
+  }
+
   static async SignOut() {
     const { signOut } = await import('next-auth/react')
     await signOut({ redirect: false })

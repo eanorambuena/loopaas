@@ -21,7 +21,7 @@ export default function Login() {
   const toastError = useToastError()
   const { toast } = useToast()
   const { mutate, user } = useCurrentUser()
-  const { refetch } = useUserInfo(user?.id)
+  const { refetch } = useUserInfo()
   const [showingPassword, setShowingPassword] = useState(false)
   const [action, setAction] = useState<AvailableActions>('signIn')
 

@@ -17,7 +17,7 @@ export default function Login() {
   const toastError = useToastError()
   const { toast } = useToast()
   const { mutate, user } = useCurrentUser()
-  const { refetch } = useUserInfo(user?.id)
+  const { refetch } = useUserInfo()
   const [action, setAction] = useState<AvailableActions>('signInWithMagicLink')
 
   const signInWithMagicLink = async (formData: FormData) => {
