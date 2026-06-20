@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -106,89 +106,38 @@ function PluginEditor({ plugin, onSave, onCancel }: PluginEditorProps) {
 
   // Función para renderizar el componente de manera segura
   const renderPluginComponent = useCallback(async (code: string): Promise<React.ReactElement<any>> => {
-    try {
-      const codeToExecute = await transpileCode(code)
-      
-      // Crear una función que evalúe el código transpilado de manera más segura
-      const safeCode = `
-        (function() {
-          'use strict';
-          const React = arguments[0];
-          const { useState, useEffect, useCallback, useMemo, useRef } = React;
-          
-          try {
-            ${codeToExecute}
-            if (typeof Component !== 'function') {
-              throw new Error('El código debe definir una función llamada "Component"');
-            }
-            return Component;
-          } catch (error) {
-            console.error('Error evaluating plugin code:', error);
-            throw error;
+    function PluginPreviewWrapper(props: any) {
+      const containerRef = useRef<HTMLDivElement>(null)
+      const sandboxRef = useRef<{ cleanup: () => void } | null>(null)
+
+      useEffect(() => {
+        if (!containerRef.current) return
+
+        if (sandboxRef.current) {
+          sandboxRef.current.cleanup()
+        }
+
+        import('@/utils/pluginSandbox').then(({ createPluginSandbox }) => {
+          if (containerRef.current) {
+            sandboxRef.current = createPluginSandbox(code, containerRef.current)
           }
         })
-      `
-      
-      // Evaluar el código de manera segura pasando React como parámetro
-      const componentFactory = eval(safeCode)
-      const PluginComponent = componentFactory(React)
-      
-      // Verificar que sea una función válida
-      if (typeof PluginComponent !== 'function') {
-        throw new Error('El código debe definir una función llamada "Component"')
-      }
-      
-      return React.createElement(PluginComponent)
-    } catch (error) {
-      console.error('Error rendering plugin:', error)
-      
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
-      const isReferenceError = errorMessage.includes('is not defined')
-      const isSyntaxError = errorMessage.includes('Unexpected') || errorMessage.includes('SyntaxError')
-      
-      let hints = [
-        '💡 Usa JSX normal: <div className="...">contenido</div>',
-        '💡 Define una función llamada "Component" que retorne JSX',
-        '💡 Verifica que no uses código no permitido por seguridad'
-      ]
-      
-      if (isReferenceError) {
-        hints = [
-          '💡 Las variables no definidas incluyen hooks como useState, useEffect, etc.',
-          '💡 Los hooks están disponibles globalmente, úsalos directamente: useState(0)',
-          '💡 Si necesitas importar algo específico, puede que no esté disponible',
-          ...hints
-        ]
-      }
-      
-      if (isSyntaxError) {
-        hints = [
-          '💡 Verifica la sintaxis de tu código JSX',
-          '💡 Asegúrate de cerrar todas las etiquetas correctamente',
-          '💡 Los comentarios JSX usan {/* */} en lugar de //',
-          ...hints
-        ]
-      }
-      
+
+        return () => {
+          if (sandboxRef.current) {
+            sandboxRef.current.cleanup()
+            sandboxRef.current = null
+          }
+        }
+      }, [code])
+
       return React.createElement('div', {
-        className: 'p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg'
-      }, [
-        React.createElement('h4', {
-          key: 'title',
-          className: 'text-red-800 dark:text-red-200 font-semibold mb-2'
-        }, '⚠️ Error en el código:'),
-        React.createElement('pre', {
-          key: 'error',
-          className: 'text-red-600 dark:text-red-300 text-sm whitespace-pre-wrap font-mono mb-3 bg-red-100 dark:bg-red-900/30 p-2 rounded'
-        }, errorMessage),
-        React.createElement('div', {
-          key: 'hints',
-          className: 'text-red-500 dark:text-red-400 text-xs mt-3 space-y-1'
-        }, hints.map((hint, index) => 
-          React.createElement('p', { key: `hint${index}` }, hint)
-        ))
-      ])
+        ref: containerRef,
+        style: { width: '100%', minHeight: '200px' }
+      })
     }
+
+    return React.createElement(PluginPreviewWrapper)
   }, [])
 
   // Efecto para renderizar componentes cuando cambia renderPreview
@@ -445,7 +394,7 @@ export function CustomPluginManager() {
       // Crear el plugin en formato compatible con plugini
       const marketplacePlugin = {
         id: `custom-${plugin.id}`,
-        permissions: [], // Los plugins personalizados por ahora no requieren permisos especiales
+        permissions: [],
         metadata: {
           name: plugin.name,
           description: plugin.description || 'Plugin personalizado creado por el usuario',
@@ -455,42 +404,42 @@ export function CustomPluginManager() {
           isCustom: true
         },
         component: function CustomPluginComponent(props: any) {
-          // Crear un componente React que ejecute el código transpilado
-          try {
-            // Usar el mismo sistema que el preview para evitar problemas de scope
-            const safeCode = `
-              (function() {
-                'use strict';
-                const React = arguments[0];
-                const { useState, useEffect, useCallback, useMemo, useRef } = React;
-                const props = arguments[1];
-                
-                try {
-                  ${transpiledCode}
-                  if (typeof Component !== 'function') {
-                    throw new Error('El código debe definir una función llamada "Component"');
-                  }
-                  return React.createElement(Component, props);
-                } catch (error) {
-                  console.error('Error evaluating plugin code:', error);
-                  throw error;
+          function PluginWrapper(innerProps: any) {
+            const containerRef = useRef<HTMLDivElement>(null)
+            const sandboxRef = useRef<{ cleanup: () => void } | null>(null)
+
+            useEffect(() => {
+              if (!containerRef.current) return
+
+              if (sandboxRef.current) {
+                sandboxRef.current.cleanup()
+              }
+
+              import('@/utils/pluginSandbox').then(({ createPluginSandbox }) => {
+                if (containerRef.current) {
+                  sandboxRef.current = createPluginSandbox(
+                    plugin.code,
+                    containerRef.current,
+                    innerProps
+                  )
                 }
               })
-            `
-            
-            // Evaluar el código de manera segura
-            const result = eval(safeCode)
-            return result(React, props)
-            
-          } catch (error) {
-            console.error('Error ejecutando plugin personalizado:', error)
+
+              return () => {
+                if (sandboxRef.current) {
+                  sandboxRef.current.cleanup()
+                  sandboxRef.current = null
+                }
+              }
+            }, [plugin.code, JSON.stringify(innerProps)])
+
             return React.createElement('div', {
-              className: 'p-4 bg-red-50 border border-red-200 rounded-lg'
-            }, [
-              React.createElement('h3', { className: 'text-red-800 font-medium mb-2' }, 'Error en el Plugin'),
-              React.createElement('p', { className: 'text-red-600 text-sm' }, `Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
-            ])
+              ref: containerRef,
+              style: { width: '100%', minHeight: '200px' }
+            })
           }
+
+          return React.createElement(PluginWrapper, props)
         }
       }
 
@@ -547,85 +496,42 @@ export function CustomPluginManager() {
 
   // Función para renderizar el componente de manera segura
   const renderPluginComponent = useCallback(async (plugin: CustomPlugin): Promise<React.ReactElement<any>> => {
-    try {
-      let codeToExecute = plugin.transpiledCode
-      
-      // Si no hay código transpilado, transpilarlo ahora
-      if (!codeToExecute) {
-        codeToExecute = await transpileCode(plugin.code)
-        // Actualizar el plugin con el código transpilado para uso futuro
-        setPlugins(prev => prev.map(p => 
-          p.id === plugin.id 
-            ? { ...p, transpiledCode: codeToExecute }
-            : p
-        ))
-      }
-      
-      // Asegurar que React esté disponible globalmente
-      if (typeof window !== 'undefined') {
-        (window as any).React = React
-      }
-      
-      // Crear una función que evalúe el código transpilado (igual que en el preview del editor)
-      const safeCode = `
-        (function() {
-          'use strict';
-          const React = arguments[0];
-          const { useState, useEffect, useCallback, useMemo, useRef } = React;
-          
-          try {
-            ${codeToExecute}
-            if (typeof Component !== 'function') {
-              throw new Error('El código debe definir una función llamada "Component"');
-            }
-            return Component;
-          } catch (error) {
-            console.error('Error evaluating plugin code:', error);
-            throw error;
+    function PluginPreviewWrapper(props: any) {
+      const containerRef = useRef<HTMLDivElement>(null)
+      const sandboxRef = useRef<{ cleanup: () => void } | null>(null)
+
+      useEffect(() => {
+        if (!containerRef.current) return
+
+        if (sandboxRef.current) {
+          sandboxRef.current.cleanup()
+        }
+
+        import('@/utils/pluginSandbox').then(({ createPluginSandbox }) => {
+          if (containerRef.current) {
+            sandboxRef.current = createPluginSandbox(
+              plugin.code,
+              containerRef.current
+            )
           }
         })
-      `
-      
-      // Evaluar el código de manera segura pasando React como parámetro
-      const componentFactory = eval(safeCode)
-      const PluginComponent = componentFactory(React)
-      
-      // Verificar que sea una función válida
-      if (typeof PluginComponent !== 'function') {
-        throw new Error('El código debe definir una función llamada "Component"')
-      }
-      
-      return React.createElement(PluginComponent)
-    } catch (error) {
-      console.error('Error rendering plugin:', error)
-      
-      // Definir hints por defecto para el error
-      const hints = [
-        '💡 Usa JSX normal: <div className="...">contenido</div>',
-        '💡 Define una función llamada "Component" que retorne JSX',
-        '💡 Verifica que no uses código no permitido por seguridad'
-      ]
-      
+
+        return () => {
+          if (sandboxRef.current) {
+            sandboxRef.current.cleanup()
+            sandboxRef.current = null
+          }
+        }
+      }, [plugin.code])
+
       return React.createElement('div', {
-        className: 'p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg'
-      }, [
-        React.createElement('h4', {
-          key: 'title',
-          className: 'text-red-800 dark:text-red-200 font-semibold mb-2'
-        }, '⚠️ Error en el código:'),
-        React.createElement('pre', {
-          key: 'error',
-          className: 'text-red-600 dark:text-red-300 text-sm whitespace-pre-wrap font-mono'
-        }, error instanceof Error ? error.message : 'Error desconocido'),
-        React.createElement('div', {
-          key: 'hints',
-          className: 'text-red-500 dark:text-red-400 text-xs mt-3 space-y-1'
-        }, hints.map((hint, index) => 
-          React.createElement('p', { key: `hint${index}` }, hint)
-        ))
-      ])
+        ref: containerRef,
+        style: { width: '100%', minHeight: '200px' }
+      })
     }
-  }, [setPlugins])
+
+    return React.createElement(PluginPreviewWrapper)
+  }, [])
 
   // Efecto para renderizar componentes cuando cambia renderPreview
   useEffect(() => {
